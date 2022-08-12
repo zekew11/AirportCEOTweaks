@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <ImportGroup>
+    <Import Project="../GamePaths.xml" />
+  </ImportGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6bba0268-5969-4005-a637-937c77fe2780}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AirportCEOTweaks</RootNamespace>
+    <AssemblyName>AirportCEOTweaks</AssemblyName>
+    <TargetFrameworks>net462</TargetFrameworks>
+    <FileAlignment>512</FileAlignment>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Configurations>Release</Configurations>
+    <AutoGenerateBindingRedirects></AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net462|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(GamePath)$(ManagedFolder)Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+      <SpecificVersion>false</SpecificVersion>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+		      <Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="com.unity.multiplayer-hlapi.Runtime">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\com.unity.multiplayer-hlapi.Runtime.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="DOTween">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\DOTween.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="DOTween43">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\DOTween43.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="DOTween46">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\DOTween46.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="DOTween50">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\DOTween50.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="Mono.Posix">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Mono.Posix.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="Mono.Security">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Mono.Security.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="mscorlib">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\mscorlib.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Newtonsoft.Json.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="System.Configuration">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\System.Configuration.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="System.EnterpriseServices">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\System.EnterpriseServices.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="System.Security">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\System.Security.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="System.ServiceModel.Internals">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\System.ServiceModel.Internals.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="System.Transactions">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\System.Transactions.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="uCPf">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\uCPf.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="uModFramework">
+      <HintPath>$(GamePath)$(ManagedFolder)uModFramework.dll</HintPath>
+	  <Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+      <SpecificVersion>false</SpecificVersion>
+    </Reference>
+    <Reference Include="Unity.Analytics.DataPrivacy">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Unity.Analytics.DataPrivacy.dll</HintPath>
+	  <Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="Unity.Analytics.StandardEvents">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Unity.Analytics.StandardEvents.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="Unity.Analytics.Tracker">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Unity.Analytics.Tracker.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="Unity.Mathematics">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Unity.Mathematics.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(GamePath)$(ManagedFolder)UnityEngine.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+      <SpecificVersion>false</SpecificVersion>
+    </Reference>
+    <Reference Include="UnityEngine.AccessibilityModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.AccessibilityModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.AIModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.AIModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.AndroidJNIModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.AndroidJNIModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.ARModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.ARModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.ClothModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.ClothModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.ClusterInputModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.ClusterInputModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.ClusterRendererModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.ClusterRendererModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(GamePath)$(ManagedFolder)UnityEngine.CoreModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+      <SpecificVersion>false</SpecificVersion>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(GamePath)uModFramework\Lib\net462\0Harmony.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+      <SpecificVersion>false</SpecificVersion>
+    </Reference>
+    <Reference Include="UnityEngine.CrashReportingModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.CrashReportingModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.DirectorModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.DirectorModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.DSPGraphModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.DSPGraphModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.GameCenterModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.GameCenterModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.GridModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.GridModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.HotReloadModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.HotReloadModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.InputModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.InputModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.JSONSerializeModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.LocalizationModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.LocalizationModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.PerformanceReportingModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.PerformanceReportingModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.Physics2DModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.ProfilerModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.ProfilerModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.ScreenCaptureModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.ScreenCaptureModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.SharedInternalsModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.SharedInternalsModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.SpriteMaskModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.SpriteMaskModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.SpriteShapeModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.SpriteShapeModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.StreamingModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.StreamingModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.SubstanceModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.SubstanceModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.SubsystemsModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.SubsystemsModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.TerrainModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.TerrainModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.TerrainPhysicsModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.TerrainPhysicsModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.TextCoreModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.TextCoreModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.TilemapModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.TilemapModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.TLSModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.TLSModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.UI.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.UIElementsModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.UmbraModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.UmbraModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.UNETModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.UNETModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.UnityAnalyticsModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.UnityAnalyticsModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.UnityConnectModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.UnityConnectModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.UnityTestProtocolModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.UnityTestProtocolModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestAssetBundleModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestAudioModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestTextureModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestWWWModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.VehiclesModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.VehiclesModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.VFXModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.VFXModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.VideoModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.VideoModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.VRModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.VRModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.WindModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.WindModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+    <Reference Include="UnityEngine.XRModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\UnityEngine.XRModule.dll</HintPath>
+		<Private>false</Private>
+	  <CopyLocal>false</CopyLocal>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ModInfo.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Classes\Backend\" />
+    <Folder Include="Patches\AirTrafficController\" />
+    <Folder Include="Patches\Z Old\" />
+  </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="&quot;$(GamePath)uModFramework\Tools\UMF.ModPacker.exe&quot; -packmod $(AssemblyName) &quot;$(TargetDir)&quot;" />
+  </Target>
+</Project>

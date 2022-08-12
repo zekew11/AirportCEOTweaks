@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <!-- Set this full path to your game folder. Must contain a slash at the end. -->
+	<!-- Example: D:\Games\GameName\ -->
+    <GamePath>C:\Program Files (x86)\Steam\steamapps\common\Airport CEO\</GamePath>
+
+    <!-- Set this partial path to the game's Managed folder. Must contain a slash at the end. -->
+	<!-- Example: GameName_Data\Managed\ -->
+    <ManagedFolder>Airport CEO_Data\Managed\</ManagedFolder>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,6 @@
+C:\Users\Ezekiel\Documents\ACEOTweaks\AirportCEOTweaks\Release\ModInfo.txt
+C:\Users\Ezekiel\Documents\ACEOTweaks\AirportCEOTweaks\Release\AirportCEOTweaks.dll
+C:\Users\Ezekiel\Documents\ACEOTweaks\AirportCEOTweaks\AirportCEOTweaks\obj\Release\AirportCEOTweaks.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Ezekiel\Documents\ACEOTweaks\AirportCEOTweaks\AirportCEOTweaks\obj\Release\AirportCEOTweaks.csproj.CoreCompileInputs.cache
+C:\Users\Ezekiel\Documents\ACEOTweaks\AirportCEOTweaks\AirportCEOTweaks\obj\Release\AirportCEOTweaks.dll
+C:\Users\Ezekiel\Documents\ACEOTweaks\AirportCEOTweaks\AirportCEOTweaks\obj\Release\AirportCEOTweaks.csproj.AssemblyReference.cache

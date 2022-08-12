@@ -1,0 +1,57 @@
+Airport CEO Tweaks:
+
+Known Bugs (1.2.x):
+Auto planner occassionally plans a series of flights with one flight missing, leaving a gap-day
+Assorted bugs if AirlineChanges are enabled
+
+Major Changelog:
+
+1.2.0
+
+* Turnaround time is adjustable.
+* Airlines offer flight contracts which repeat based on airline size and satisfaction.
+
+1.1.1
+
+* Improved active livery support
+
+1.1.0
+
+* Improved planner rescheduling logic: more permissive for the player
+* Added Active Livery Components, used for changing previously inaccessible visual features of aircraft
+
+1.0.0
+
+* Added basic cargo system
+* Added hold-shift planner enhancements
+
+
+Minor Changelog
+
+1.2.0
+
+* Added a system for more complex airline and flight behavior. Partially utilized.
+* Turnaround time is player adjustable within limits
+* Airlines offer flight contracts which repeat based on airline size and satisfaction
+* Flights in series indicator in schedule UI now indicates flights remaining, as opposed to the total number planned initially, giving better indication of when contracts will expire.
+* Livery layers hidden by z-level are automatically unhidden (mod compatibility feature)
+* Further airline features disabled by default until 1.2.1 due to not being complete / stable.
+* Trello : https://trello.com/b/Wjx5mvmW/aceo-tweaks
+
+1.1.1
+
+* Added "makewindow" command for active liveries
+* Added "xact" as shorthand for "exactly"
+* Made livery log-spam toggle-able
+
+1.1.0
+
+* UMF auto-update enabled for future updates.
+* Improved planner rescheduling logic: more permissive for the player
+* Added Flight type framework (not implemented)
+* Added Active Livery Components, used for changing previously inaccessible visual features of aircraft
+
+1.0.0
+
+* Added basic cargo system
+* Added hold-shift planner enhancements
