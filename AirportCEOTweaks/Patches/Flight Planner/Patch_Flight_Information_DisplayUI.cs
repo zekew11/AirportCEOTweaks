@@ -41,8 +41,19 @@ namespace AirportCEOTweaks
             if (flight is CommercialFlightModel)
             {
 
+                CommercialFlightModel cmf = flight as CommercialFlightModel;
+
+                Transform transform2 = __instance.transform.Find("FlightInfo");
+
                 TextMeshProUGUI FrqValueText = __instance.transform.Find("FlightInfo").Find("FlightFrequencyValueText").GetComponent<TextMeshProUGUI>();
                 TextMeshProUGUI FrqText = __instance.transform.Find("FlightInfo").Find("FlightFrequencyText").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI expectedArrivingPassengersValueText = transform2.Find("ExpectedArrivingPassengersValueText").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI expectedDepartingPassengersValueText = transform2.Find("ExpectedDepartingPassengersValueText").GetComponent<TextMeshProUGUI>();
+
+                //expectedArrivingPassengersValueText.text =     cmf.currentTotalNbrOfArrivingPassengers.ToString() + " / " + cmf.totalNbrOfArrivingPassengers.ToString() ;
+                //expectedDepartingPassengersValueText.text =   cmf.currentTotalNbrOfDepartingPassengers.ToString() + " / " + cmf.totalNbrOfDepartingPassengers.ToString();
+                expectedArrivingPassengersValueText.text = "(" + cmf.totalNbrOfArrivingPassengers.ToString() + ")";
+                expectedDepartingPassengersValueText.text = "(" + cmf.totalNbrOfDepartingPassengers.ToString() + ")";
 
                 FrqText.text = "Flight Type:";
 
@@ -71,9 +82,17 @@ namespace AirportCEOTweaks
         {
             if (flight is CommercialFlightModel)
             {
+                CommercialFlightModel cmf = flight as CommercialFlightModel;
+
+                Transform transform2 = __instance.transform.Find("FlightInfo");
 
                 TextMeshProUGUI FrqValueText = __instance.transform.Find("FlightInfo").Find("FlightFrequencyValueText").GetComponent<TextMeshProUGUI>();
                 TextMeshProUGUI FrqText = __instance.transform.Find("FlightInfo").Find("FlightFrequencyText").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI expectedArrivingPassengersValueText = transform2.Find("ExpectedArrivingPassengersValueText").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI expectedDepartingPassengersValueText = transform2.Find("ExpectedDepartingPassengersValueText").GetComponent<TextMeshProUGUI>();
+
+                expectedArrivingPassengersValueText.text = " "+ cmf.currentTotalNbrOfArrivingPassengers.ToString()  + "\n(" + cmf.totalNbrOfArrivingPassengers.ToString()+ ")";
+                expectedDepartingPassengersValueText.text = " "+cmf.currentTotalNbrOfDepartingPassengers.ToString() + "\n(" + cmf.totalNbrOfDepartingPassengers.ToString()+")";
 
                 FrqText.text = "Flight Type:";
 

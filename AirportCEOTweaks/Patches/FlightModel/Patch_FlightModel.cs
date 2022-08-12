@@ -7,16 +7,6 @@ namespace AirportCEOTweaks
     [HarmonyPatch(typeof(FlightModel))]
     static class Patch_FlightModel
     {
-        [HarmonyPostfix]
-        [HarmonyPatch("FinalizeFlightDetails")]
-        public static void PostfixFinalizeFlightDetails(FlightModel __instance)
-        {
-            if (__instance is CommercialFlightModel)
-            {
-                SingletonNonDestroy<ModsController>.Instance.GetExtensions(__instance as CommercialFlightModel, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-                ecfm.FinalizeFlightDetails();
-            }
-        }
         [HarmonyPrefix]
         [HarmonyPatch("ShouldActivateFlight")]
         public static bool Prefix_ShouldActivateFlight(DateTime currentTime, ref bool __result, FlightModel __instance)

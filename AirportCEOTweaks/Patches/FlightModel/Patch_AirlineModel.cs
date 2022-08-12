@@ -199,7 +199,7 @@ namespace AirportCEOTweaks
         public bool GenerateFlight(AirlineModel airlineModel, bool isEmergency = false, bool isAmbulance = false)
         {
 
-            if (Utils.ChanceOccured(0f))
+            if (Utils.ChanceOccured(0f)) //chance to do vanilla gen
             {
                 return false;
             }
@@ -296,7 +296,7 @@ namespace AirportCEOTweaks
                 return false;
             }
 
-            // Select at weighted random ............................................................................................
+            // Select aircraft at weighted random ............................................................................................
             for ( ; ; )
             {
                 int start = Utils.RandomRangeI(0, AircraftModels.Count);
@@ -330,13 +330,13 @@ namespace AirportCEOTweaks
                 }
             }
             LoopEnd:
+
             // Preselect route number ...............................................................................................
 
             int maxflightnumber = (((int)starRank+3)^2)*50 + Utils.RandomRangeI(100f,200f);
-
             int flightnumber = Utils.RandomRangeI(1f, maxflightnumber);
 
-            for (; ; )
+            for ( ; ; )
             {
                 if (SingletonNonDestroy<ModsController>.Instance.FlightsByFlightNumber(parent,parent.airlineFlightNbr +  flightnumber).Count > 0)
                 {
@@ -359,7 +359,7 @@ namespace AirportCEOTweaks
             {
                 Debug.LogError("ACEO Tweaks | ERROR: In generate flight selected aircraft model nbr " + selectedAircraft.aircraftType + " did not return an aircraft type structure!");
                 return false;
-            }
+            } //error catch
 
             Route route = TravelController.GenerateRoute((float)selectedAircraft.rangeKM, selectedAircraftType.size , selectedAircraft.weightClass, RangeByFlightType(inBound,true), RangeByFlightType(inBound, false));
             Route route2;
@@ -393,6 +393,7 @@ namespace AirportCEOTweaks
             }
 
             route2.ReverseRoute();
+
             route.routeNbr = flightnumber;
             route2.routeNbr = flightnumber;
 
@@ -442,18 +443,36 @@ namespace AirportCEOTweaks
         public HashSet<CommercialFlightModel> InstantiateFlightSeries(string AircraftType, int seriesLength, Route arrivalRoute, Route departureRoute, FlightTypes.FlightType arrivalType = FlightTypes.FlightType.Vanilla, FlightTypes.FlightType departureType = FlightTypes.FlightType.Vanilla)
         {
             HashSet<CommercialFlightModel> set = new HashSet<CommercialFlightModel>();
+            AircraftModel aircraftModel;
+            int seatsin;
+            int seatsout;
+
+
+            PAX();
+
             for (int l = 0; l < seriesLength; l++)
             {
+                //Vanilla Commercial Flight Model
+                
                 CommercialFlightModel commercialFlightModel = new CommercialFlightModel(parent.referenceID, true, AircraftType, arrivalRoute, departureRoute)
                 {
                     numberOfFlightsInSerie = seriesLength
                 };
+
+                commercialFlightModel.totalNbrOfArrivingPassengers = seatsin;
+                commercialFlightModel.totalNbrOfDepartingPassengers = seatsout;
+
                 set.Add(commercialFlightModel);
+
+                //Extended Commercial Flight Model
+
                 Extend_CommercialFlightModel ecm = new Extend_CommercialFlightModel(commercialFlightModel, arrivalType, departureType)
                 {
-                    last = (l == seriesLength - 1)
+                    last = (l == seriesLength - 1) //unused, I think...
                 };
                 ecm.Initialize();
+
+                //Register to vote today!!!
 
                 Singleton<AirTrafficController>.Instance.AddToFlightList(commercialFlightModel);
                 parent.flightList.Add(commercialFlightModel.referenceID);
@@ -461,7 +480,33 @@ namespace AirportCEOTweaks
                 myFlights.Add(ecm);
                 
             }
+            
             return set;
+
+            void PAX()
+            {
+                aircraftModel = Singleton<AirTrafficController>.Instance.GetAircraftModel(AircraftType);
+                seatsin = aircraftModel.maxPax;
+                seatsout = seatsin;
+
+                ref int operand = ref seatsin;
+                FlightTypes.FlightType flightType = arrivalType;
+
+                for (var i = 0; i < 2; i++)
+                {
+                    switch (flightType)
+                    {
+                        case FlightTypes.FlightType.Economy: operand = (operand * 1.15f).RoundToIntLikeANormalPerson(); break;
+                        case FlightTypes.FlightType.VIP: operand = (operand * 0.5f).RoundToIntLikeANormalPerson(); break;
+
+                        case FlightTypes.FlightType.Cargo:
+                        case FlightTypes.FlightType.SpecialCargo: 
+                        case FlightTypes.FlightType.Positioning: operand = 0; break;
+                    }
+                    flightType = departureType;
+                    operand = ref seatsout;
+                }
+            }
         }
 
         public float GetEconomyTiers(string name, string desc, Enums.BusinessClass stars)

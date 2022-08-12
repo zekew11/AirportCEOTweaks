@@ -8,20 +8,56 @@ namespace AirportCEOTweaks
     [HarmonyPatch(typeof(CommercialFlightModel))]
     static class Patch_CommercialFlightModel
     {
-
+        [HarmonyPatch("FinalizeFlightDetails")]
+        [HarmonyPostfix]
+        public static void PostfixFinalizeFlightDetails(ref CommercialFlightModel __instance)
+        {
+            SingletonNonDestroy<ModsController>.Instance.GetExtensions(__instance as CommercialFlightModel, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
+            __instance.SetFlightPassengerTrafficValues(1);
+            ecfm.FinalizeFlightDetails();
+        }
+        
         [HarmonyPatch("SetFlightPassengerTrafficValues")]
         public static void Postfix(CommercialFlightModel __instance, float __0)
         {
             if (AirportCEOTweaksConfig.fixes == false && AirportCEOTweaksConfig.cargoSystem == false) { return; }
 
-            __instance.currentTotalNbrOfArrivingPassengers = ((float)__instance.totalNbrOfArrivingPassengers * __0).RoundToIntLikeANormalPerson();
+            if (__instance.isAllocated)
+            {
+                int inhr =  __instance.arrivalTimeDT.Hour;
+                int outhr = __instance.departureTimeDT.Hour;
+
+                long seed = __instance.arrivalTimeDT.ToBinary();
+                UnityEngine.Random.InitState((int)seed);
+
+                float mult = UnityEngine.Random.Range(.3f, 1.0f) + UnityEngine.Random.Range(.6f, 1.33f); //(0.66 +/- 0.33) + ( 1.0 +/- 0.33) /2
+                float mult2 = UnityEngine.Random.Range(.3f, 1.0f) + UnityEngine.Random.Range(.6f, 1.33f);
+
+                mult  += (float)(0.70 - 0.01986964 * inhr  + 0.009644035 * Math.Pow((double)inhr, 2d)  - 0.0003787513 * Math.Pow((double)inhr, 3d));
+                mult2 += (float)(0.70 - 0.01986964 * outhr + 0.009644035 * Math.Pow((double)outhr, 2d) - 0.0003787513 * Math.Pow((double)outhr, 3d));
+
+                mult  /= 3;
+                mult2 /= 3;
+
+                mult = mult.Clamp(0f, 1f);
+                mult2 = mult2.Clamp(0f, 1f);
+
+                __instance.currentTotalNbrOfArrivingPassengers = ((float)__instance.totalNbrOfArrivingPassengers * mult * __0).RoundToIntLikeANormalPerson();
+                __instance.currentTotalNbrOfDepartingPassengers = ((float)__instance.totalNbrOfDepartingPassengers * mult2 * __0).RoundToIntLikeANormalPerson();
+            }
+            else
+            {
+                __instance.currentTotalNbrOfArrivingPassengers = __instance.totalNbrOfArrivingPassengers;
+                __instance.currentTotalNbrOfDepartingPassengers = __instance.totalNbrOfDepartingPassengers;
+            }
         }
+
         [HarmonyPatch("SetFromSerializer")]
         [HarmonyPostfix]
         public static void Patch_AddExtensionsOnLoad( ref CommercialFlightModel __instance )
         {
             Singleton<ModsController>.Instance.GetExtensions(__instance, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-            
+            __instance.SetFlightPassengerTrafficValues(1);
             /*
                   FlightTypes.FlightType outBound;
                   FlightTypes.FlightType inBound;
@@ -43,6 +79,7 @@ namespace AirportCEOTweaks
                   ecm.Initialize(); */
             
         }
+
         [HarmonyPatch("CancelFlight")]
         [HarmonyPostfix]
         public static void Patch_RemoveExtensionCan(CommercialFlightModel __instance)
@@ -59,6 +96,7 @@ namespace AirportCEOTweaks
                 Debug.LogError("ACEO Tweaks | Error: Failed to remove commercial flight model extension from the dictionary and scope on flight cancel!");
             }
         }
+
         [HarmonyPatch("CompleteFlight")]
         [HarmonyPostfix]
         public static void Patch_RemoveExtensionCom(CommercialFlightModel __instance)
@@ -76,10 +114,12 @@ namespace AirportCEOTweaks
             }
 
         }
+
         [HarmonyPatch("AllocateFlight")]
         [HarmonyPostfix]
         public static void Patch_RefreshSeriesOnAllocate(ref CommercialFlightModel __instance)
         {
+            __instance.SetFlightPassengerTrafficValues(1);
             try
             {
                 Singleton<ModsController>.Instance.GetExtensions(__instance, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
@@ -206,15 +246,19 @@ namespace AirportCEOTweaks
 
             if (inboundFlightType == FlightTypes.FlightType.Cargo || inboundFlightType == FlightTypes.FlightType.SpecialCargo || inboundFlightType == FlightTypes.FlightType.Positioning)
             {
-                parent.ResetArrivingPassengers();
+                //parent.ResetArrivingPassengers();
             }
             if (outboundFlightType == FlightTypes.FlightType.Cargo || outboundFlightType == FlightTypes.FlightType.SpecialCargo || outboundFlightType == FlightTypes.FlightType.Positioning)
             {
-                parent.ResetDeparingPassengers();
+                //parent.ResetDeparingPassengers();
             }
 
             Extend_FlightModel.IfNoPAX(parent);
 
+            /*
+             * 
+             * commenting away to give way to rewritten setpaxtrafficvalues, hopefully it works...
+             * 
             switch (inboundFlightType)
             {
                 case FlightTypes.FlightType.SpecialCargo:
@@ -232,18 +276,19 @@ namespace AirportCEOTweaks
                     { parent.SetFlightPassengerTrafficValues(.33f); }
                     break;
                 case FlightTypes.FlightType.Flagship: parent.SetFlightPassengerTrafficValues(.75f); break;
-                case FlightTypes.FlightType.Economy: parent.SetFlightPassengerTrafficValues(1.1f); break;
-                case FlightTypes.FlightType.Mainline: parent.SetFlightPassengerTrafficValues(.9f); break;
-                case FlightTypes.FlightType.Commuter: parent.SetFlightPassengerTrafficValues(.7f); break;
+                case FlightTypes.FlightType.Economy: parent.SetFlightPassengerTrafficValues(1.1f);  break;
+                case FlightTypes.FlightType.Mainline: parent.SetFlightPassengerTrafficValues(.9f);  break;
+                case FlightTypes.FlightType.Commuter: parent.SetFlightPassengerTrafficValues(.7f);  break;
             }
+            */
 
             EvaluateServices();
 
-            void Security(bool flag)
+            void Security(bool flag) //I think it NRE's
             {
-                parent.securityAssistanceRequested = flag;
-                parent.securityAssistanceInProgress = flag ? parent.securityAssistanceInProgress : false;
-                parent.securityAssistanceCompleted = flag ? parent.securityAssistanceCompleted : true;
+                //parent.securityAssistanceRequested = flag;
+                //parent.securityAssistanceInProgress = flag ? parent.securityAssistanceInProgress : false;
+                //parent.securityAssistanceCompleted = flag ? parent.securityAssistanceCompleted : true;
             }
         }
         public void CompleteFlight()// ------------- RENEWAL CODE WITHIN ------------------------------
