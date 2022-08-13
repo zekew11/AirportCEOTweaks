@@ -5,7 +5,7 @@ namespace AirportCEOTweaks
 {
     public class AirportCEOTweaksConfig
     {
-        private static readonly string configVersion = "1.2";
+        private static readonly string configVersion = "1.2.1";
 
         //Add your config vars here.
         public static UnityEngine.KeyCode increaseTurnaroundBind;
@@ -18,11 +18,12 @@ namespace AirportCEOTweaks
         public static bool fixes;
         public static bool cargoSystem;
         public static bool plannerChanges;
-        public static bool longerFlightSeries;
-        public static bool airlineChanges;
+        //public static bool longerFlightSeries;
+        //public static bool airlineChanges;
         public static bool liveryExtensions;
         public static bool permisivePlanner;
         public static bool smallPlaneBaggageOff;
+        public static bool disconnectedBaggageOff;
 
         public static bool liveryLogs;
 
@@ -39,7 +40,7 @@ namespace AirportCEOTweaks
                     string cfgVer = cfg.Read("ConfigVersion", new UMFConfigString());
                     if (cfgVer != string.Empty && cfgVer != configVersion)
                     {
-                        cfg.DeleteConfig(false);
+                        cfg.DeleteConfig(true);
                         AirportCEOTweaks.Log("The config file was outdated and has been deleted. A new config will be generated.");
                     }
 
@@ -65,13 +66,14 @@ namespace AirportCEOTweaks
 
 
                     fixes = cfg.Read("Fixes for Disabled Modules", new UMFConfigBool(true, false, true), "Apply patches/workarounds that are not strictly neccessary for the selected configuration.");
-                    cargoSystem = cfg.Read("Legacy Cargo System", new UMFConfigBool(true, false, true), "Enable/Disable the (primitive) cargo flight system. Setting will be depreciated with full intrduction of the flight types system.");
-                    smallPlaneBaggageOff = cfg.Read("Small Aircraft Baggage", new UMFConfigBool(true, false, true), "When enabled small aircraft will never request baggage handling");
+                    cargoSystem = cfg.Read("Cargo System", new UMFConfigBool(true, false, true), "Enable/Disable the (primitive) cargo flight system. Setting will be depreciated with full intrduction of the flight types system.");
+                    smallPlaneBaggageOff = cfg.Read("Small Aircraft No-Baggage", new UMFConfigBool(false, false, true), "When enabled small aircraft will never request baggage service.");
+                    disconnectedBaggageOff = cfg.Read("Disconnected Stands No-Baggage", new UMFConfigBool(true, false, true), "When enabled aircraft assigned to stands with no connected baggage bay will not request baggage service.");
                     plannerChanges = cfg.Read("Planner Changes", new UMFConfigBool(true, false, true), "Enable/Disable player controlled planner hacks such as hold-shift to reschedule all flights in series.");
-                    longerFlightSeries = cfg.Read("Longer Series", new UMFConfigBool(true, false, true), "Enable/Disable changes to how airlines generate repeating flight contracts.");
-                    airlineChanges = cfg.Read("Temp Airline Changes", new UMFConfigBool(false, false, true), "UNSTABLE Enable/Disable airline balance changes such as requesting differing turnaround services.");
+                    //longerFlightSeries = cfg.Read("Longer Series", new UMFConfigBool(true, false, true), "Enable/Disable changes to how airlines generate repeating flight contracts.");
+                    //airlineChanges = cfg.Read("Temp Airline Changes", new UMFConfigBool(false, false, true), "UNSTABLE Enable/Disable airline balance changes such as requesting differing turnaround services.");
                     liveryExtensions = cfg.Read("Livery Extensions", new UMFConfigBool(true, false, true), "Enable/Disable advanced livery functions.");
-
+                    
                     
 
                     cargoAirlineFlags = cfg.Read("Cargo Airline Flags", new UMFConfigStringArray(new string[] { "cargo","freight","logistics", "mail", "dhl","fedex","ups", "kalitta" }), "Define flags which, in the name of any airline, flag that airline as a cargo operator.");

@@ -13,7 +13,7 @@ namespace AirportCEOTweaks
         [HarmonyPatch(typeof(StandModel), "ChangeToBuilt")]
         public static void Postfix(StandModel __instance)
         {
-           if (AirportCEOTweaksConfig.airlineChanges == false && AirportCEOTweaksConfig.fixes == false) { return; }
+           if (AirportCEOTweaksConfig.fixes == false) { return; } //AirportCEOTweaksConfig.airlineChanges == false && 
 
             __instance.autoPlan = false;
         }

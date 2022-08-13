@@ -1,23 +1,44 @@
 Airport CEO Tweaks:
 
-Known Bugs (1.2.x):
-Auto planner occassionally plans a series of flights with one flight missing, leaving a gap-day
-Assorted bugs if AirlineChanges are enabled
+Known Bugs (1.2.1):
 
-Major Changelog:
+* Confirm Flight button sometimes hangs when pressed.
+* Loading two different saves without restating the game in between may or may not fracture space-time.
+
+Changelog:
+
+**1.2.1**
+
+---It is recommended to disable the auto planner when starting to play with 1.2.1, and enable it only cautiously, one stand at a time. The design goal of the update is that autoplanner is not necessary.---
+
+* Turnaround times depend on type of flight
+* Airlines extend flight contracts when satisfied
+* Airlines cut short flight contracts when upset
+* Airlines operate various flight types based on their economic focus
+* Some airline descriptions updated/retconned to match new game mechanics
+* Flight types displayed in flight info window, as well as expected PAX vs PAX capacity
+* PAX capacity depends on flight type
+* PAX load factor depends on time of day
+* Fixed some planner bugs from 1.2.0
+* Rewrote service request system for baggage, catering, cleaning, fueling, ramp service
+* Added setting to disable baggage service on small stands (vanilla behavior is default)
+* Added setting to disable baggage service on stands with no baggage bay (improved behavior is default)
+* Depreciated settings for experimental flight types and new contract lengths
 
 1.2.0
-
-* Turnaround time is adjustable.
-* Airlines offer flight contracts which repeat based on airline size and satisfaction.
+* Significantly expanded flight variety
 
 1.1.1
 
-* Improved active livery support
+* Added "makewindow" command for active liveries
+* Added "xact" as shorthand for "exactly"
+* Made livery log-spam toggle-able
 
 1.1.0
 
+* UMF auto-update enabled for future updates (pending approval from UMF)
 * Improved planner rescheduling logic: more permissive for the player
+* Added Flight type framework (not implemented)
 * Added Active Livery Components, used for changing previously inaccessible visual features of aircraft
 
 1.0.0
@@ -26,7 +47,8 @@ Major Changelog:
 * Added hold-shift planner enhancements
 
 
-Minor Changelog
+
+Full Previous Changelogs
 
 1.2.0
 

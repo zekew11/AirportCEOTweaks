@@ -60,6 +60,7 @@ namespace AirportCEOTweaks
         [HarmonyPrefix]
         public static bool HackFlightCount(ref AirlineModel __instance)
         {
+            HashSet<string> unAllocatedNbrs = new HashSet<string>();
             __instance.UnAllocatedCount = 0;
             __instance.AllocatedCount = 0;
             __instance.ActiveCount = 0;
@@ -69,27 +70,30 @@ namespace AirportCEOTweaks
                 {
                     continue;
                 }
-                if (!commercialFlightModel.isAllocated)
+                if (!commercialFlightModel.isAllocated) //not allocated
                 {
-                    __instance.UnAllocatedCount = __instance.UnAllocatedCount + 1;
-                }
-                if (commercialFlightModel.isAllocated)
-                {
-                    if (commercialFlightModel.arrivalTimeDT.AddDays(-5) > Singleton<TimeController>.Instance.GetCurrentContinuousTime())
+                    if(unAllocatedNbrs.Add(commercialFlightModel.departureFlightNbr))
                     {
-                        __instance.UnAllocatedCount = __instance.UnAllocatedCount+1;
+                        __instance.UnAllocatedCount = __instance.UnAllocatedCount + 1;
+                    }
+                }
+                if (commercialFlightModel.isAllocated) //allocated
+                {
+                    if (commercialFlightModel.arrivalTimeDT > Singleton<TimeController>.Instance.GetCurrentContinuousTime().AddDays(3)) //3+ days away
+                    {
+                        continue;
                     }
                     else
                     {
                         __instance.AllocatedCount = __instance.AllocatedCount + 1;
                     }
                 }
-                if (commercialFlightModel.isActivated)
+                if (commercialFlightModel.isActivated) //activated
                 {
                     __instance.ActiveCount = __instance.ActiveCount + 1;
                 }
             }
-            __instance.UnAllocatedCount = __instance.UnAllocatedCount / 3;
+
             return false;
         }
 
@@ -199,14 +203,8 @@ namespace AirportCEOTweaks
         public bool GenerateFlight(AirlineModel airlineModel, bool isEmergency = false, bool isAmbulance = false)
         {
 
-            if (Utils.ChanceOccured(0f)) //chance to do vanilla gen
-            {
-                return false;
-            }
-            if (!AirportCEOTweaksConfig.longerFlightSeries && !AirportCEOTweaksConfig.airlineChanges)
-            {
-                return false;
-            }
+            //if (Utils.ChanceOccured(0f)) //chance to do vanilla gen{return false;}
+            //if (!AirportCEOTweaksConfig.longerFlightSeries && !AirportCEOTweaksConfig.airlineChanges){return false;}
             
             //Debug.LogError("ACEO Tweaks | INFO: GenerateFlight called in extension by airline " + parent.businessName);
             

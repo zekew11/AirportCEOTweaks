@@ -27,7 +27,7 @@ namespace AirportCEOTweaks
                 int inhr =  __instance.arrivalTimeDT.Hour;
                 int outhr = __instance.departureTimeDT.Hour;
 
-                long seed = __instance.arrivalTimeDT.ToBinary();
+                long seed = __instance.arrivalTimeDT.ToBinary() + __instance.departureRoute.routeNbr;
                 UnityEngine.Random.InitState((int)seed);
 
                 float mult = UnityEngine.Random.Range(.3f, 1.0f) + UnityEngine.Random.Range(.6f, 1.33f); //(0.66 +/- 0.33) + ( 1.0 +/- 0.33) /2
@@ -158,7 +158,7 @@ namespace AirportCEOTweaks
 
             this.inboundFlightType = inboundFlightType;
             this.outboundFlightType = outboundFlightType;
-            this.turnaroundType = SingletonNonDestroy<FlightTypesController>.Instance.GetTurnaroundType(inboundFlightType,outboundFlightType);
+            this.turnaroundType = SingletonNonDestroy<FlightTypesController>.Instance.GetTurnaroundType(parent,inboundFlightType,outboundFlightType);
         }
         public Extend_CommercialFlightModel(CommercialFlightModel parent, Extend_AirlineModel eam)
         {
@@ -243,53 +243,8 @@ namespace AirportCEOTweaks
         public void FinalizeFlightDetails()
         {
             RefreshTypes();
-
-            if (inboundFlightType == FlightTypes.FlightType.Cargo || inboundFlightType == FlightTypes.FlightType.SpecialCargo || inboundFlightType == FlightTypes.FlightType.Positioning)
-            {
-                //parent.ResetArrivingPassengers();
-            }
-            if (outboundFlightType == FlightTypes.FlightType.Cargo || outboundFlightType == FlightTypes.FlightType.SpecialCargo || outboundFlightType == FlightTypes.FlightType.Positioning)
-            {
-                //parent.ResetDeparingPassengers();
-            }
-
             Extend_FlightModel.IfNoPAX(parent);
-
-            /*
-             * 
-             * commenting away to give way to rewritten setpaxtrafficvalues, hopefully it works...
-             * 
-            switch (inboundFlightType)
-            {
-                case FlightTypes.FlightType.SpecialCargo:
-                    if (parent.arrivalRoute.routeNbr % Singleton<TimeController>.Instance.GetCurrentContinuousTime().Day < 2 | true)
-                    {
-                        Security(true);
-                    }
-                    break;
-                case FlightTypes.FlightType.VIP:
-                    if (parent.arrivalRoute.routeNbr % Singleton<TimeController>.Instance.GetCurrentContinuousTime().Day < 2 | true)
-                    {
-                        Security(true);
-                    }
-                    if (!parent.Aircraft.isConcorde)
-                    { parent.SetFlightPassengerTrafficValues(.33f); }
-                    break;
-                case FlightTypes.FlightType.Flagship: parent.SetFlightPassengerTrafficValues(.75f); break;
-                case FlightTypes.FlightType.Economy: parent.SetFlightPassengerTrafficValues(1.1f);  break;
-                case FlightTypes.FlightType.Mainline: parent.SetFlightPassengerTrafficValues(.9f);  break;
-                case FlightTypes.FlightType.Commuter: parent.SetFlightPassengerTrafficValues(.7f);  break;
-            }
-            */
-
             EvaluateServices();
-
-            void Security(bool flag) //I think it NRE's
-            {
-                //parent.securityAssistanceRequested = flag;
-                //parent.securityAssistanceInProgress = flag ? parent.securityAssistanceInProgress : false;
-                //parent.securityAssistanceCompleted = flag ? parent.securityAssistanceCompleted : true;
-            }
         }
         public void CompleteFlight()// ------------- RENEWAL CODE WITHIN ------------------------------
         {
@@ -448,7 +403,7 @@ namespace AirportCEOTweaks
 
                 inboundFlightType = myAirlineExtension.GetFlightType(parent);
                 outboundFlightType = inboundFlightType;
-                this.turnaroundType = SingletonNonDestroy<FlightTypesController>.Instance.GetTurnaroundType(inboundFlightType, outboundFlightType);
+                this.turnaroundType = SingletonNonDestroy<FlightTypesController>.Instance.GetTurnaroundType(parent,inboundFlightType, outboundFlightType);
             }
             catch
             {
@@ -854,7 +809,7 @@ namespace AirportCEOTweaks
             Extend_AirlineModel eam = E_Airline();
             switch (turnaroundType)
             {
-                case FlightTypes.TurnaroundType.FuelOnly: result = -10; break;
+                case FlightTypes.TurnaroundType.FuelOnly: result = -20; break;
                 case FlightTypes.TurnaroundType.Reduced: result = -1; break;
                 case FlightTypes.TurnaroundType.Normal: result = 1; break;
                 case FlightTypes.TurnaroundType.Exended: result = 2; break;
@@ -863,11 +818,11 @@ namespace AirportCEOTweaks
             }
             switch (eam.economyTier)
             {
-                case 0: result = -10; break;
-                case 1: result = 0; break;
+                case 0: result -= 10; break;
+                case 1: break;
                 case 2: break;
-                case 3: result++; break;
-                case 4: result = Math.Max(1,result++); break;
+                case 3: result = Math.Max(1, result++); break;
+                case 4: result = Math.Max(1, result++); break;
             }
             switch (inboundFlightType)
             {
@@ -883,6 +838,13 @@ namespace AirportCEOTweaks
             {
                 result = -10;
             }
+            try
+            {
+                if (!parent.Stand.HasConnectedBaggageBay && AirportCEOTweaksConfig.disconnectedBaggageOff)
+                {
+                    result = -10;
+                }
+            }catch{ } //disconnectedbaggagebaybaggagething
 
             result = result.Clamp(-1, 2);
 

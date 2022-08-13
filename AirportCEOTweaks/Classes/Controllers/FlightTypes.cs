@@ -50,73 +50,80 @@ namespace AirportCEOTweaks
     }
     public class FlightTypesController : SingletonNonDestroy<FlightTypesController>
     { 
-
-        public FlightTypes.TurnaroundType GetTurnaroundType(FlightTypes.FlightType inBound, FlightTypes.FlightType outBound)
+        public FlightTypes.TurnaroundType GetTurnaroundType(CommercialFlightModel commercialFlightModel, FlightTypes.FlightType inBound, FlightTypes.FlightType outBound)
         {
             List<FlightTypes.TurnaroundType> types = new List<FlightTypes.TurnaroundType>();
-            //FlightType switchOn = inBound;
+            FlightTypes.FlightType switchOn = inBound;
 
-            switch (outBound)
+            for (var i = 0; i < 2; i++)
             {
-                case FlightTypes.FlightType.Economy :
-                    types.Add(FlightTypes.TurnaroundType.Reduced);
-                    types.Add(FlightTypes.TurnaroundType.Reduced);
-                    //types.Add(FlightTypes.TurnaroundType.Normal);
-                    break;
+                switch (switchOn)
+                {
+                    case FlightTypes.FlightType.Economy:
+                        types.Add(FlightTypes.TurnaroundType.Reduced);
+                        types.Add(FlightTypes.TurnaroundType.Reduced);
+                        types.Add(FlightTypes.TurnaroundType.Normal);
+                        break;
 
-                case FlightTypes.FlightType.Commuter:
-                    //types.Add(FlightTypes.TurnaroundType.Reduced);
-                    types.Add(FlightTypes.TurnaroundType.Normal);
-                    break;
+                    case FlightTypes.FlightType.Commuter:
+                        types.Add(FlightTypes.TurnaroundType.Reduced);
+                        types.Add(FlightTypes.TurnaroundType.Normal);
+                        break;
 
-                case FlightTypes.FlightType.Mainline:
-                    //types.Add(FlightTypes.TurnaroundType.Reduced);
-                    types.Add(FlightTypes.TurnaroundType.Normal);
-                    types.Add(FlightTypes.TurnaroundType.Normal);
-                    types.Add(FlightTypes.TurnaroundType.Normal);
-                    break;
+                    case FlightTypes.FlightType.Mainline:
+                        types.Add(FlightTypes.TurnaroundType.Reduced);
+                        types.Add(FlightTypes.TurnaroundType.Normal);
+                        types.Add(FlightTypes.TurnaroundType.Normal);
+                        types.Add(FlightTypes.TurnaroundType.Normal);
+                        types.Add(FlightTypes.TurnaroundType.Normal);
+                        break;
 
-                case FlightTypes.FlightType.Flagship:
-                    //types.Add(FlightTypes.TurnaroundType.Normal);
-                    types.Add(FlightTypes.TurnaroundType.Full);
-                    types.Add(FlightTypes.TurnaroundType.Full);
-                    //types.Add(FlightTypes.TurnaroundType.Exended);
-                    break;
+                    case FlightTypes.FlightType.Flagship:
+                        types.Add(FlightTypes.TurnaroundType.Normal);
+                        types.Add(FlightTypes.TurnaroundType.Full);
+                        types.Add(FlightTypes.TurnaroundType.Full);
+                        types.Add(FlightTypes.TurnaroundType.Exended);
+                        break;
 
-                case FlightTypes.FlightType.VIP:
-                    //types.Add(FlightTypes.TurnaroundType.Full);
-                    types.Add(FlightTypes.TurnaroundType.Exended);
-                    //types.Add(FlightTypes.TurnaroundType.FuelOnly);
-                    break;
+                    case FlightTypes.FlightType.VIP:
+                        types.Add(FlightTypes.TurnaroundType.Full);
+                        types.Add(FlightTypes.TurnaroundType.Exended);
+                        //types.Add(FlightTypes.TurnaroundType.FuelOnly);
+                        break;
 
-                case FlightTypes.FlightType.Positioning:
-                    types.Add(FlightTypes.TurnaroundType.Maintenance);
-                    if (inBound == FlightTypes.FlightType.Cargo)
-                    { types.Add(FlightTypes.TurnaroundType.Cargo); }
-                    else if (inBound == FlightTypes.FlightType.SpecialCargo)
-                    { types.Add(FlightTypes.TurnaroundType.SpecialCargo); types.Add(FlightTypes.TurnaroundType.FuelOnly); }
-                    else if (inBound == FlightTypes.FlightType.Positioning)
-                    { types.Add(FlightTypes.TurnaroundType.FuelOnly); types.Add(FlightTypes.TurnaroundType.Maintenance); }
-                    else if (inBound == FlightTypes.FlightType.Divert)
-                    { types.Add(FlightTypes.TurnaroundType.Maintenance); types.Add(FlightTypes.TurnaroundType.FuelOnly); }
-                    else
-                    { types.Add(GetTurnaroundType(inBound, inBound)); }
-                    break;
-                case FlightTypes.FlightType.Cargo:
-                    types.Add(FlightTypes.TurnaroundType.Cargo);
-                    //if (Random.value < .35) {types.Add(FlightTypes.TurnaroundType.FuelOnly); }
-                    break;
-                case FlightTypes.FlightType.SpecialCargo:
-                    types.Add(FlightTypes.TurnaroundType.SpecialCargo);
-                    //types.Add(FlightTypes.TurnaroundType.FuelOnly);
-                    break;
-                default:
-                    types.Add(FlightTypes.TurnaroundType.Vanilla);
-                    break;
+                    case FlightTypes.FlightType.Positioning:
+                        types.Add(FlightTypes.TurnaroundType.Maintenance);
+                        if (inBound == FlightTypes.FlightType.Cargo)
+                        { types.Add(FlightTypes.TurnaroundType.Cargo); }
+                        else if (inBound == FlightTypes.FlightType.SpecialCargo)
+                        { types.Add(FlightTypes.TurnaroundType.SpecialCargo); types.Add(FlightTypes.TurnaroundType.FuelOnly); }
+                        else if (inBound == FlightTypes.FlightType.Positioning)
+                        { types.Add(FlightTypes.TurnaroundType.FuelOnly); types.Add(FlightTypes.TurnaroundType.Maintenance); }
+                        else if (inBound == FlightTypes.FlightType.Divert)
+                        { types.Add(FlightTypes.TurnaroundType.Maintenance); types.Add(FlightTypes.TurnaroundType.FuelOnly); }
+                        else
+                        { types.Add(GetTurnaroundType(commercialFlightModel, inBound, inBound)); }
+                        break;
+                    case FlightTypes.FlightType.Cargo:
+                        types.Add(FlightTypes.TurnaroundType.Cargo);
+                        types.Add(FlightTypes.TurnaroundType.Cargo);
+                        types.Add(FlightTypes.TurnaroundType.Cargo);
+                        types.Add(FlightTypes.TurnaroundType.FuelOnly);
+                        break;
+                    case FlightTypes.FlightType.SpecialCargo:
+                        types.Add(FlightTypes.TurnaroundType.SpecialCargo);
+                        types.Add(FlightTypes.TurnaroundType.FuelOnly);
+                        break;
+                    default:
+                        types.Add(FlightTypes.TurnaroundType.Vanilla);
+                        break;
+                }
+                switchOn = outBound;
             }
 
-            types.ShuffleList();
-            return types.ElementAt(0);
+            int seed = commercialFlightModel.departureRoute.routeNbr;
+            UnityEngine.Random.InitState(seed);
+            return types.ElementAt(UnityEngine.Random.Range(0, types.Count - 1));
         }
 
         public TimeSpan GetTurnaroundTime(Extend_CommercialFlightModel extCommercialFlightModel, FlightTypes.TurnaroundType turnaroundType, float Playerbias = 1f)
