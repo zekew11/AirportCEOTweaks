@@ -33,6 +33,7 @@ namespace AirportCEOTweaks
                 }
             }
         }
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(AircraftController), "SetLivery", new Type[] { })]
         public static void Patch_LiveryAddActive(AircraftController __instance)
@@ -67,6 +68,30 @@ namespace AirportCEOTweaks
             {
                 Debug.LogError("ACEO Tweaks | Error: failed to postfix SetLivery in Aircraft Controller");
             }
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch("ChargeFlightIncome")]
+        public static bool Patch_FlightIncome(ref AircraftController __instance)
+        {
+            if (__instance.FlightModel == null)
+            {
+                return false;
+            }
+            CommercialFlightModel cfm;
+
+            if ((cfm = (__instance.FlightModel as CommercialFlightModel)) != null && cfm.Airline != null)
+            {
+                Singleton<ModsController>.Instance.GetExtensions(cfm, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
+
+                float val = eam.PaymentPerFlight(ecfm,cfm.Airline.GetPaymentPerFlight(cfm.weightClass)) * ecfm.GetPaymentPercentAndReportRating();
+
+                if (!__instance.IsTotaled)
+                {
+                    Singleton<EconomyController>.Instance.CollectFlightCompletionFee<AircraftController>(val, __instance);
+                }
+            }    
+            return false;
         }
 
 

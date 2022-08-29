@@ -7,7 +7,11 @@ Known Bugs (1.2.1):
 
 Changelog:
 
-**1.2.1**
+**2.1.1**
+* Fixed airline satisfaction not changing
+* Revised version numbering. Conversion: 1.2.1 == (1.)2.1 --- This update can be though of as (1.)2.1.1
+
+1.2.1
 
 ---It is recommended to disable the auto planner when starting to play with 1.2.1, and enable it only cautiously, one stand at a time. The design goal of the update is that autoplanner is not necessary.---
 

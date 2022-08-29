@@ -25,8 +25,8 @@ namespace AirportCEOTweaks
             parameters = new string[] { };
 
 
-            List<string> nounsList = SingletonNonDestroy<ModsController>.Instance.LiveryGroupWords();
-            List<string> verbsList = SingletonNonDestroy<ModsController>.Instance.LiveryActionWords();
+            List<string> nounsList = Singleton<ModsController>.Instance.LiveryGroupWords();
+            List<string> verbsList = Singleton<ModsController>.Instance.LiveryActionWords();
 
             if (name == null || !name.ToLower().Contains("config")) { return false; }
 

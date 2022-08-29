@@ -15,7 +15,7 @@ using Newtonsoft;
 
 namespace AirportCEOTweaks
 {
-    public class ModsController : SingletonNonDestroy<ModsController>, IDontDestroyOnLoad
+    public class ModsController : Singleton<ModsController>, IDontDestroyOnLoad
     {
         //public Dictionary<CommercialFlightModel, Extend_CommercialFlightModel> commercialFlightExtensionDictionary = new Dictionary<CommercialFlightModel, Extend_CommercialFlightModel>();
         private Dictionary<string, Extend_CommercialFlightModel> commercialFlightExtensionRefDictionary = new Dictionary<string, Extend_CommercialFlightModel>();
@@ -214,7 +214,7 @@ namespace AirportCEOTweaks
         }
         public void GetExtensions(CommercialFlightModel cfm, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam)
         {
-            //SingletonNonDestroy<ModsController>.Instance.GetExtensions(parent, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam)
+            //Singleton<ModsController>.Instance.GetExtensions(parent, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam)
             
             if (cfm == null)
             {
@@ -235,7 +235,7 @@ namespace AirportCEOTweaks
 
             GetExtensions(cfm.Airline, out eam);
             
-            if (!commercialFlightExtensionRefDictionary.TryGetValue(cfm.ReferenceID, out ecfm) | ecfm == null)
+            if (!commercialFlightExtensionRefDictionary.TryGetValue(cfm.ReferenceID, out ecfm) || ecfm == null)
             {
                 ecfm = new Extend_CommercialFlightModel(cfm, eam);
                 ecfm.Initialize();

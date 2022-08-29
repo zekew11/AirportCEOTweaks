@@ -35,7 +35,7 @@ namespace AirportCEOTweaks
         {
             if (__instance is CommercialFlightModel)
             {
-                SingletonNonDestroy<ModsController>.Instance.GetExtensions(__instance as CommercialFlightModel, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
+                Singleton<ModsController>.Instance.GetExtensions(__instance as CommercialFlightModel, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
                 
                 __result = ecfm.TurnaroundTime;
                 return false;

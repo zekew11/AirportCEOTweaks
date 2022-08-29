@@ -2,6 +2,7 @@ using UnityEngine;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using TMPro;
 
 namespace AirportCEOTweaks
 {
@@ -42,8 +43,8 @@ namespace AirportCEOTweaks
                 {
                     if (f != null)
                     {
-                        SingletonNonDestroy<ModsController>.Instance.GetExtensions(f, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-                        ecfm.turnaroundPlayerBias = SingletonNonDestroy<ModsController>.Instance.TurnaroundBias;
+                        Singleton<ModsController>.Instance.GetExtensions(f, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
+                        ecfm.turnaroundPlayerBias = Singleton<ModsController>.Instance.TurnaroundBias;
                         ecfm.ResetTurnaroundTime();
 
                         StandModel standByReferenceID = Singleton<BuildingController>.Instance.GetObjectByReferenceID<StandModel>(__instance.rowStandReferenceID);
@@ -240,9 +241,9 @@ namespace AirportCEOTweaks
         {
             try
             {
-                SingletonNonDestroy<ModsController>.Instance.GetExtensions(__instance.flight, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-                SingletonNonDestroy<ModsController>.Instance.TurnaroundBiasFromBuffer();
-                ecfm.turnaroundPlayerBias = SingletonNonDestroy<ModsController>.Instance.TurnaroundBias;
+                Singleton<ModsController>.Instance.GetExtensions(__instance.flight, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
+                Singleton<ModsController>.Instance.TurnaroundBiasFromBuffer();
+                ecfm.turnaroundPlayerBias = Singleton<ModsController>.Instance.TurnaroundBias;
                 ecfm.ResetTurnaroundTime(false);
                 //Debug.LogError("ACEO Tweaks | Info: FlightSlotContainerUI OnDrag Patch!");
             }
@@ -259,14 +260,24 @@ namespace AirportCEOTweaks
         {
             try 
             {
-                SingletonNonDestroy<ModsController>.Instance.GetExtensions(__instance.flight, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-                SingletonNonDestroy<ModsController>.Instance.turnaroundBiasBuffer = ecfm.turnaroundPlayerBias;
+                Singleton<ModsController>.Instance.GetExtensions(__instance.flight, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
+                Singleton<ModsController>.Instance.turnaroundBiasBuffer = ecfm.turnaroundPlayerBias;
             }
             catch
             {
                 Debug.LogError("ACEO Tweaks | ERROR: FlightSlotContainerUI OnBeginDrag Patch!");
             }
-}
+        }
+
+        [HarmonyPatch("SetContainerValues")]
+        [HarmonyPostfix]
+        public static void PostfixFlightValue(ref FlightSlotContainerUI __instance, ref TextMeshProUGUI ___paymentPerFlight)
+        {
+            Singleton<ModsController>.Instance.GetExtensions(__instance.flight, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
+            
+            float val = eam.PaymentPerFlight(ecfm, __instance.flight.Airline.GetPaymentPerFlight(__instance.flight.weightClass)) * ecfm.GetPaymentPercentAndReportRating(false);
+            ___paymentPerFlight.text = Utils.GetCurrencyFormat(val, "C0"); 
+        }
 
     }
     public static class Extend_FlightSlotContainerUI
