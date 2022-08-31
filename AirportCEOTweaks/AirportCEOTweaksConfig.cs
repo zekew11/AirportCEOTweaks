@@ -5,7 +5,7 @@ namespace AirportCEOTweaks
 {
     public class AirportCEOTweaksConfig
     {
-        private static readonly string configVersion = "1.2.1";
+        private static readonly string configVersion = "2.1.2";
 
         //Add your config vars here.
         public static UnityEngine.KeyCode increaseTurnaroundBind;
@@ -76,7 +76,7 @@ namespace AirportCEOTweaks
                     
                     
 
-                    cargoAirlineFlags = cfg.Read("Cargo Airline Flags", new UMFConfigStringArray(new string[] { "cargo","freight","logistics", "mail", "dhl","fedex","ups", "kalitta" }), "Define flags which, in the name of any airline, flag that airline as a cargo operator.");
+                    cargoAirlineFlags = cfg.Read("Cargo Airline Flags", new UMFConfigStringArray(new string[] { "cargo","freight","logistics", "mail", "dhl","fedex","ups", "kalitta","amazon air" }), "Define flags which, in the name of any airline, flag that airline as a cargo operator.");
                     cargoPayMod = cfg.Read("Cargo Flight Payment Modifier", new UMFConfigFloat(0.65f, 0f, 2f, 2, 1, false), "Cargo flight completion bonus is multiplied by this value");
 
 

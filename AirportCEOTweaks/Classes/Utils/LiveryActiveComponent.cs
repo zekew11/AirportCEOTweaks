@@ -141,9 +141,26 @@ namespace AirportCEOTweaks
             string[] parameters;
 
 
-            var z = originalComponent.transform.position.z;
-            z = (z > 99 || z < -99) ? 0 : z;
-            originalComponent.transform.position.SetZ(z);
+            float z = originalComponent.transform.localPosition.z;
+            //z = (z <= -99f) ? 0f : z;
+            if (z <= -99)
+            {
+                if (AirportCEOTweaksConfig.liveryLogs)
+                { Debug.LogError("ACEO Tweaks | Livery Debug: found "+name+"at z="+z.ToString()+" : moving to z=0."); }
+
+                Vector3 newPos = new Vector3( originalComponent.transform.position.x, originalComponent.transform.position.y, 0f );
+                originalComponent.transform.position = newPos;
+
+                if (AirportCEOTweaksConfig.liveryLogs)
+                { Debug.LogError("ACEO Tweaks | Livery Debug: " + name + "now at z=" + originalComponent.transform.localPosition.z.ToString()); }
+            }
+            else
+            {
+                if (AirportCEOTweaksConfig.liveryLogs)
+                { 
+                    //Debug.LogError("ACEO Tweaks | Livery Debug: found " + name + "at z=" + z.ToString() + " : not moving.");
+                }
+            }
 
 
             try

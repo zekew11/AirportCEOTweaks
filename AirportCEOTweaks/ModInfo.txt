@@ -1,13 +1,18 @@
 Airport CEO Tweaks:
 
-Known Bugs (1.2.1):
+Known Bugs (2.1.2):
 
 * Confirm Flight button sometimes hangs when pressed.
 * Loading two different saves without restating the game in between may or may not fracture space-time.
+* Baggage loading stat decreases for erronious reasons.
 
 Changelog:
 
-**2.1.1**
+2.1.2
+* Fixed automatic livery layer unhiding
+* Added "amazon air" cargo airline flag
+
+2.1.1
 * Fixed airline satisfaction not changing
 * Revised version numbering. Conversion: 1.2.1 == (1.)2.1 --- This update can be though of as (1.)2.1.1
 
