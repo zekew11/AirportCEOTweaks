@@ -9,6 +9,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
 using Newtonsoft;
+using TMPro;
+using System.Reflection;
 
 
 
@@ -67,10 +69,28 @@ namespace AirportCEOTweaks
                 }
             }
         }
-        private new void Awake()
+        private void Start()
         {
-            base.Awake();
-            Debug.LogError("ACEOTweaks | Mods Controller Awake");
+            //base.Awake();
+            //Debug.LogError("ACEOTweaks | Mods Controller Awake");
+
+            GameObject appLabel = GameObject.Find("ApplicationVersionLabel");
+            ApplicationVersionLabelUI applicationVersionLabelUI = appLabel.GetComponent<ApplicationVersionLabelUI>();
+            //Patch_AddTweaksLabel();
+
+            /*void Patch_AddTweaksLabel()
+            {
+                Debug.LogError("ACEO Tweaks | DEBUG: AddTweaksLabel Ran");
+
+                TMP_Text tMP = appLabel.transform.GetComponent<TextMeshProUGUI>();
+                string str = tMP.text;
+
+                Version version = Assembly.GetEntryAssembly().GetName().Version;
+
+                str = str + " - AirportCEO Tweaks v" + version.ToString();
+                tMP.text = str;
+                Debug.LogError(str);
+            }*/
         }
 
         public void ResetForMainMenu()

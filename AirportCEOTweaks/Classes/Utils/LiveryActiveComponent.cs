@@ -148,11 +148,13 @@ namespace AirportCEOTweaks
                 if (AirportCEOTweaksConfig.liveryLogs)
                 { Debug.LogError("ACEO Tweaks | Livery Debug: found "+name+"at z="+z.ToString()+" : moving to z=0."); }
 
-                Vector3 newPos = new Vector3( originalComponent.transform.position.x, originalComponent.transform.position.y, 0f );
+                Vector3 newPos = new Vector3( originalComponent.transform.position.x, originalComponent.transform.position.y, -0.09f );
                 originalComponent.transform.position = newPos;
-
+                
                 if (AirportCEOTweaksConfig.liveryLogs)
-                { Debug.LogError("ACEO Tweaks | Livery Debug: " + name + "now at z=" + originalComponent.transform.localPosition.z.ToString()); }
+                { Debug.LogError("ACEO Tweaks | Livery Debug: " + name + "now at local z=" + originalComponent.transform.localPosition.z.ToString("0.0000000"));
+                    Debug.LogError("ACEO Tweaks | Livery Debug: " + name + "now at global z=" + originalComponent.transform.position.z.ToString("0.0000000"));
+                }
             }
             else
             {

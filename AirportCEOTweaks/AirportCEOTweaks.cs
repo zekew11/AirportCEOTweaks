@@ -8,6 +8,7 @@ namespace AirportCEOTweaks
 {
     class AirportCEOTweaks
     {
+
         internal static void Log(string text, bool clean = false)
         {
             using (UMFLog log = new UMFLog()) log.Log(text, clean);
@@ -19,10 +20,11 @@ namespace AirportCEOTweaks
             AirportCEOTweaksConfig.Load();
         }
 
-		[UMFHarmony(31)] //Set this to the number of harmony patches in your mod.
+		[UMFHarmony(33)] //Set this to the number of harmony patches in your mod.
         public static void Start()
 		{
 			Log("AirportCEOTweaks v" + UMFMod.GetModVersion().ToString(), true);
-		}
+
+        }
 	}
 }
