@@ -133,6 +133,14 @@ namespace AirportCEOTweaks
                 Debug.LogError("ACEO Tweaks | Error: Failed to refresh commercial flight model extension on flight allocate!");
             }
         }
+        [HarmonyPatch("ActivateFlight")]
+        [HarmonyPrefix]
+        public static void Patch_RefreshOnActivate(CommercialFlightModel __instance)
+        {
+            Singleton<ModsController>.Instance.GetExtensions(__instance, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
+
+            ecfm.RefreshServices();
+        }
     }
 
    // [Serializable]
@@ -1233,6 +1241,17 @@ namespace AirportCEOTweaks
                 catch { } //disconnectedbaggagebaybaggagething
 
                 result = result.Clamp(-1, 2);
+                if ((result == 0 || result == 1) && this.flightModel.isActivated)
+                {
+                    if (Singleton<AirportController>.Instance.AirportData.baggageHandlingSystemEnabled && flightModel.Stand.HasConnectedBaggageBay)
+                    {
+                        result = 2;
+                    }
+                    else
+                    {
+                        result = 0;
+                    }
+                }
 
                 if (nameString == "cargoTransferAssistance")
                 {
