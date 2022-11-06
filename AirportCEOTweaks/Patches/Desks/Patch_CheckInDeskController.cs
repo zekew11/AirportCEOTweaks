@@ -11,7 +11,7 @@ namespace AirportCEOTweaks
     {
         [HarmonyPatch("CanAcceptBag")]
         [HarmonyPostfix]
-        public static void Patch_NoBagsFlights(CommercialFlightModel flight, CheckInDeskController __instance, bool __result)
+        public static void Patch_NoBagsFlights(CommercialFlightModel flight, CheckInDeskController __instance, ref bool __result)
         {
             if (flight.cargoLoadingRequested == false)
             {
