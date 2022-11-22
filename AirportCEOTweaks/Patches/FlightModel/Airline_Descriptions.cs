@@ -26,7 +26,7 @@ namespace AirportCEOTweaks
             }
 
         }
-        public string Generate_Description(Extend_AirlineModel eam)
+        public string Generate_Description(Extend_AirlineModel eam) //currently overridden by return
         {
             string stringy = "";
 
@@ -101,6 +101,7 @@ namespace AirportCEOTweaks
                     }
                     break;
             }
+            return string.Empty;
             return string.Concat(eam.parent.businessName, stringy);
         }
     }

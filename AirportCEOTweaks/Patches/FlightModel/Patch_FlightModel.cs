@@ -11,7 +11,7 @@ namespace AirportCEOTweaks
         [HarmonyPatch("ShouldActivateFlight")]
         public static bool Prefix_ShouldActivateFlight(DateTime currentTime, ref bool __result, FlightModel __instance)
         {
-            if (!AirportCEOTweaksConfig.fixes && !AirportCEOTweaksConfig.plannerChanges) { return true; }
+            if (!AirportCEOTweaksConfig.fixes && !AirportCEOTweaksConfig.plannerChanges || !AirportCEOTweaksConfig.flightTypes) { return true; }
 
             __result = __instance.arrivalTimeDT-currentTime < new TimeSpan(1,0,0);
             return false;
@@ -22,7 +22,7 @@ namespace AirportCEOTweaks
         {
             try
             {
-            if (!AirportCEOTweaksConfig.fixes && !AirportCEOTweaksConfig.plannerChanges) { return true; }
+            if (!AirportCEOTweaksConfig.fixes && !AirportCEOTweaksConfig.plannerChanges || !AirportCEOTweaksConfig.flightTypes) { return true; }
 
             __result = Extend_FlightModel.TakeoffTime(__instance, out TimeSpan t, 0f, 99f) - currentTime.AddMinutes(-10);
             return false;

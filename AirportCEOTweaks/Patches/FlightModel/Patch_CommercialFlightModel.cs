@@ -103,6 +103,8 @@ namespace AirportCEOTweaks
         [HarmonyPostfix]
         public static void Patch_RemoveExtensionCom(CommercialFlightModel __instance)
         {
+            if (!AirportCEOTweaksConfig.flightTypes)
+            { return; }
             try
             {
                 Singleton<ModsController>.Instance.GetExtensions(__instance, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
@@ -392,6 +394,12 @@ namespace AirportCEOTweaks
         }
         public void RefreshFlightTypes(Extend_AirlineModel myAirlineExtension)
         {
+            if (!AirportCEOTweaksConfig.flightTypes)
+            {
+                inboundFlightType = FlightTypes.FlightType.Vanilla;
+                outboundFlightType = inboundFlightType;
+                turnaroundType = FlightTypes.TurnaroundType.Vanilla;
+            }
             try
             {
                 if (parent == null)
@@ -999,6 +1007,8 @@ namespace AirportCEOTweaks
                 }
                 set
                 {
+                    if (!AirportCEOTweaksConfig.flightTypes)
+                    { return; }
                     string stringy = nameString + "Completed";
                     flightModel.GetType().GetField(stringy).SetValue(flightModel,value);
 
@@ -1021,6 +1031,8 @@ namespace AirportCEOTweaks
                 }
                 set
                 {
+                    if (!AirportCEOTweaksConfig.flightTypes)
+                    { return; }
                     string stringy = nameString + "Requested";
                     flightModel.GetType().GetField(stringy).SetValue(flightModel, value);
 
@@ -1030,13 +1042,6 @@ namespace AirportCEOTweaks
                         succeeded = false;
                         Completed = true;
                     }
-                }
-            }
-            public bool DummyFalse
-            {
-                get
-                {
-                    return false;
                 }
             }
             private int EvaluateCatering()

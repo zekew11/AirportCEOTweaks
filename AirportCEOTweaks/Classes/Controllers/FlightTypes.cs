@@ -81,7 +81,7 @@ namespace AirportCEOTweaks
                     case FlightTypes.FlightType.Flagship:
                         types.Add(FlightTypes.TurnaroundType.Normal);
                         types.Add(FlightTypes.TurnaroundType.Full);
-                        types.Add(FlightTypes.TurnaroundType.Full);
+                        types.Add(FlightTypes.TurnaroundType.Exended);
                         types.Add(FlightTypes.TurnaroundType.Exended);
                         break;
 

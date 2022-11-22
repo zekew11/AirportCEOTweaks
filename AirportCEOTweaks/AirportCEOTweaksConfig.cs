@@ -24,6 +24,8 @@ namespace AirportCEOTweaks
         public static bool permisivePlanner;
         public static bool smallPlaneBaggageOff;
         public static bool disconnectedBaggageOff;
+        public static bool flightTypes;
+        public static bool highFlightCap;
 
         public static bool liveryLogs;
 
@@ -68,11 +70,13 @@ namespace AirportCEOTweaks
                     fixes = cfg.Read("Fixes for Disabled Modules", new UMFConfigBool(true, false, true), "Apply patches/workarounds that are not strictly neccessary for the selected configuration.");
                     cargoSystem = cfg.Read("Cargo System", new UMFConfigBool(true, false, true), "Enable/Disable the (primitive) cargo flight system. Setting will be depreciated with full intrduction of the flight types system.");
                     smallPlaneBaggageOff = cfg.Read("Small Aircraft No-Baggage", new UMFConfigBool(false, false, true), "When enabled small aircraft will never request baggage service.");
-                    disconnectedBaggageOff = cfg.Read("Disconnected Stands No-Baggage", new UMFConfigBool(true, false, true), "When enabled aircraft assigned to stands with no connected baggage bay will not request baggage service.");
+                    disconnectedBaggageOff = cfg.Read("Disconnected Stands No-Baggage", new UMFConfigBool(true, false, true), "When enabled aircraft of any size assigned to stands with no connected baggage bay will not request baggage service.");
+                    flightTypes = cfg.Read("Flight Types System",new UMFConfigBool(true,false,true), "A large redesign of airline and flight interactions. Not a vanilla experiance.");
+                    highFlightCap = cfg.Read("Increase Flight Cap", new UMFConfigBool(true, false, true), "A tweak to increase the flight cap by building multiple ATC towers.");
                     plannerChanges = cfg.Read("Planner Changes", new UMFConfigBool(true, false, true), "Enable/Disable player controlled planner hacks such as hold-shift to reschedule all flights in series.");
                     //longerFlightSeries = cfg.Read("Longer Series", new UMFConfigBool(true, false, true), "Enable/Disable changes to how airlines generate repeating flight contracts.");
                     //airlineChanges = cfg.Read("Temp Airline Changes", new UMFConfigBool(false, false, true), "UNSTABLE Enable/Disable airline balance changes such as requesting differing turnaround services.");
-                    liveryExtensions = cfg.Read("Livery Extensions", new UMFConfigBool(true, false, true), "Enable/Disable advanced livery functions.");
+                    //liveryExtensions = cfg.Read("Livery Extensions", new UMFConfigBool(true, false, true), "Enable/Disable advanced livery functions.");
                     
                     
 

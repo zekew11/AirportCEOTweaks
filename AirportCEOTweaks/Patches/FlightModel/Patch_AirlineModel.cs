@@ -60,6 +60,11 @@ namespace AirportCEOTweaks
         [HarmonyPrefix]
         public static bool HackFlightCount(ref AirlineModel __instance)
         {
+            if (!AirportCEOTweaksConfig.flightTypes)
+            {
+                return true;
+            }
+            
             HashSet<string> unAllocatedNbrs = new HashSet<string>();
             __instance.UnAllocatedCount = 0;
             __instance.AllocatedCount = 0;
@@ -204,7 +209,7 @@ namespace AirportCEOTweaks
         {
 
             //if (Utils.ChanceOccured(0f)) //chance to do vanilla gen{return false;}
-            //if (!AirportCEOTweaksConfig.longerFlightSeries && !AirportCEOTweaksConfig.airlineChanges){return false;}
+            if (!AirportCEOTweaksConfig.flightTypes){return false;}
 
             //Debug.LogError("ACEO Tweaks | INFO: GenerateFlight called in extension by airline " + parent.businessName);
 
@@ -604,6 +609,10 @@ namespace AirportCEOTweaks
                     }
                 }
             }
+            if (!AirportCEOTweaksConfig.flightTypes)
+            {
+                return FlightTypes.FlightType.Vanilla;
+            }
 
             int intEconomyTier = (economyTier * 73f).RoundToIntLikeANormalPerson();
             bool rounddown = (flightNumber % 73 > intEconomyTier % 73);
@@ -814,15 +823,6 @@ namespace AirportCEOTweaks
             }
             return basePay.RoundToNearest(250f);
 
-        }
-    }
-
-    [Serializable]
-    public class ModAirlineModel : AirlineModel
-    {
-        public ModAirlineModel(Airline airline) : base(airline)
-        {
-            Debug.LogError("ModAirlineModelConstructor!");
         }
     }
 }

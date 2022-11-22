@@ -273,6 +273,11 @@ namespace AirportCEOTweaks
         [HarmonyPostfix]
         public static void PostfixFlightValue(ref FlightSlotContainerUI __instance, ref TextMeshProUGUI ___paymentPerFlight)
         {
+            if (!AirportCEOTweaksConfig.flightTypes)
+            {
+                return;
+            }
+            
             Singleton<ModsController>.Instance.GetExtensions(__instance.flight, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
             
             float val = eam.PaymentPerFlight(ecfm, __instance.flight.Airline.GetPaymentPerFlight(__instance.flight.weightClass)) * ecfm.GetPaymentPercentAndReportRating(false);

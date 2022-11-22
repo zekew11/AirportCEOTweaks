@@ -38,7 +38,7 @@ namespace AirportCEOTweaks
         [HarmonyPatch(typeof(AircraftController), "SetLivery", new Type[] { })]
         public static void Patch_LiveryAddActive(AircraftController __instance)
         {
-            if (AirportCEOTweaksConfig.liveryExtensions == false) { return; }
+            //if (AirportCEOTweaksConfig.liveryExtensions == false) { return; }
             try
             {
                 Transform liveryTransform = __instance.Transform.Find("Sprite").Find("Livery").GetChild(0);
@@ -74,6 +74,10 @@ namespace AirportCEOTweaks
         [HarmonyPatch("ChargeFlightIncome")]
         public static bool Patch_FlightIncome(ref AircraftController __instance)
         {
+            if (!AirportCEOTweaksConfig.flightTypes)
+            {
+                return true;
+            }
             if (__instance.FlightModel == null)
             {
                 return false;

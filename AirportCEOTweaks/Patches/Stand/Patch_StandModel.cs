@@ -13,6 +13,8 @@ namespace AirportCEOTweaks
         [HarmonyPrefix]
         public static bool Patch_AllowMedNoBaggage(ref StandModel __instance)
         {
+			if (!AirportCEOTweaksConfig.flightTypes)
+			{ return true; }
 
 			__instance.isBoardingDeskConnected = __instance.HasAssignedBoardingDesk;
 			__instance.isSecurityCheckpointConnected = __instance.HasConnectedSecurityStation;

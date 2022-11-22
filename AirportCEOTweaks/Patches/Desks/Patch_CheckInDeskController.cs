@@ -13,6 +13,10 @@ namespace AirportCEOTweaks
         [HarmonyPostfix]
         public static void Patch_NoBagsFlights(CommercialFlightModel flight, CheckInDeskController __instance, ref bool __result)
         {
+            if (!AirportCEOTweaksConfig.flightTypes)
+            {
+                return;
+            }
             if (flight.cargoLoadingRequested == false)
             {
                 __result = false;
