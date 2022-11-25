@@ -25,23 +25,23 @@ namespace AirportCEOTweaks
 
 		SortedSet<RouteContainer> routeContainers;
 
-		public RouteGenerationController() 
-        {
+		public RouteGenerationController()
+		{
 
 		}
 		public void Init(Airport[] airports, City[] cities, Country[] countries, Continent[] continents)
-        {
+		{
 			//We construct this from the existing TravelController and pass in the private arrays of airports, cities, continents, ect...
-			Debug.LogError("ACEO Tweaks | Debug: RouteGenerationController Init");
+			//Debug.LogError("ACEO Tweaks | Debug: RouteGenerationController Init");
 
 			this.airports = airports;
-			Debug.LogError("ACEO Tweaks | Debug: airports.length = " + airports.Length);
+			//Debug.LogError("ACEO Tweaks | Debug: airports.length = " + airports.Length);
 			this.cities = cities;
-			Debug.LogError("ACEO Tweaks | Debug: cities.length = " + cities.Length);
+			//Debug.LogError("ACEO Tweaks | Debug: cities.length = " + cities.Length);
 			this.countries = countries;
-			Debug.LogError("ACEO Tweaks | Debug: countries.length = " + countries.Length);
+			//Debug.LogError("ACEO Tweaks | Debug: countries.length = " + countries.Length);
 			this.continents = continents;
-			Debug.LogError("ACEO Tweaks | Debug: continents.length = " + continents.Length);
+			//Debug.LogError("ACEO Tweaks | Debug: continents.length = " + continents.Length);
 
 			playerAirport = GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport;
 			MakeDictionarysEct();
@@ -51,10 +51,10 @@ namespace AirportCEOTweaks
 			StartCoroutines();
 		}
 		private void MakeDictionarysEct()
-        {
+		{
 			airportsBySize = new Dictionary<Enums.GenericSize, HashSet<Airport>>();
 			foreach (Airport airport in airports)
-            {
+			{
 				if (!airportsBySize.ContainsKey(airport.paxSize))
 				{
 					airportsBySize.Add(airport.paxSize, new HashSet<Airport>());
@@ -72,46 +72,46 @@ namespace AirportCEOTweaks
 			}
 			domesticAirports = new HashSet<Airport>();
 			foreach (Airport airport in airports)
-            {
-				if (TravelController.IsDomesticAirport(airport,playerAirport))
-                {
+			{
+				if (TravelController.IsDomesticAirport(airport, playerAirport))
+				{
 					domesticAirports.Add(airport);
-                }
-            }
+				}
+			}
 			Debug.LogError("ACEO Tweaks | Debug: domesticAirports.count = " + domesticAirports.Count);
 
 			nearAirports = new HashSet<Airport>();
 			foreach (Airport airport in airports)
-            {
+			{
 				// 1200 nautical miles/60nm/degree = 20 deg
-				
+
 				float latdiff = (float)(playerAirport.latitude - airport.latitude) % 360;
 
 				if (latdiff > 20)
-                {
+				{
 					continue;
-                }
+				}
 
 				//1200 / 60 >>> 0 = 20>180
 				float longdiff = (float)(playerAirport.longitude - airport.longitude) % 360;
-				float longthresh = (float)(0.00000152 * Math.Pow(playerAirport.latitude,4) + 20);  // 15 at 0 deg lat; 27 at 45lat; 120 at 90 lat, close enough
+				float longthresh = (float)(0.00000152 * Math.Pow(playerAirport.latitude, 4) + 20);  // 15 at 0 deg lat; 27 at 45lat; 120 at 90 lat, close enough
 
 				if (longdiff > longthresh)
-                {
+				{
 					continue;
-                }
+				}
 
 				nearAirports.Add(airport);
-            }
+			}
 			Debug.LogError("ACEO Tweaks | Debug: nearAirports.count = " + nearAirports.Count);
 		}
 		private void StartCoroutines()
-        {
+		{
 			StartCoroutine(CoroutineGenerateRoutes());
-        }
+		}
 		public HashSet<RouteContainer> GenerateSomeRouteContainers(int numberToGenerate = 5)
 		{
-			Enums.GenericSize[] relevantAirportSizes = {Enums.GenericSize.Gigantic, Enums.GenericSize.Huge , Enums.GenericSize.VeryLarge, Enums.GenericSize.Large};
+			Enums.GenericSize[] relevantAirportSizes = { Enums.GenericSize.Gigantic, Enums.GenericSize.Huge, Enums.GenericSize.VeryLarge, Enums.GenericSize.Large };
 			HashSet<Airport> canidateAirports = new HashSet<Airport>();
 			HashSet<RouteContainer> routeContainers = new HashSet<RouteContainer>();
 
@@ -123,14 +123,14 @@ namespace AirportCEOTweaks
 				canidateAirports.UnionWith(nearAirports);
 			}
 			if (Utils.ChanceOccured(.5f))
-            {
+			{
 				canidateAirports.UnionWith(airportsBySize[Enums.GenericSize.Medium]);
 
 				canidateAirports.UnionWith(airportsByCargoSize[Enums.GenericSize.Medium]);
 				canidateAirports.UnionWith(airportsByCargoSize[Enums.GenericSize.Small]);
 
 				if (Utils.ChanceOccured(.5f))
-                {
+				{
 					canidateAirports.UnionWith(airportsBySize[Enums.GenericSize.Small]);
 					canidateAirports.UnionWith(airportsBySize[Enums.GenericSize.VerySmall]);
 
@@ -145,7 +145,7 @@ namespace AirportCEOTweaks
 
 			for (int i = 0; i < numberToGenerate; i++)
 			{
-				Airport airport = canidateAirports.ElementAt<Airport>(Random.Range(0f,canidateAirports.Count).RoundToIntLikeANormalPerson());
+				Airport airport = canidateAirports.ElementAt<Airport>(Random.Range(0f, canidateAirports.Count).RoundToIntLikeANormalPerson());
 
 				routeContainers.Add(
 					new RouteContainer(
@@ -154,6 +154,113 @@ namespace AirportCEOTweaks
 			}
 
 			return routeContainers;
+		}
+		public SortedSet<RouteContainer> SelectRouteContainers(float maxRange = 16000, float minRange = 0, bool forceDomestic = false, bool forceOrigin = false, Country origin = null)
+		{
+			SortedSet<RouteContainer> returnSet = new SortedSet<RouteContainer>();
+			float min = 0;
+			float max = (float)routeContainers.Count;
+			int rand;
+			RouteContainer item;
+
+			for (int i = 0; (i < 200 && returnSet.Count < 100); i++)
+			{
+				rand = (int)Random.Range(min, max);
+				item = routeContainers.ElementAt(rand);
+				if (item.Distance > maxRange)
+				{
+					max = rand;
+				}
+				else if (item.Distance < minRange)
+				{
+					min = rand;
+				}
+				else
+				{
+					returnSet.Add(item);
+				}
+			}
+
+			if (forceDomestic)
+			{
+				returnSet = FilterDomestic(returnSet);
+			}
+
+			if (forceOrigin)
+			{
+				returnSet = FilterByOrigin(returnSet, origin);
+			}
+
+			return returnSet;
+		}
+		public HashSet<RouteContainer> SelectRoutesByChance(SortedSet<RouteContainer> originalSet, short numToSelect=1)
+		{
+			HashSet<RouteContainer> returnSet = (HashSet<RouteContainer>)originalSet.Cast<HashSet<RouteContainer>>();
+			int i = 0;
+			RouteContainer a;
+			RouteContainer b;
+			int sumChance;
+
+			numToSelect=numToSelect.ClampMin<short>(1);
+
+			for (; ; )
+            {
+				if (returnSet.Count <= numToSelect)
+                {
+					if (returnSet.Count <=0)
+                    {
+						Debug.LogError("ACEO Tweaks | ERROR: SelectRoutesByChance Returned Empty Set!");
+                    }
+					return returnSet;
+                }
+				if (i + 1 < returnSet.Count)
+				{
+					a = returnSet.ElementAt(i);
+					b = returnSet.ElementAt(i + 1);
+					sumChance = a.Chance + b.Chance;
+					if (Random.Range(0,sumChance) > a.Chance)
+                    {
+						returnSet.Remove(a);
+                    }	
+					else
+                    {	
+						returnSet.Remove(b);
+                    }
+					i++;
+				}
+				else
+                {
+					i = 0;
+                }
+            }
+		}
+		private SortedSet<RouteContainer> FilterDomestic(SortedSet<RouteContainer> originalSet)
+        {
+			return
+                (SortedSet<RouteContainer>)(from RouteContainer route in originalSet
+											where (route.Domestic)
+											select route);
+        }
+		private SortedSet<RouteContainer> FilterByOrigin(SortedSet<RouteContainer> originalSet, Country origin)
+        {
+			return
+				(SortedSet<RouteContainer>)(from RouteContainer route in originalSet
+											where (route.country == origin)
+											select route);
+		}
+		private SortedSet<RouteContainer> FilterByDistance(SortedSet<RouteContainer> originalSet, float maxDistance, float minDistance)
+		{
+			return
+				(SortedSet<RouteContainer>)(from RouteContainer route in originalSet
+											where (route.Distance > minDistance && route.Distance < maxDistance)
+											select route);
+		}
+		private SortedSet<RouteContainer> FilterByDirection(SortedSet<RouteContainer> originalSet, short direction, short allowedHalfAngle)
+		{
+			return
+				(SortedSet<RouteContainer>)(from RouteContainer route in originalSet
+											where ((route.Direction - direction + 360)%360) < allowedHalfAngle
+											select route);
 		}
 		private static Enums.GenericSize[] GetRelevantAirportSizes(Enums.GenericSize genericSize)
 		{
@@ -219,7 +326,7 @@ namespace AirportCEOTweaks
 
 		IEnumerator CoroutineGenerateRoutes()
         {
-			int i= 0; //debug only
+			//int i= 0; //debug only
 			Debug.LogError("ACEO Tweaks | Debug: CoroutineGenerateRoutes Started");
 			for (;;)
 			{
@@ -230,14 +337,14 @@ namespace AirportCEOTweaks
 					yield return new WaitForSeconds(10f);
 				}
 
-				Debug.LogError("ACEO Tweaks | Debug: iteration " + i + " of GenerateRoutes; requested " + numToGen + " routes. Have " + routeContainers.Count+".");
+				//Debug.LogError("ACEO Tweaks | Debug: iteration " + i + " of GenerateRoutes; requested " + numToGen + " routes. Have " + routeContainers.Count+".");
 
 				routeContainers.UnionWith(GenerateSomeRouteContainers(numToGen));
 
-				Debug.LogError("ACEO Tweaks | Debug: iteration " + i + "; now have " + routeContainers.Count + " routes.");
+				//Debug.LogError("ACEO Tweaks | Debug: iteration " + i + "; now have " + routeContainers.Count + " routes.");
 
 				yield return new WaitForSeconds(2f);
-				i++;//debug
+				//i++;//debug
 			}
 		}
 		//Map of continent vs continent twin-engine restriction
@@ -279,12 +386,13 @@ namespace AirportCEOTweaks
 		Airport airport;
 		Enums.GenericSize size;
 		Enums.GenericSize cargosize;
-		Country country;
+		public Country country;
 		private sbyte domestic = -1; //Access Domestic
 		private sbyte etops = -1;    //Access Etops
 		private float distance;      //Access Distance
 		private short direction;     //Access Direction
 		private short directionr;    //Access Directionr
+		private int chance = -1;			 //Access Chance
 
 
 		public RouteContainer(Route route)
@@ -297,6 +405,8 @@ namespace AirportCEOTweaks
 			distance = route.routeDistance;
 			direction = short.MaxValue;//GetDirectionOfAirport(airport);
 			directionr = short.MaxValue;//(short)((direction + 180) % 360); //reciprocal of direction
+
+			
 		}
 
 		//Accessors
@@ -342,19 +452,30 @@ namespace AirportCEOTweaks
 				}
 				return direction;
             }
-        }
+		} //get accessor with one time calc
 		public short Directionr
 		{
 			get
 			{
 				if (directionr > 360) //only on init to short.MaxValue
 				{
-					directionr = (short)((Direction + 180) % 360);
+					directionr = (short)((Direction + 180) % 360); 
 				}
 				return direction;
 			}
-		}
+		} //get accessor with one time calc
 
+		public int Chance
+        {
+			get
+            {
+				if (chance < 0)
+                {
+					chance = Calculate_Chance(size);
+                }
+				return chance;
+            }
+        }
 
 		private short GetDirectionBetweenCoordinates(float lat1, float long1, float lat2, float long2)
         {
@@ -382,6 +503,35 @@ namespace AirportCEOTweaks
 			return GetDirectionBetweenCoordinates(lat1, long1, lat2, long2);
         }
 
+		private int Calculate_Chance(Enums.GenericSize size)
+        {
+			if (Distance<=0)
+            {
+				Debug.LogError("ACEO Tweaks | ERROR: A route has 0 or negative distance! ("+airport.airportName+")");
+				return 0;
+            }
 
+			int chance = 0;
+			switch (size)
+            {
+				case Enums.GenericSize.Tiny		: chance= 1;break;
+				case Enums.GenericSize.VerySmall: chance= 3;break;
+				case Enums.GenericSize.Small	: chance= 4;break;
+				case Enums.GenericSize.Medium	: chance= 8;break;
+				case Enums.GenericSize.Large	: chance=10;break;
+				case Enums.GenericSize.VeryLarge: chance=25;break;
+				case Enums.GenericSize.Huge		: chance=30;break;
+				case Enums.GenericSize.Gigantic : chance=20;break;
+			}
+
+			if (Domestic)
+            {
+				chance *= 2;
+            }
+
+			chance *= (20000 / Distance).RoundToIntLikeANormalPerson();
+
+			return chance;
+        }
     }
 }

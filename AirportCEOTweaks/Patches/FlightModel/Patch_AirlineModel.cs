@@ -52,7 +52,7 @@ namespace AirportCEOTweaks
                 return true;
             }
 
-            return !eam.GenerateFlight(__instance, isEmergency, isAmbulance);
+            return !eam.OldGenerateFlight(__instance, isEmergency, isAmbulance);
         }
 
 
@@ -152,6 +152,14 @@ namespace AirportCEOTweaks
             parent.businessDescription = describer.Generate_Description(this) + "\n \n" + describer.Replace_Description(parent);
             describer = null;
 
+
+            foreach (string aircraftModelString in FleetModels)
+            {
+                int range = Singleton<AirTrafficController>.Instance.GetAircraftGameObject(aircraftModelString).GetComponent<AircraftController>().am.rangeKM;
+                maxRange = Math.Max(range, maxRange);
+            }
+
+
             myFlights = new HashSet<Extend_CommercialFlightModel>();
             foreach (CommercialFlightModel cfm in parent.flightListObjects)
             {
@@ -163,6 +171,8 @@ namespace AirportCEOTweaks
                 myFlights.Add(ecfm);
                 ecfm.RefreshFlightTypes(this);
             }
+
+
         }
 
 
@@ -175,6 +185,7 @@ namespace AirportCEOTweaks
         private int maxFlights = 30;
         private int maxSeries = 3;
         public float cargoProportion = 0f;
+        public float maxRange = 0f;
 
         // Properties ------------------------------------------------------------------------------------------------------
 
@@ -205,7 +216,7 @@ namespace AirportCEOTweaks
         // Methods ---------------------------------------------------------------------------------------------------------
 
 
-        public bool GenerateFlight(AirlineModel airlineModel, bool isEmergency = false, bool isAmbulance = false)
+        public bool OldGenerateFlight(AirlineModel airlineModel, bool isEmergency = false, bool isAmbulance = false)
         {
 
             //if (Utils.ChanceOccured(0f)) //chance to do vanilla gen{return false;}
