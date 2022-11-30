@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AirportCEOTweaks
 {
 	[Serializable]
-	public struct AircraftData
+	public struct AircraftTypeData
 	{
 		public Enums.ThreeStepScale Size
 		{
@@ -43,40 +43,35 @@ namespace AirportCEOTweaks
 
 		public string displayName;
 		public string manufacturer;
+		public string iCAOCode;
 
 		public short capacity_PAX;
 		public short exitLimit_PAX;
+		public short seatsAbreast;
 		public short capacity_ULD;
-
-		public short class1Rows;
-		public short class1Abreast;
-
-		public short class2Rows;
-		public short class2Abreast;
-
-		public short class3Rows;
-		public short class3Abreast;
+		public short capacityCargo_KG;
 
 		public short range_KM;
+		public short speed_KMH;
 		public short etops_Minutes;
-		public short fuelCapacity_L;
+		public int fuelCapacity_L;
 		public bool jP1;
 
-		public short speed_KMH;
-
 		public short takeoffDistance_M;
-		public short maxTOW_KG;
+		public int maxTOW_KG;
 		public char iCAO_Class;
 		public short numEngines;
+		public Enums.AircraftEngineType engineType;
 
 		public short numBuilt;
 		public short yearIntroduced;
+		public short yearLastProduced;
+		public short yearRetired;
 
 		public bool needStairs;
 		public bool needPushback;
 		public bool needPaved;
 		public bool heavy;
-
 		public bool canJetbridge;
 		public bool canPushback;
 		public bool sonicBoom;
