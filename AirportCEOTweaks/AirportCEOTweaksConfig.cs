@@ -5,7 +5,7 @@ namespace AirportCEOTweaks
 {
     public class AirportCEOTweaksConfig
     {
-        private static readonly string configVersion = "2.1.2";
+        private static readonly string configVersion = "2.2.0";
 
         //Add your config vars here.
         public static UnityEngine.KeyCode increaseTurnaroundBind;
@@ -16,6 +16,7 @@ namespace AirportCEOTweaks
         public static UnityEngine.KeyCode overloadShiftBind;
 
         public static bool fixes;
+        public static bool airlineNationality;
         public static bool cargoSystem;
         public static bool plannerChanges;
         //public static bool longerFlightSeries;
@@ -30,6 +31,10 @@ namespace AirportCEOTweaks
         public static bool liveryLogs;
 
         public static string[] cargoAirlineFlags;
+        public static string[] noInternationalFlags;
+        public static string[] yesInternationalFlags;
+        public static int minimumStarsForInternational;
+        public static int flightGenerationMultiplyer;
         public static float cargoPayMod;
 
         internal static void Load()
@@ -68,6 +73,7 @@ namespace AirportCEOTweaks
 
 
                     fixes = cfg.Read("Fixes for Disabled Modules", new UMFConfigBool(true, false, true), "Apply patches/workarounds that are not strictly neccessary for the selected configuration.");
+                    airlineNationality = cfg.Read("Airline Nationality System", new UMFConfigBool(true, false, true), "When enabled, airlines will operate to and from their home nations. More options below...");
                     cargoSystem = cfg.Read("Cargo System", new UMFConfigBool(true, false, true), "Enable/Disable the (primitive) cargo flight system. Setting will be depreciated with full intrduction of the flight types system.");
                     smallPlaneBaggageOff = cfg.Read("Small Aircraft No-Baggage", new UMFConfigBool(false, false, true), "When enabled small aircraft will never request baggage service.");
                     disconnectedBaggageOff = cfg.Read("Disconnected Stands No-Baggage", new UMFConfigBool(true, false, true), "When enabled aircraft of any size assigned to stands with no connected baggage bay will not request baggage service.");
@@ -83,7 +89,11 @@ namespace AirportCEOTweaks
                     cargoAirlineFlags = cfg.Read("Cargo Airline Flags", new UMFConfigStringArray(new string[] { "cargo","freight","logistics", "mail", "dhl","fedex","ups", "kalitta","amazon air" }), "Define flags which, in the name of any airline, flag that airline as a cargo operator.");
                     cargoPayMod = cfg.Read("Cargo Flight Payment Modifier", new UMFConfigFloat(0.65f, 0f, 2f, 2, 1, false), "Cargo flight completion bonus is multiplied by this value");
 
-
+                    
+                    yesInternationalFlags = cfg.Read("Force International Flights Flags", new UMFConfigStringArray(new string[] { "international","global","world"}), "Define flags which, in the name of any airline, flag that airline as having international flights regaurdless of any other settings");
+                    noInternationalFlags = cfg.Read("Domestic Flights Only Flags", new UMFConfigStringArray(new string[] { "express", "regional", "link", "connection" }), "Define flags which, in the name of any airline, flag that airline as having no international flights");
+                    minimumStarsForInternational = cfg.Read("Minimum Airline Star-Rank for International Service", new UMFConfigInt(3, 1, 6, 1, false), "Airlines below this rank do not fly Internationally");
+                    flightGenerationMultiplyer = cfg.Read("Flight Generation Multiplyer", new UMFConfigInt(3, 1, 10, 3, false), "At each opportunity airlines attempt to generate this many flights. High values may result in duplicate flights.");
 
                     liveryLogs = cfg.Read("Livery Author Log Files", new UMFConfigBool(false, false, false), "Enable/Disable extra log files for livery authors to debug active liveries");
                     permisivePlanner = cfg.Read("Permissive Flight Planning", new UMFConfigBool(false, false, false), "Unreasonably permissive flight planning rules for expirimentation and debug");

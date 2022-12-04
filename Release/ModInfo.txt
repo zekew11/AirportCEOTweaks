@@ -1,15 +1,26 @@
 Airport CEO Tweaks:
 
-Known Bugs (2.1.2):
+2.2.0 Route Generation Respects Nationality By Default! Airport location will impact the flights you can recieve from different airlines, up to and including causeing airlines to offer no flights!
 
-* Confirm Flight button sometimes hangs when pressed.
-* Loading two different saves without restating the game in between may or may not fracture space-time.
-* Baggage loading stat decreases for erronious reasons.
+Press shift-F10 in game to view the mod settings. The nationality system can be disabled. The rate of flight generation can be modified for more remote/more urban airports.
+
+Airlines for which nationality is undefined (including vanilla airlines and some mod airlines) disregaurd the nationality system.
+
+
+Known Bugs (2.2.0):
+
+* Baggage loading stat decreases due to PAX checking baggage for flights without baggage service.
+* Shadow layers added in liverys not currently working.
+* Game sometimes hangs when loading a save. Restart resolves.
+* Small cargo aircraft depart prematurly
 
 Changelog:
 
-2.1.4
-*
+2.2.0
+* Completly rewrote route generation.
+* New route generation supports airline nationality.
+* Resolved flight planning issue causing skipped flights and hanging confirmation button.
+* Implimented basic detection of domestic-only carriers.
 
 2.1.3
 * Fixed automatic livery layer unhiding. But for real this time.

@@ -70,28 +70,17 @@ namespace AirportCEOTweaks
         }
         private void Start()
         {
-            TestSerializer();
-            
-            //base.Awake();
-            //Debug.LogError("ACEOTweaks | Mods Controller Awake");
-
-            GameObject appLabel = GameObject.Find("ApplicationVersionLabel");
-            ApplicationVersionLabelUI applicationVersionLabelUI = appLabel.GetComponent<ApplicationVersionLabelUI>();
-            //Patch_AddTweaksLabel();
-
-            /*void Patch_AddTweaksLabel()
+            if(AirportCEOTweaksConfig.airlineNationality && !GameSettingManager.RealisticInternationalStands)
             {
-                Debug.LogError("ACEO Tweaks | DEBUG: AddTweaksLabel Ran");
-
-                TMP_Text tMP = appLabel.transform.GetComponent<TextMeshProUGUI>();
-                string str = tMP.text;
-
-                Version version = Assembly.GetEntryAssembly().GetName().Version;
-
-                str = str + " - AirportCEO Tweaks v" + version.ToString();
-                tMP.text = str;
-                Debug.LogError(str);
-            }*/
+                DialogPanel.Instance.ShowQuestionPanelCustomOptions(new Action<bool>(EnableRealisticInternational), "ACEO Tweaks airline nationality is enabled. Realistic international stands setting is recommended! \n \n (ACEO Tweaks options are available via shift-F10)", "Enable", "Ignore", true, false);
+            }
+            void EnableRealisticInternational(bool doit)
+            {
+                if (doit)
+                {
+                    GameSettingManager.RealisticInternationalStands = true;
+                }
+            }
         }
 
         public void ResetForMainMenu()
@@ -102,14 +91,27 @@ namespace AirportCEOTweaks
 
         public static DateTime NextWeekday(Enums.Weekday weekday,int offset = 0)
         {
+            if (offset == 0)
+            {
+                //return Singleton<TimeController>.Instance.GetNextPossibleDateBaseOnWeekday(weekday);
+            }
+
             DateTime currentDayDT = Singleton<TimeController>.Instance.GetCurrentContinuousTime();
 
             int zeroDay = Singleton<TimeController>.Instance.GetTodaysIndex();
-            int gotoDay = ((int)weekday);
+            int gotoDay = (int)weekday;
+
+            if(zeroDay == -1 || gotoDay ==-1)
+            {
+                Debug.LogError("ACEO Tweaks | ERROR: NextWeekday Failed! (-1day)");
+            }
+
             int diffDays = gotoDay - zeroDay;
             if (diffDays < 0) { diffDays += 7; }
 
-            return new DateTime(currentDayDT.Year,currentDayDT.Month,currentDayDT.Day+diffDays+offset,0,0,0);
+            DateTime returnTime = new DateTime(currentDayDT.Year,currentDayDT.Month,currentDayDT.Day,0,0,0);
+            returnTime = returnTime.AddDays(diffDays).AddDays(offset);
+            return returnTime;
         }
 
         public HashSet<CommercialFlightModel> FlightsByFlightNumber(AirlineModel airline, string flightNumber)

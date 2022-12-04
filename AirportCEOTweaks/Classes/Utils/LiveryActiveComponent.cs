@@ -111,7 +111,7 @@ namespace AirportCEOTweaks
             }
 
             if (verbs.Count == 0 || (exactStrings.Count == 0 && groupWords.Count == 0))
-            { Debug.LogError("ACEO Tweaks | WARN: LiveryComponetParse is returning false for insufficient definition on "+name + " verbs:"+verbs.Count.ToString()+" nouns:" + exactStrings.Count.ToString()+" groups:" + groupWords.Count.ToString()); return false; }
+            { Debug.LogWarning("ACEO Tweaks | WARN: LiveryComponetParse is returning false for insufficient definition on "+name + " verbs:"+verbs.Count.ToString()+" nouns:" + exactStrings.Count.ToString()+" groups:" + groupWords.Count.ToString()); return false; }
 
 
 
@@ -184,13 +184,13 @@ namespace AirportCEOTweaks
             {
                 switch (verb)
                 {
-                    case "setpax": Debug.LogError("ACEO Tweaks | WARN: attempted to verb " + verb + ". not yet implimented!"); break;
-                    case "setrows": Debug.LogError("ACEO Tweaks | WARN: attempted to verb " + verb + ". not yet implimented!"); break;
-                    case "setrange": Debug.LogError("ACEO Tweaks | WARN: attempted to verb " + verb + ". not yet implimented!"); break;
-                    case "setstairs": Debug.LogError("ACEO Tweaks | WARN: attempted to verb " + verb + ". not yet implimented!"); break;
-                    case "settype": Debug.LogError("ACEO Tweaks | WARN: attempted to verb " + verb + ". not yet implimented (and may never be) !"); break;
-                    case "settitle": Debug.LogError("ACEO Tweaks | WARN: attempted to verb " + verb + ". not yet implimented!"); break;
-                    case "setsize": Debug.LogError("ACEO Tweaks | WARN: attempted to verb " + verb + ". not yet implimented (and may never be) !"); break;
+                    case "setpax":    if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
+                    case "setrows":   if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
+                    case "setrange":  if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
+                    case "setstairs": if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
+                    case "settype":   if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
+                    case "settitle":  if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
+                    case "setsize":   if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
 
                     case "moveabs": Move(gameObjects, originalComponent.transform.localPosition, false); flag = true; break;
                     case "moverel": Move(gameObjects, originalComponent.transform.localPosition, true); flag = true; break;
@@ -200,12 +200,12 @@ namespace AirportCEOTweaks
                     case "setlayerorder": SetLayerOrderParse(gameObjects, parameters); break;
                     case "makewindow": MakeChildOf(gameObjects, new string[] { "nightwindows" }); SetMaterial(gameObjects, "nonlit"); break;
                     case "makenonlit": SetMaterial(gameObjects, "nonlit"); break;
-                    case "makelightsource": Debug.LogError("ACEO Tweaks | WARN: attempted to verb " + verb + ". not yet implimented (and may never be) !"); break;
-                    case "makelightsprite": Debug.LogError("ACEO Tweaks | WARN: attempted to verb " + verb + ". not yet implimented (and may never be) !"); break;
-                    case "makechildof": Debug.LogError("ACEO Tweaks | WARN: attempted to verb " + verb + ". not yet implimented!"); break;
+                    case "makelightsource": if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
+                    case "makelightsprite": if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
+                    case "makechildof": if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
 
                     default:
-                        Debug.LogError("ACEO Tweaks | WARN: attempted to verb " + verb + ". Not recognised!");
+                        Debug.LogError("ACEO Tweaks | ERROR: attempted to verb " + verb + ". Not recognised!");
                         break;
                 }
             }
