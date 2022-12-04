@@ -70,7 +70,8 @@ namespace AirportCEOTweaks
         }
         private void Start()
         {
-            if(AirportCEOTweaksConfig.airlineNationality && !GameSettingManager.RealisticInternationalStands)
+            //Debug.LogError(AllAircraftRanges());
+            if (AirportCEOTweaksConfig.airlineNationality && !GameSettingManager.RealisticInternationalStands)
             {
                 DialogPanel.Instance.ShowQuestionPanelCustomOptions(new Action<bool>(EnableRealisticInternational), "ACEO Tweaks airline nationality is enabled. Realistic international stands setting is recommended! \n \n (ACEO Tweaks options are available via shift-F10)", "Enable", "Ignore", true, false);
             }
@@ -81,6 +82,7 @@ namespace AirportCEOTweaks
                     GameSettingManager.RealisticInternationalStands = true;
                 }
             }
+            
         }
 
         public void ResetForMainMenu()
@@ -322,6 +324,21 @@ namespace AirportCEOTweaks
             
         }
 
+        public static string AllAircraftRanges()
+        {
+            string stringy="";
+            foreach (string aircraftString in CustomEnums.GetAircraftArray())
+            {
+                CustomEnums.TryGetAircraftType(aircraftString, out AircraftType aircraftType);
+                AircraftModel aircraftModel = Singleton<AirTrafficController>.Instance.GetAircraftModel(aircraftType.id);
+
+                stringy = stringy.Insert(stringy.Length,aircraftModel.aircraftType);
+                stringy = stringy.Insert(stringy.Length," fuel capacity = ");
+                stringy = stringy.Insert(stringy.Length,aircraftModel.fuelTankCapacityLiters.ToString());
+                stringy = stringy.Insert(stringy.Length," liters \n");
+            }
+            return stringy;
+        }
         public static void TestSerializer()
         {
             Debug.LogError("ACEO Tweaks | Test Serializer Init");

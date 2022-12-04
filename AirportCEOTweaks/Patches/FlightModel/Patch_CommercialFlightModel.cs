@@ -812,6 +812,11 @@ namespace AirportCEOTweaks
         {
             get
             {
+                if (AirportCEOTweaksConfig.forceNormalTurnaroundTime)
+                {
+                    bool remote = parent.StandIsAssigned ? parent.StandIsRemote : false;
+                    return AirTrafficController.GetTurnaroundTime(parent.weightClass, parent.isEmergency, remote);
+                }
                 switch (IsRemote)
                 {
                     case true:

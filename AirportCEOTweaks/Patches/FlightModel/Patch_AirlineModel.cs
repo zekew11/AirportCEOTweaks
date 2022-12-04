@@ -309,19 +309,20 @@ namespace AirportCEOTweaks
                     }
                 }
                 minRange /= 4;
+                minRange = minRange.Clamp(20f, 100f);
                 if (minRange > maxRange) { Debug.LogError("ACEO Tweaks | ERROR: min range > max range"); return false; }
 
                 
                 return true;
             }
             if (!CalcMinMaxRange()) { return true; }
-            desiredRange = Math.Abs(Random.Range(-maxRange, maxRange*1.1f)+Random.Range(-maxRange, maxRange*1.1f))/2;
+            desiredRange = Math.Abs(Random.Range(-maxRange, maxRange)+Random.Range(-maxRange, maxRange)+Random.Range(-maxRange, maxRange)) /3;
             
 
             // Route gen ............................................................................................................
 
             SortedSet<RouteContainer> routeContainers = new SortedSet<RouteContainer>();
-            routeContainers = UnityEngine.GameObject.Find("CoreGameControllers").GetComponent<RouteGenerationController>().SelectRouteContainers((desiredRange*1.25f).ClampMax(maxRange), (desiredRange / 1.5f).ClampMin(minRange), forceDomestic, forceOrigin, country);
+            routeContainers = UnityEngine.GameObject.Find("CoreGameControllers").GetComponent<RouteGenerationController>().SelectRouteContainers((desiredRange*1f).ClampMax(maxRange), (desiredRange / 2f).ClampMin(minRange), forceDomestic, forceOrigin, country);
             SortedSet<RouteContainer> routeContainer = new SortedSet<RouteContainer>();
             routeContainer = UnityEngine.GameObject.Find("CoreGameControllers").GetComponent<RouteGenerationController>().NewSelectRoutesByChance(routeContainers);
 
@@ -911,11 +912,11 @@ namespace AirportCEOTweaks
                 {
                     case 1:
                     case 2:
-                    case 3: rangecap = .4f; break;
+                    case 3: rangecap = .2f; break;
                     case 4:
                     case 5:
-                    case 6: rangecap = .6f; break;
-                    case 7:
+                    case 6: rangecap = .4f; break;
+                    case 7: rangecap = .6f; break;
                     case 8: rangecap = .8f; break;
                     default: rangecap = .9f; break;
                 }
