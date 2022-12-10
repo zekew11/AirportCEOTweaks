@@ -7,29 +7,20 @@ using UnityEngine;
 using HarmonyLib;
 using TMPro;
 using System.Reflection;
-/*
+
 namespace AirportCEOTweaks
 {
-    //[HarmonyPatch(typeof(ApplicationVersionLabelUI))]             ------------- DISABLED
+    [HarmonyPatch(typeof(ApplicationVersionLabelUI), "Awake")]
     static class Patch_AppVersionLabel
     {
-        //[HarmonyPostfix]
-        //[HarmonyPatch("Awake")]
-        public static void Patch_AddTweaksLabel(ref ApplicationVersionLabelUI __instance)
+        public static void Postfix(ApplicationVersionLabelUI __instance)
         {
-            //doesn't fire; awake is too soon
-            
-            Debug.LogError("ACEO Tweaks | DEBUG: AddTweaksLabel Ran");
-
             TMP_Text tMP = __instance.transform.GetComponent<TextMeshProUGUI>();
             string str = tMP.text;
 
-            Version version = Assembly.GetEntryAssembly().GetName().Version;
-
-            str = str + " - AirportCEO Tweaks v" + version.ToString();
+            str = str + "Airport CEO Tweaks " + AirportCEOTweaksConfig.displayConfigVersion;
             tMP.text = str;
-            Debug.LogError(str);
+            //Debug.LogError("ACEO Tweaks | DEBUG: AddTweaksLabel Ran");  <------ This does not log, it is not avaiable yet! It does work, with no errors.
         }
     }
 }
-*/

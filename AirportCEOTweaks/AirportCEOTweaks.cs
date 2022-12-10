@@ -3,6 +3,8 @@ using UModFramework.API;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using HarmonyLib;
+using System.Reflection;
 
 namespace AirportCEOTweaks
 {
@@ -19,8 +21,11 @@ namespace AirportCEOTweaks
         {
             AirportCEOTweaksConfig.Load();
         }
+        static void Awake()
+        {
+        }
 
-		[UMFHarmony(37)] //Set this to the number of harmony patches in your mod.
+		[UMFHarmony(40)] //Set this to the number of harmony patches in your mod.
         public static void Start()
 		{
 			Log("AirportCEOTweaks v" + UMFMod.GetModVersion().ToString(), true);

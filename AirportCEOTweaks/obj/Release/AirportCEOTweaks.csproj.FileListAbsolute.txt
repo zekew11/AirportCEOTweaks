@@ -4,3 +4,10 @@ C:\Users\Ezekiel\Documents\ACEOTweaks\AirportCEOTweaks\AirportCEOTweaks\obj\Rele
 C:\Users\Ezekiel\Documents\ACEOTweaks\AirportCEOTweaks\AirportCEOTweaks\obj\Release\AirportCEOTweaks.csproj.CoreCompileInputs.cache
 C:\Users\Ezekiel\Documents\ACEOTweaks\AirportCEOTweaks\AirportCEOTweaks\obj\Release\AirportCEOTweaks.dll
 C:\Users\Ezekiel\Documents\ACEOTweaks\AirportCEOTweaks\AirportCEOTweaks\obj\Release\AirportCEOTweaks.csproj.AssemblyReference.cache
+C:\Program Files (x86)\Steam\steamapps\common\Airport CEO\uModFramework\Humoresques Mods\Tweaks Collab\AirportCEOTweaks\AirportCEOTweaks\obj\Release\AirportCEOTweaks.csproj.AssemblyReference.cache
+C:\Program Files (x86)\Steam\steamapps\common\Airport CEO\uModFramework\Humoresques Mods\Tweaks Collab\AirportCEOTweaks\AirportCEOTweaks\obj\Release\AirportCEOTweaks.GeneratedMSBuildEditorConfig.editorconfig
+C:\Program Files (x86)\Steam\steamapps\common\Airport CEO\uModFramework\Humoresques Mods\Tweaks Collab\AirportCEOTweaks\AirportCEOTweaks\obj\Release\AirportCEOTweaks.csproj.CoreCompileInputs.cache
+C:\Program Files (x86)\Steam\steamapps\common\Airport CEO\uModFramework\Humoresques Mods\Tweaks Collab\AirportCEOTweaks\Release\ModInfo.txt
+C:\Program Files (x86)\Steam\steamapps\common\Airport CEO\uModFramework\Humoresques Mods\Tweaks Collab\AirportCEOTweaks\AirportCEOTweaks\obj\Release\AirportCEOTweaks.csproj.CopyComplete
+C:\Program Files (x86)\Steam\steamapps\common\Airport CEO\uModFramework\Humoresques Mods\Tweaks Collab\AirportCEOTweaks\Release\AirportCEOTweaks.dll
+C:\Program Files (x86)\Steam\steamapps\common\Airport CEO\uModFramework\Humoresques Mods\Tweaks Collab\AirportCEOTweaks\AirportCEOTweaks\obj\Release\AirportCEOTweaks.dll

@@ -6,6 +6,7 @@ namespace AirportCEOTweaks
     public class AirportCEOTweaksConfig
     {
         private static readonly string configVersion = "2.2.0";
+        public static string displayConfigVersion = configVersion; //This is displayed in the ACEO top bar (Patch_AppVersionLabel), can be changed independtly of other config version
 
         //Add your config vars here.
         public static UnityEngine.KeyCode increaseTurnaroundBind;
@@ -36,6 +37,7 @@ namespace AirportCEOTweaks
         public static int minimumStarsForInternational;
         public static int flightGenerationMultiplyer;
         public static float cargoPayMod;
+        public static float structureRepairLevel; //Affects both stands and runways
 
         internal static void Load()
         {
@@ -97,6 +99,7 @@ namespace AirportCEOTweaks
 
                     liveryLogs = cfg.Read("Livery Author Log Files", new UMFConfigBool(false, false, false), "Enable/Disable extra log files for livery authors to debug active liveries");
                     permisivePlanner = cfg.Read("Permissive Flight Planning", new UMFConfigBool(false, false, false), "Unreasonably permissive flight planning rules for expirimentation and debug");
+                    structureRepairLevel = cfg.Read("Structure Repair Level", new UMFConfigFloat(0.75f, 0.01f, 0.95f, 2, 0.25f, false), "Repairs stands and runways at the set level rather than the vanilla value");
 
                     AirportCEOTweaks.Log("ACEO Tweaks | Finished loading settings.");
                 }
