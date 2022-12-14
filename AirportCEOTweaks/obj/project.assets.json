@@ -8,27 +8,20 @@
     ".NETFramework,Version=v4.6.2": []
   },
   "packageFolders": {
-    "C:\\Users\\Ezekiel\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\zsolt\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
+      "projectUniqueName": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Airport CEO\\uModFramework\\Humoresques Mods\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
       "projectName": "AirportCEOTweaks",
-      "projectPath": "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
-      "packagesPath": "C:\\Users\\Ezekiel\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks\\obj\\",
+      "projectPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Airport CEO\\uModFramework\\Humoresques Mods\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
+      "packagesPath": "C:\\Users\\zsolt\\.nuget\\packages\\",
+      "outputPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Airport CEO\\uModFramework\\Humoresques Mods\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\obj\\",
       "projectStyle": "PackageReference",
       "crossTargeting": true,
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\Ezekiel\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\zsolt\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -53,7 +46,7 @@
     "frameworks": {
       "net462": {
         "targetAlias": "net462",
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.413\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }
