@@ -33,40 +33,13 @@
       <SpecificVersion>false</SpecificVersion>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
-    </Reference>
-    <Reference Include="com.unity.multiplayer-hlapi.Runtime">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\com.unity.multiplayer-hlapi.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="DOTween">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\DOTween.dll</HintPath>
-    </Reference>
-    <Reference Include="DOTween43">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\DOTween43.dll</HintPath>
-    </Reference>
-    <Reference Include="DOTween46">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\DOTween46.dll</HintPath>
-    </Reference>
-    <Reference Include="DOTween50">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\DOTween50.dll</HintPath>
-    </Reference>
-    <Reference Include="GalaxyCSharp">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\GalaxyCSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Ionic.Zip.Unity">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\Ionic.Zip.Unity.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Posix">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\Mono.Posix.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Security">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\Mono.Security.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\mscorlib.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration">
       <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\System.Configuration.dll</HintPath>
@@ -77,34 +50,19 @@
     <Reference Include="System.Security">
       <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\System.Security.dll</HintPath>
     </Reference>
-    <Reference Include="System.ServiceModel.Internals">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\System.ServiceModel.Internals.dll</HintPath>
-    </Reference>
     <Reference Include="System.Transactions">
       <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\System.Transactions.dll</HintPath>
-    </Reference>
-    <Reference Include="uCPf">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\uCPf.dll</HintPath>
     </Reference>
     <Reference Include="uModFramework">
       <HintPath>$(GamePath)$(ManagedFolder)uModFramework.dll</HintPath>
       <Private>False</Private>
       <SpecificVersion>false</SpecificVersion>
     </Reference>
-    <Reference Include="Unity.Analytics.DataPrivacy">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\Unity.Analytics.DataPrivacy.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Analytics.StandardEvents">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\Unity.Analytics.StandardEvents.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Analytics.Tracker">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\Unity.Analytics.Tracker.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.Mathematics">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\Unity.Mathematics.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Unity.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>$(GamePath)$(ManagedFolder)UnityEngine.dll</HintPath>

@@ -20,6 +20,7 @@ namespace AirportCEOTweaks
         public static bool airlineNationality;
         public static bool cargoSystem;
         public static bool plannerChanges;
+        public static bool forceNormalTurnaroundTime;
         //public static bool longerFlightSeries;
         //public static bool airlineChanges;
         public static bool liveryExtensions;
@@ -77,6 +78,7 @@ namespace AirportCEOTweaks
                     fixes = cfg.Read("Fixes for Disabled Modules", new UMFConfigBool(true, false, true), "Apply patches/workarounds that are not strictly neccessary for the selected configuration.");
                     airlineNationality = cfg.Read("Airline Nationality System", new UMFConfigBool(true, false, true), "When enabled, airlines will operate to and from their home nations. More options below...");
                     cargoSystem = cfg.Read("Cargo System", new UMFConfigBool(true, false, true), "Enable/Disable the (primitive) cargo flight system. Setting will be depreciated with full intrduction of the flight types system.");
+                    forceNormalTurnaroundTime = cfg.Read("Force Vanilla Turnaround Times", new UMFConfigBool(false, true, false), "Expirimental: force vanilla turnaround time on all flights. Better autoplanner compatability.");
                     smallPlaneBaggageOff = cfg.Read("Small Aircraft No-Baggage", new UMFConfigBool(false, false, true), "When enabled small aircraft will never request baggage service.");
                     disconnectedBaggageOff = cfg.Read("Disconnected Stands No-Baggage", new UMFConfigBool(true, false, true), "When enabled aircraft of any size assigned to stands with no connected baggage bay will not request baggage service.");
                     flightTypes = cfg.Read("Flight Types System",new UMFConfigBool(true,false,true), "A large redesign of airline and flight interactions. Not a vanilla experiance.");

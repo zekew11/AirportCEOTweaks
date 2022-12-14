@@ -584,11 +584,11 @@ namespace AirportCEOTweaks
                     Debug.LogError("ACEO Tweaks | ERROR: ecfm ParentAirlineExtension == null in refresh services");
                 }
                 
-                turnaroundServices.TryAdd(TurnaroundServices.Catering,    new TurnaroundService(TurnaroundServices.Catering, parent, this, ParentAirlineExtension));
-                turnaroundServices.TryAdd(TurnaroundServices.Cleaning,    new TurnaroundService(TurnaroundServices.Cleaning, parent, this, ParentAirlineExtension));
-                turnaroundServices.TryAdd(TurnaroundServices.Fueling,     new TurnaroundService(TurnaroundServices.Fueling, parent, this, ParentAirlineExtension));
-                turnaroundServices.TryAdd(TurnaroundServices.Baggage,     new TurnaroundService(TurnaroundServices.Baggage, parent, this, ParentAirlineExtension));
-                turnaroundServices.TryAdd(TurnaroundServices.RampService, new TurnaroundService(TurnaroundServices.RampService, parent, this, ParentAirlineExtension));
+                turnaroundServices.Add(TurnaroundServices.Catering,    new TurnaroundService(TurnaroundServices.Catering, parent, this, ParentAirlineExtension));
+                turnaroundServices.Add(TurnaroundServices.Cleaning,    new TurnaroundService(TurnaroundServices.Cleaning, parent, this, ParentAirlineExtension));
+                turnaroundServices.Add(TurnaroundServices.Fueling,     new TurnaroundService(TurnaroundServices.Fueling, parent, this, ParentAirlineExtension));
+                turnaroundServices.Add(TurnaroundServices.Baggage,     new TurnaroundService(TurnaroundServices.Baggage, parent, this, ParentAirlineExtension));
+                turnaroundServices.Add(TurnaroundServices.RampService, new TurnaroundService(TurnaroundServices.RampService, parent, this, ParentAirlineExtension));
             }
 
 
@@ -812,6 +812,11 @@ namespace AirportCEOTweaks
         {
             get
             {
+                if (AirportCEOTweaksConfig.forceNormalTurnaroundTime)
+                {
+                    bool remote = parent.StandIsAssigned ? parent.StandIsRemote : false;
+                    return AirTrafficController.GetTurnaroundTime(parent.weightClass, parent.isEmergency, remote);
+                }
                 switch (IsRemote)
                 {
                     case true:
