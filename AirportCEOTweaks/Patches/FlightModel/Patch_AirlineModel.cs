@@ -365,8 +365,17 @@ namespace AirportCEOTweaks
                     if (type == null) { break; }
                     float suit = type.SuitabilityForRoute(container);
                     if (float.IsNaN(suit)) { Debug.LogError("ACEO Tweaks | ERROR: Suitability is NaN!"); break; }
-                    if (orderedTypeDictionay.TryAdd(suit, type))
-                    { totalSutability += suit; }
+
+                    try 
+                    {
+                        orderedTypeDictionay.Add(suit, type);
+                        
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                    totalSutability += suit;
                 }
 
                 float selectedSutability = Random.Range(0f, totalSutability);
