@@ -2,7 +2,7 @@ using UnityEngine;
 using HarmonyLib;
 using System;
 
-namespace AirportCEOTweaks.Patches
+namespace AirportCEOTweaks
 {
     [HarmonyPatch(typeof(RunwayModel))]
     static class Patch_StructureRepairRunway
