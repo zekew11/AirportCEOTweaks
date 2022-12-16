@@ -21,6 +21,9 @@ Changelog:
 * New route generation supports airline nationality.
 * Resolved flight planning issue causing skipped flights and hanging confirmation button.
 * Implimented basic detection of domestic-only carriers.
+* credit humoresque: Tooltips in flight planner for hold-shift-to-affect-all functionaliity
+* credit humoresque: Structure auto-repair threshold now adjustable in F10 settings
+* credit humoresque: ACEO Tweaks version shown below game version
 
 2.1.3
 * Fixed automatic livery layer unhiding. But for real this time.

@@ -204,6 +204,15 @@ namespace AirportCEOTweaks
                 }
                 if ((int)starRank+1 < AirportCEOTweaksConfig.minimumStarsForInternational && cargoProportion < 1f)
                 {
+                    if(country == null)
+                    {
+                        return false;
+                    } //can't enforce nationality on the null pirates!
+                    if (!TravelController.IsDomesticAirport(GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport, country))
+                    {
+                        return false;
+                    } //we don't want to be making forien airlines domestic only
+                    
                     return true;
                 }
                 return false;
@@ -218,6 +227,16 @@ namespace AirportCEOTweaks
                     if (parent.businessName.ToLower().Contains(flag.ToLower()))
                     { return true; }
                 }
+                if (country == null)
+                {
+                    return true;
+                } //can't enforce nationality on the null pirates!
+                if (!TravelController.IsDomesticAirport(GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport, country))
+                {
+                    return true;
+                } //we don't want to be making forien airlines domestic only
+
+
                 return false;
             }
         }
@@ -283,7 +302,7 @@ namespace AirportCEOTweaks
             float minRange=float.MaxValue;
             float desiredRange;
             try { Country country = this.country; } catch { country = null; }
-            bool forceDomestic=Utils.ChanceOccured(.3f) || (IsDomestic&&!ForceInternational);
+            bool forceDomestic=Utils.ChanceOccured(0f) || (IsDomestic&&!ForceInternational);
             bool forceOrigin;
             
             if (country == null)
@@ -364,14 +383,14 @@ namespace AirportCEOTweaks
             bool SelectAircaft()
             {
                 
-                var filteredTypeModels = typeModels.Where(model => model.CanServeRoute(container));
+                var filteredTypeModels = typeModels.Where(model => model.CanServeRoute(container, 0f ,AirportCEOTweaksConfig.liveryLogs));
                 SortedDictionary<float, TypeModel> orderedTypeDictionay = new SortedDictionary<float, TypeModel>();
                 float totalSutability = 0f;
 
                 if (filteredTypeModels.Count() == 0)
                 {
 
-                    Debug.LogWarning("ACEO Tweaks | WARN: filteredTypeModels.Count == 0");
+                    if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: filteredTypeModels.Count == 0"); }
                     return false;
                 }
 
@@ -408,7 +427,7 @@ namespace AirportCEOTweaks
                 if (selectedAircraft == null) { return false; }
                 return true;
             }
-            if (!SelectAircaft()) { Debug.LogWarning("ACEO Tweaks | WARN: Generate flight for " + parent.businessName + " failed due to failure to select an aircraft"); return true; }
+            if (!SelectAircaft()) { if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: Generate flight for " + parent.businessName + " failed due to failure to select an aircraft"); } return true; }
 
             // Determine the flight types ...........................................................................................
 
@@ -920,13 +939,13 @@ namespace AirportCEOTweaks
                     return false;
                 }
             }
-            public bool CanServeRoute(RouteContainer route, float chanceToOfferRegaurdless = 0, bool debug = true)
+            public bool CanServeRoute(RouteContainer route, float chanceToOfferRegaurdless = 0, bool debug = false)
             {
                 if (debug)
                 {
-                    if (!AvailableByDLC()) { Debug.Log("ACEO Tweaks | Info: " + aircraftString + "not available by DLC"); }
-                    if (!CanOperateFromOtherAirportSize(route.Airport.paxSize)) { Debug.Log("ACEO Tweaks | Info: " + aircraftString + " cannot operate from" + route.Airport.airportName + " ["+ route.Airport.airportIATACode + "]"); }
-                    if (!CanFlyDistance(route.Distance.RoundToIntLikeANormalPerson())) { Debug.Log("ACEO Tweaks | Info" + aircraftString + " cannot fly distance " + route.Distance + " (do you have refueling available?)"); }
+                    if (!AvailableByDLC()) { Debug.Log("ACEO Tweaks | Info: " + aircraftString + " not available by DLC"); }
+                    if (!CanOperateFromOtherAirportSize(route.Airport.paxSize)) { Debug.Log("ACEO Tweaks | Info: " + aircraftString + " cannot operate from " + route.Airport.airportName + " ["+ route.Airport.airportIATACode + "]"); }
+                    if (!CanFlyDistance(route.Distance.RoundToIntLikeANormalPerson())) { Debug.Log("ACEO Tweaks | Info: " + aircraftString + " cannot fly distance " + route.Distance + "km (do you have refueling available?)"); }
                     if (!CanDispatchAdditionalAircraft()) { }
                     if (!CanOperateFromPlayerAirportStands(0)) { Debug.Log("ACEO Tweaks | Info: " + aircraftString + " cannot operate from player stand sizes"); }
                 }

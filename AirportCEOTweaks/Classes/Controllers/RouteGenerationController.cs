@@ -143,11 +143,11 @@ namespace AirportCEOTweaks
 
 			for (int i = 0; i < numberToGenerate; i++)
 			{
-				if (canidateAirports.Count == 0)
+				if (canidateAirports.Count <= 0)
                 {
 					break;
                 }
-				Airport airport = canidateAirports.ElementAt<Airport>(Random.Range(0f, canidateAirports.Count).RoundToIntLikeANormalPerson());
+				Airport airport = canidateAirports.ElementAt<Airport>(Random.Range(0, canidateAirports.Count));
 
 				routeContainers.Add(
 					new RouteContainer(

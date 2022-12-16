@@ -276,7 +276,7 @@ namespace AirportCEOTweaks
         {
             float maxDelay = GetMaxDelay();
 
-            if (parent.delayCounter<maxDelay)
+            if (parent.delayCounter<maxDelay) //might renew if no delay
             {
                 Singleton<ModsController>.Instance.GetExtensions(parent, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
                 if (ecfm != this)
@@ -284,66 +284,77 @@ namespace AirportCEOTweaks
                     Debug.LogError("ACEO Tweaks | WARN: Get extensions called from an ecfm returned a differnt ecfm.");
                 }
                 
-                    if (Utils.ChanceOccured(parent.Airline.Rating.ClampMax(0.8f)))
+                if (parent.numberOfFlightsInSerie <= 7 && parent.numberOfFlightsInSerie >= 4 && Utils.ChanceOccured(parent.Airline.Rating.ClampMax(0.9f)))
+                {
+                    int num = 1;
+
+                    if (parent.delayCounter < maxDelay/2 && Utils.ChanceOccured(parent.Airline.Rating.ClampMax(0.7f)))
                     {
-                        if (parent.numberOfFlightsInSerie <= 14 && parent.numberOfFlightsInSerie > 3)
+                        num++;
+                    }
+
+
+                    //find the info for the last flight in the series
+
+                    HashSet<CommercialFlightModel> mySeries = Singleton<ModsController>.Instance.FutureFlightsByFlightNumber(Airline, DepartureFlightNumber, CurrentTime);
+                    DateTime lastArrivalTime = parent.arrivalTimeDT;
+                    DateTime lastDepartureTime = parent.departureTimeDT;
+                    StandModel lastStand = parent.Stand;
+                    float lastTurnaroundPlayerBias = turnaroundPlayerBias;
+
+                    foreach (CommercialFlightModel commercialFlightModel in mySeries)
+                    {
+                        Singleton<ModsController>.Instance.GetExtensions(commercialFlightModel, out Extend_CommercialFlightModel other_ecfm, out Extend_AirlineModel other_eam);
+
+                        // Catch any strange future-casting
+                        if (commercialFlightModel.arrivalTimeDT > Singleton<TimeController>.Instance.GetCurrentContinuousTime().AddDays(8))
                         {
-                            int num = 1;
-
-                            if (parent.delayCounter < maxDelay/2)
-                            {
-                                num++;
-                                if (parent.Airline.rating > 0.8)
-                                {
-                                    num++;
-                                }
-                            }
-
-
-                            //find the info for the last flight in the series
-
-                            HashSet<CommercialFlightModel> mySeries = Singleton<ModsController>.Instance.FutureFlightsByFlightNumber(Airline, DepartureFlightNumber, CurrentTime);
-                            DateTime lastArrivalTime = parent.arrivalTimeDT;
-                            DateTime lastDepartureTime = parent.departureTimeDT;
-                            StandModel lastStand = parent.Stand;
-                            float lastTurnaroundPlayerBias = turnaroundPlayerBias;
-                            foreach (CommercialFlightModel cfms in mySeries)
-                            {
-                                Singleton<ModsController>.Instance.GetExtensions(cfms, out Extend_CommercialFlightModel other_ecfm, out Extend_AirlineModel other_eam);
-
-                                lastStand = lastArrivalTime > cfms.arrivalTimeDT ? lastStand : cfms.Stand;
-                                lastTurnaroundPlayerBias = lastArrivalTime > cfms.arrivalTimeDT ? lastTurnaroundPlayerBias : other_ecfm.turnaroundPlayerBias;
-                                
-                                //Do anything else before changeing the time vars so they can be used in comparisons.
-                                lastArrivalTime = lastArrivalTime > cfms.arrivalTimeDT ? lastArrivalTime : cfms.arrivalTimeDT;
-                                lastDepartureTime = lastDepartureTime > cfms.departureTimeDT ? lastDepartureTime : cfms.departureTimeDT;
-                            }
-
-
-                            // Instantiate and allocate the new flight(s)
-
-                            HashSet<CommercialFlightModel> cfmSet = eam.InstantiateFlightSeries(parent.aircraftTypeString, num, parent.arrivalRoute, parent.departureRoute);
-                            foreach (CommercialFlightModel cfm in cfmSet)
-                            {
-                                num--;
-                                cfm.AllocateFlight(lastArrivalTime.AddDays(num+1), lastDepartureTime.AddDays(num+1), parent.Stand);
-                                RefreshSeriesLen(false, true);
-                            }
-
+                            Debug.LogWarning("ACEO Tweaks | WARN: A flight is future-cast more than 7 days!");
+                            commercialFlightModel.CancelFlight();
+                            continue;
                         }
 
+                        lastStand = lastArrivalTime > commercialFlightModel.arrivalTimeDT ? lastStand : commercialFlightModel.Stand;
+                        lastTurnaroundPlayerBias = lastArrivalTime > commercialFlightModel.arrivalTimeDT ? lastTurnaroundPlayerBias : other_ecfm.turnaroundPlayerBias;
+                        
+                        //Do anything else before changeing the time vars so they can be used in comparisons.
+
+                        lastArrivalTime = lastArrivalTime > commercialFlightModel.arrivalTimeDT ? lastArrivalTime : commercialFlightModel.arrivalTimeDT;
+                        lastDepartureTime = lastDepartureTime > commercialFlightModel.departureTimeDT ? lastDepartureTime : commercialFlightModel.departureTimeDT;
                     }
+
+                    //catch too soon/too late scheduling
+                    if (lastArrivalTime < Singleton<TimeController>.Instance.GetCurrentContinuousTime().AddDays(3) || lastArrivalTime > Singleton<TimeController>.Instance.GetCurrentContinuousTime().AddDays(8))
+                    {
+                        Debug.LogError("ACEO Tweaks | ERROR: Tried to renew flight for too early/late!");
+                        return;
+                    }
+
+
+                    // Instantiate and allocate the new flight(s)
+
+                    HashSet<CommercialFlightModel> cfmSet = eam.InstantiateFlightSeries(parent.aircraftTypeString, num, parent.arrivalRoute, parent.departureRoute);
+                    foreach (CommercialFlightModel cfm in cfmSet)
+                    {
+                        cfm.AllocateFlight(lastArrivalTime.AddDays(num), lastDepartureTime.AddDays(num), parent.Stand);  // eg 3 renewals Adddays 3,2,1
+                        RefreshSeriesLen(false, true);
+                        num--;
+                    }
+
+                }
+
+               
                 
             }
 
             if (parent.delayCounter>maxDelay && parent.Airline.rating<0.25 && Utils.ChanceOccured(0.35f - parent.Airline.rating))
             {
                 HashSet<CommercialFlightModel> mySeries = Singleton<ModsController>.Instance.FlightsByFlightNumber(Airline, DepartureFlightNumber);
-                foreach (CommercialFlightModel cfm in mySeries)
+                foreach (CommercialFlightModel commercialFlightModel in mySeries)
                 {
-                    if (cfm.arrivalTimeDT.AddDays(-2) < CurrentTime)
+                    if (commercialFlightModel.arrivalTimeDT.AddDays(-2) < CurrentTime)
                     {
-                        cfm.CancelFlight(false);
+                        commercialFlightModel.CancelFlight(false);
                     }
                 }
             }

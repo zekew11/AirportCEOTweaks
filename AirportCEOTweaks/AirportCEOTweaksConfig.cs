@@ -5,8 +5,8 @@ namespace AirportCEOTweaks
 {
     public class AirportCEOTweaksConfig
     {
-        private static readonly string configVersion = "2.2.0";
-        public static string displayConfigVersion = configVersion; //This is displayed in the ACEO top bar (Patch_AppVersionLabel), can be changed independtly of other config version
+        private static readonly string configVersion = "2.2.0c";
+        public static string displayConfigVersion = "2.2.0 Beta 3"; //This is displayed in the ACEO top bar (Patch_AppVersionLabel), can be changed independtly of other config version
 
         //Add your config vars here.
         public static UnityEngine.KeyCode increaseTurnaroundBind;
@@ -95,13 +95,13 @@ namespace AirportCEOTweaks
 
                     
                     yesInternationalFlags = cfg.Read("Force International Flights Flags", new UMFConfigStringArray(new string[] { "international","global","world"}), "Define flags which, in the name of any airline, flag that airline as having international flights regaurdless of any other settings");
-                    noInternationalFlags = cfg.Read("Domestic Flights Only Flags", new UMFConfigStringArray(new string[] { "express", "regional", "link", "connection" }), "Define flags which, in the name of any airline, flag that airline as having no international flights");
-                    minimumStarsForInternational = cfg.Read("Minimum Airline Star-Rank for International Service", new UMFConfigInt(3, 1, 6, 1, false), "Airlines below this rank do not fly Internationally");
+                    noInternationalFlags = cfg.Read("Domestic Flights Only Flags", new UMFConfigStringArray(new string[] {}), "Define flags which, in the name of any airline, flag that airline as having no international flights");
+                    minimumStarsForInternational = cfg.Read("Minimum Airline Star-Rank for International Service", new UMFConfigInt(2, 1, 6, 1, false), "Airlines below this rank do not fly Internationally");
                     flightGenerationMultiplyer = cfg.Read("Flight Generation Multiplyer", new UMFConfigInt(3, 1, 10, 3, false), "At each opportunity airlines attempt to generate this many flights. High values may result in duplicate flights.");
 
                     liveryLogs = cfg.Read("Livery Author Log Files", new UMFConfigBool(false, false, false), "Enable/Disable extra log files for livery authors to debug active liveries");
                     permisivePlanner = cfg.Read("Permissive Flight Planning", new UMFConfigBool(false, false, false), "Unreasonably permissive flight planning rules for expirimentation and debug");
-                    structureRepairLevel = cfg.Read("Structure Repair Level", new UMFConfigFloat(0.75f, 0.01f, 0.95f, 2, 0.25f, false), "Repairs stands and runways at the set level rather than the vanilla value");
+                    structureRepairLevel = cfg.Read("Structure Repair Level", new UMFConfigFloat(0.25f, 0.01f, 0.95f, 2, 0.25f, false), "Repairs stands and runways at the set level rather than the vanilla value");
 
                     AirportCEOTweaks.Log("ACEO Tweaks | Finished loading settings.");
                 }
