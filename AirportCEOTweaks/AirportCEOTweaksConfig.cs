@@ -6,7 +6,7 @@ namespace AirportCEOTweaks
     public class AirportCEOTweaksConfig
     {
         private static readonly string configVersion = "2.2.0c";
-        public static string displayConfigVersion = "2.2.0 Beta 3"; //This is displayed in the ACEO top bar (Patch_AppVersionLabel), can be changed independtly of other config version
+        public static string displayConfigVersion = "2.2.0 Beta 4"; //This is displayed in the ACEO top bar (Patch_AppVersionLabel), can be changed independtly of other config version
 
         //Add your config vars here.
         public static UnityEngine.KeyCode increaseTurnaroundBind;

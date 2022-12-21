@@ -3,11 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using UnityEngine;
 
 namespace AirportCEOTweaks
 {
     public class Airline_Descriptions
     {
+        public string OriginalDescription(AirlineModel airlineModel)
+        {
+            //Not Implimented
+            
+            Airline airline = Singleton<BusinessController>.Instance.GetAirline(airlineModel.businessName);
+            string directory = "";
+            if (airline.isCustom)
+            {
+                //mod stuff
+                //directory = 
+                
+            }
+            else
+            {
+                //notmodstuff
+                directory = Application.dataPath;
+            }
+            return "";
+        }
         public string Replace_Description(AirlineModel airline)        
         {
             
@@ -101,6 +122,8 @@ namespace AirportCEOTweaks
                     }
                     break;
             }
+
+            //Debug.Log("ACEO Tweaks | Debug: Airline " + eam.parent.businessName + " logo path = " + eam.parent.logoPath);
             return string.Empty;
             return string.Concat(eam.parent.businessName, stringy);
         }

@@ -16,14 +16,21 @@ namespace AirportCEOTweaks
         {
             //Debug.LogError("AirlineModelConstructor.");
             //__instance = new ModAirlineModel(airline);
-
-            Singleton<ModsController>.Instance.GetExtensions(__instance, out Extend_AirlineModel eam);
+            if (__instance == null)
+            {
+                return;
+            }
+            Singleton<ModsController>.Instance.GetExtensions(__instance, out _);
         }
         [HarmonyPatch("SetFromSerializer")]
         [HarmonyPostfix]
         public static void PostfixSetExtensionFromSave(AirlineModel __instance)
         {
-            Singleton<ModsController>.Instance.GetExtensions(__instance, out Extend_AirlineModel eam);
+            if (__instance==null)
+            {
+                return;
+            }
+            Singleton<ModsController>.Instance.GetExtensions(__instance, out _);
         }
 
 
@@ -54,7 +61,10 @@ namespace AirportCEOTweaks
             }
 
             Singleton<ModsController>.Instance.GetExtensions(__instance, out Extend_AirlineModel eam);
-
+            if (eam == null)
+            {
+                return false;
+            }
 
             for (int i = 0; i<AirportCEOTweaksConfig.flightGenerationMultiplyer;i++)
             {
@@ -118,37 +128,84 @@ namespace AirportCEOTweaks
 
         public Extend_AirlineModel(AirlineModel airline)
         {
+            if (airline == null) { return; }
+            if (Singleton<ModsController>.Instance==null) { return; }
+
             parent = airline;
+
             Singleton<ModsController>.Instance.RegisterThisEAM(this, airline);
-            starRank = parent.businessClass;
+
+            //Basic
+
+            starRank = parent?.businessClass ?? Enums.BusinessClass.Small;
             economyTier = GetEconomyTiers(airline.businessName, airline.businessDescription, airline.businessClass);
-            countryCode = Singleton<BusinessController>.Instance.GetAirline(airline.businessName).countryCode ?? "";
-            try { country = TravelController.GetCountryByCode(countryCode); }
-            catch { country = null; Debug.LogWarning("ACEO Tweaks | WARN: Airline " + airline.businessName + ": country code " + countryCode + " not found!"); }
-            if  (!AirportCEOTweaksConfig.airlineNationality) { country = null; }
 
-            Airline_Descriptions describer = new Airline_Descriptions();
-            parent.businessDescription = describer.Generate_Description(this) + "\n \n" + describer.Replace_Description(parent);
-            describer = null;
+            //Nationality
 
+            countryCode = Singleton<BusinessController>.Instance?.GetAirline(airline.businessName)?.countryCode ?? "";
 
-            foreach (string aircraftModelString in FleetModels)
+            if (!AirportCEOTweaksConfig.airlineNationality)
             {
-                int range = Singleton<AirTrafficController>.Instance.GetAircraftGameObject(aircraftModelString).GetComponent<AircraftController>().am.rangeKM;
-                maxRange = Math.Max(range, maxRange);
+                country = null;
+                goto describer;
             }
 
+            try
+            {
+                country = TravelController.GetCountryByCode(countryCode);
+            }
+            catch
+            {
+                country = null;
+            }
+
+            //Describer
+
+            describer:
+
+            Airline_Descriptions describer = new Airline_Descriptions();
+            parent.businessDescription = describer?.Generate_Description(this) + "" + describer?.Replace_Description(parent) ?? "";
+            
+
+
+            //maxrange
+            if (FleetModels.Length > 0)
+            {
+                foreach (string aircraftModelString in FleetModels)
+                {
+                    try
+                    {
+                        int range = Singleton<AirTrafficController>.Instance?.GetAircraftGameObject(aircraftModelString)?.GetComponent<AircraftController>()?.am?.rangeKM ?? 0;
+                        maxRange = Math.Max(range, maxRange);
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+            }
+
+            //list flights
 
             myFlights = new HashSet<Extend_CommercialFlightModel>();
-            foreach (CommercialFlightModel cfm in parent.flightListObjects)
+            if (parent.flightListObjects.Count > 0)
             {
-                Singleton<ModsController>.Instance.GetExtensions(cfm, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-                if (eam != this)
+                foreach (CommercialFlightModel cfm in parent.flightListObjects)
                 {
-                    Debug.LogWarning("ACEO Tweaks | WARN: extend airline model constructor assigned other eam to own flights");
+                    Singleton<ModsController>.Instance.GetExtensions(cfm, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
+                    if (eam == null) { return; }
+                    if (eam != this)
+                    {
+                        Debug.LogWarning("ACEO Tweaks | WARN: extend airline model constructor assigned other eam to own flights");
+                    }
+                    
+                    if (ecfm == null)
+                    {
+                        return;
+                    }
+                    myFlights.Add(ecfm);
+                    ecfm.RefreshFlightTypes(this);
                 }
-                myFlights.Add(ecfm);
-                ecfm.RefreshFlightTypes(this);
             }
 
             MakeTypeModelDictionary();

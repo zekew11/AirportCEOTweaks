@@ -268,6 +268,7 @@ namespace AirportCEOTweaks
         }
         public void GetExtensions(AirlineModel airline, out Extend_AirlineModel eam)
         {
+            if (airline == null) { eam = null; return; }
             if (!airlineExtensionRefDictionary.TryGetValue(airline.referenceID, out eam) | eam == null)
             {
                 eam = new Extend_AirlineModel(airline);
