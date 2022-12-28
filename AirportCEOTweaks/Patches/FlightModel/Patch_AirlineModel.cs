@@ -164,7 +164,7 @@ namespace AirportCEOTweaks
             describer:
 
             Airline_Descriptions describer = new Airline_Descriptions();
-            parent.businessDescription = describer?.Generate_Description(this) + "" + describer?.Replace_Description(parent) ?? "";
+            parent.businessDescription = describer?.Replace_Description(parent) ?? "";
             
 
 

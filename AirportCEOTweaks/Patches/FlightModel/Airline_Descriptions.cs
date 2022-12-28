@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using UnityEngine;
+using Newtonsoft.Json;
 
 namespace AirportCEOTweaks
 {
@@ -12,22 +13,86 @@ namespace AirportCEOTweaks
     {
         public string OriginalDescription(AirlineModel airlineModel)
         {
-            //Not Implimented
-            
+
+            //NRE on load
+            //Vanilla airlines load raw loacalization key (not key's value)
+
+            if (airlineModel == null) 
+            {
+                Debug.LogError("ACEO Tweaks | ERROR: OriginalDescription airline model is null!");
+                return "ERROR: airline model is null"; 
+            }
+
             Airline airline = Singleton<BusinessController>.Instance.GetAirline(airlineModel.businessName);
-            string directory = "";
-            if (airline.isCustom)
+
+            if (airline == null)
             {
-                //mod stuff
-                //directory = 
-                
+                Debug.LogError("ACEO Tweaks | ERROR: OriginalDescription airline is null!");
+                return "ERROR: airline is null";
             }
-            else
+
+            string directoryString = airline.logoPath;
+            DirectoryInfo directoryInfo = Directory.GetParent(directoryString) ?? default(DirectoryInfo);
+
+            if (directoryInfo == null)
             {
-                //notmodstuff
-                directory = Application.dataPath;
+                Debug.LogError("ACEO Tweaks | ERROR: OriginalDescription directoryInfo is null!");
+                return "ERROR: directory is null";
             }
-            return "";
+
+            FileInfo[] jsonFiles = directoryInfo.GetFiles("*.json");
+            
+            if (jsonFiles == null)
+            {
+                Debug.LogError("ACEO Tweaks | ERROR: OriginalDescription json is null!");
+                return "ERROR: json is null";
+            }
+            if (jsonFiles[0] == null || jsonFiles.Length == 0)
+            {
+                Debug.LogError("ACEO Tweaks | ERROR: OriginalDescription json is empty!");
+                return "ERROR: json is empty";
+            }
+            
+            foreach(FileInfo file in jsonFiles)
+            {
+                if (file == null)
+                {
+                    continue;
+                }
+                string path = file.ToString().Replace("\\", "/");
+                try
+                {
+                    var t = JsonConvert.DeserializeObject<Airline>(Utils.ReadFile(path));
+                    if (t==null)
+                    {
+                        continue;
+                    }
+                    if (t.description != null && t.description.Length>0)
+                    {
+                        //Debug.Log("ACEO Tweaks | Debug: Loaded description for: " + t.name);
+                        if (t.isCustom)
+                        {
+                            return t.description;
+                        }
+                        else
+                        {
+                            try
+                            {
+                                return LocalizationManager.GetLocalizedValue(t.description);
+                            }
+                            catch
+                            {
+                                return t.description;
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+
+                }
+            }
+            return "ACEO Tweaks failed to load description!";
         }
         public string Replace_Description(AirlineModel airline)        
         {
@@ -43,7 +108,7 @@ namespace AirportCEOTweaks
                 case "Tulip Airlines": return "Tulip airlines became a prominent national carrier in the 1950s. While the airline’s early transatlantic services were widely praised, the jet-age left the carrier struggling to adapt. As the original long-haul fleet retired the aircraft were not able to be replaced. The airline shifted its attention to regional activities by the end of the 1960s. \n \nThe once-struggling carrier has been slowly but steadily expanding its regional services since the early 2000s. While the airline no longer caters to an elite audience, competent management has ensured that the airline’s customers are always treated with respect: leading to excellent public perception of the brand. \n \nWith a well developed network of regional routes, Tulip proudly announced that it would resume long-haul operations on the 50th anniversary of its last transatlantic flight - December 10 2017 - and thereafter operate a fleet of four 787-9s on routes around the world!";
                 case "Tulip Airlines Vintage": return "Tulip airlines was was founded in late 1947 and became a prominent national carrier in the early 1950s. While the airline’s transatlantic services are widely praised for their luxury, the jet-age sees the carrier struggling to adapt to the new realities of commercial aviation. While the airline's regional buisness remains strong, the long-haul fleet is aging and these aircraft are unlikly to be replaced.";
                 case "Siberian Airlines": return "Siberian Airlines operates with participation from major governemnts and private investors. It is considered the most modern and comfortable carrier in the eastern world, though the proletariat is conspicuously underrepresented amoung its audience.";
-                default: return airline.businessDescription;
+                default: return OriginalDescription(airline);
             }
 
         }

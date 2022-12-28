@@ -196,13 +196,13 @@ namespace AirportCEOTweaks
                     case "moverel": Move(gameObjects, originalComponent.transform.localPosition, true); flag = true; break;
                     case "enable": EnableDisable(gameObjects, true); flag = true; break;
                     case "disable": EnableDisable(gameObjects, false); flag = true; break;
-                    case "makeshadow": SetMaterial(gameObjects, "nonlit"); SetLayerOrder(gameObjects, -10); break;
+                    case "makeshadow": ReplaceShadowComponentWith(gameObjects); SetMaterial(gameObjects, "nonlit"); SetLayerOrder(gameObjects, -10); break;
                     case "setlayerorder": SetLayerOrderParse(gameObjects, parameters); break;
                     case "makewindow": MakeChildOf(gameObjects, new string[] { "nightwindows" }); SetMaterial(gameObjects, "nonlit"); break;
                     case "makenonlit": SetMaterial(gameObjects, "nonlit"); break;
                     case "makelightsource": if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
                     case "makelightsprite": if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
-                    case "makechildof": if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
+                    case "makechildof": MakeChildOf(gameObjects, parameters); break;
 
                     default:
                         Debug.LogError("ACEO Tweaks | ERROR: attempted to verb " + verb + ". Not recognised!");
@@ -456,6 +456,29 @@ namespace AirportCEOTweaks
                     Debug.LogError("ACEO Tweaks | Livery Debug: changed " + obj.name + " parent/group to "+parent.name);
                 }
             }
+        }
+
+        void ReplaceShadowComponentWith(HashSet<GameObject> gameObjects)
+        {
+            GameObject gameObject = gameObjects.Last();
+            GameObject shadowObject = null;
+
+            Transform[] children = this.gameObject.transform.GetComponentsInChildren<Transform>(true);
+            foreach (Transform child in children)
+            {
+                if (child.gameObject.name.ToLower() == "shadow")
+                {
+                    shadowObject = child.gameObject;
+                }
+            }
+
+            if (shadowObject == null)
+            {
+                Debug.LogError("ACEO Tweaks | ERROR: Failed to find vanilla shadow object!");
+                return;
+            }
+
+            shadowObject.GetComponent<SpriteRenderer>().sprite = gameObject.GetComponent<SpriteRenderer>().sprite;
         }
     }
 }
