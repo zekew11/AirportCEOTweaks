@@ -10,18 +10,16 @@ Airlines for which nationality is undefined (including vanilla airlines and some
 Known Bugs (2.2.0):
 
 * Baggage loading stat decreases due to PAX checking baggage for flights without baggage service.
-* Shadow layers added in liverys not currently working.
-* Game sometimes hangs when loading a save. Restart resolves.
 * Small cargo aircraft depart prematurly
 
 Changelog:
 
 2.2.0
-* Completly rewrote route generation.
+* Completely rewrote route generation.
 * New route generation supports airline nationality.
 * Resolved flight planning issue causing skipped flights and hanging confirmation button.
-* Implimented basic detection of domestic-only carriers.
-* credit humoresque: Tooltips in flight planner for hold-shift-to-affect-all functionaliity
+* Implemented basic detection of domestic-only carriers.
+* credit humoresque: Tooltips in flight planner for hold-shift-to-affect-all functionality
 * credit humoresque: Structure auto-repair threshold now adjustable in F10 settings
 * credit humoresque: ACEO Tweaks version shown below game version
 

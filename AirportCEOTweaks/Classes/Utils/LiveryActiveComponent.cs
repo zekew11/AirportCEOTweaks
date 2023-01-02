@@ -196,7 +196,7 @@ namespace AirportCEOTweaks
                     case "moverel": Move(gameObjects, originalComponent.transform.localPosition, true); flag = true; break;
                     case "enable": EnableDisable(gameObjects, true); flag = true; break;
                     case "disable": EnableDisable(gameObjects, false); flag = true; break;
-                    case "makeshadow": ReplaceShadowComponentWith(gameObjects); SetMaterial(gameObjects, "nonlit"); SetLayerOrder(gameObjects, -10); break;
+                    case "makeshadow": ReplaceShadowSpriteWith(gameObjects); EnableDisable(gameObjects,false); break;
                     case "setlayerorder": SetLayerOrderParse(gameObjects, parameters); break;
                     case "makewindow": MakeChildOf(gameObjects, new string[] { "nightwindows" }); SetMaterial(gameObjects, "nonlit"); break;
                     case "makenonlit": SetMaterial(gameObjects, "nonlit"); break;
@@ -458,7 +458,7 @@ namespace AirportCEOTweaks
             }
         }
 
-        void ReplaceShadowComponentWith(HashSet<GameObject> gameObjects)
+        void ReplaceShadowSpriteWith(HashSet<GameObject> gameObjects)
         {
             GameObject gameObject = gameObjects.Last();
             GameObject shadowObject = null;

@@ -10,8 +10,6 @@ Airlines for which nationality is undefined (including vanilla airlines and some
 Known Bugs (2.2.0):
 
 * Baggage loading stat decreases due to PAX checking baggage for flights without baggage service.
-* Shadow layers added in liverys not currently working.
-* Game sometimes hangs when loading a save. Restart resolves.
 * Small cargo aircraft depart prematurly
 
 Changelog:
