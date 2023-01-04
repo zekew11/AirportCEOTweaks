@@ -178,6 +178,13 @@ namespace AirportCEOTweaks
 
         public Dictionary<TurnaroundServices,TurnaroundService> turnaroundServices = new Dictionary<TurnaroundServices, TurnaroundService>();
 
+        [Serializable]
+        public struct CommercialFlightModelData
+        {
+            public string airlineString;
+            public string flightNumberString;
+            public string arrivalDateTimeString;
+        }
 
         public Extend_CommercialFlightModel(CommercialFlightModel parent, Extend_AirlineModel eam)
         {
@@ -705,6 +712,16 @@ namespace AirportCEOTweaks
             return maxDelay;
         }
 
+        public CommercialFlightModelData SerializedData()
+        {
+            CommercialFlightModelData data = new CommercialFlightModelData();
+            data.airlineString = parent.Airline.businessName;
+            data.flightNumberString = parent.departureFlightNbr;
+            data.arrivalDateTimeString = parent.arrivalTimeDTString;
+
+            return data;
+        }
+
         private DateTime CurrentTime
         {
             get
@@ -866,7 +883,7 @@ namespace AirportCEOTweaks
         private class Refresher : MonoBehaviour
         {
             public Extend_CommercialFlightModel Me;
-            public float maxWait = 0.5f;
+            public float maxWait = 1f;
             void Start()
             {
                 StartCoroutine(RefreshCoRoutine());
@@ -936,6 +953,15 @@ namespace AirportCEOTweaks
                 this.flightModel = flightModel;
                 this.ecfm = ecfm;
                 this.eam = eam;
+            }
+
+            [Serializable]
+            struct TurnaroundServiceData
+            {
+                private bool failed;
+                private bool succeeded;
+                private TurnaroundServices service;
+                private TurnaroundServiceData[] turnaroundServiceDataChildren;
             }
             public enum Desire
             {

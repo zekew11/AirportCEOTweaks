@@ -325,6 +325,22 @@ namespace AirportCEOTweaks
             
         }
 
+        public Extend_CommercialFlightModel[] AllExtendCommercialFlightModels()
+        {
+            //Extend_CommercialFlightModel[] array = new Extend_CommercialFlightModel[] { };
+            List<Extend_CommercialFlightModel> list = new List<Extend_CommercialFlightModel>();
+            int i = 0;
+            foreach (Extend_CommercialFlightModel ecfm in commercialFlightExtensionRefDictionary.Values)
+            {
+                if (ecfm == null)
+                {
+                    continue;
+                }
+                list.Add(ecfm);
+                i++;
+            }
+            return list.ToArray();
+        }
         public static string AllAircraftRanges()
         {
             string stringy="";

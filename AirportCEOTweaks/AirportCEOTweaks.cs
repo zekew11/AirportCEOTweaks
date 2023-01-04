@@ -25,7 +25,7 @@ namespace AirportCEOTweaks
         {
         }
 
-		[UMFHarmony(41)] //Set this to the number of harmony patches in your mod.
+		[UMFHarmony(42)] //Set this to the number of harmony patches in your mod.
         public static void Start()
 		{
 			Log("AirportCEOTweaks v" + UMFMod.GetModVersion().ToString(), true);

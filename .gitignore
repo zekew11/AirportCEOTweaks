@@ -14,3 +14,6 @@ AirportCEOTweaks/obj/Release/AirportCEOTweaks.csproj.AssemblyReference.cache
 *.cache
 .vs/AirportCEOTweaks/v16/.suo
 *.v2
+*.cache
+.vs/AirportCEOTweaks/v16/.suo
+Release/AirportCEOTweaks.dll
