@@ -85,6 +85,7 @@ namespace AirportCEOTweaks
         public static void LiveryOrigins()
         {
             Texture2D debugCross = UMFAsset.LoadTexture2D("crosshair.png");
+            
             Sprite debugCrossSprite = Sprite.Create(debugCross, new Rect(0.0f, 0.0f, debugCross.width, debugCross.height), new Vector2(0.5f, 0.5f), 180.0f);
             
             foreach (FlightModel flight in Singleton<AirTrafficController>.Instance.GetAllFlights())

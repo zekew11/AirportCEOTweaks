@@ -140,7 +140,6 @@ namespace AirportCEOTweaks
             HashSet<GameObject> gameObjects;
             string[] parameters;
 
-
             float z = originalComponent.transform.localPosition.z;
             //z = (z <= -99f) ? 0f : z;
             if (z <= -99)
@@ -166,8 +165,6 @@ namespace AirportCEOTweaks
                     //Debug.LogError("ACEO Tweaks | Livery Debug: found " + name + "at z=" + z.ToString() + " : not moving.");
                 }
             }
-
-
             try
             {
                 flag2 = LiveyComponentParse(name, out HashSet<GameObject> gO, out HashSet<string> v, out string[] p);
@@ -457,7 +454,6 @@ namespace AirportCEOTweaks
                 }
             }
         }
-
         void ReplaceShadowSpriteWith(HashSet<GameObject> gameObjects)
         {
             GameObject gameObject = gameObjects.Last();

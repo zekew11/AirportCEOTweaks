@@ -18,7 +18,7 @@ namespace AirportCEOTweaks
             TMP_Text tMP = __instance.transform.GetComponent<TextMeshProUGUI>();
             string str = tMP.text;
 
-            str = str + "Airport CEO Tweaks " + AirportCEOTweaksConfig.displayConfigVersion;
+            str = str + "ACEO Tweaks " + AirportCEOTweaksConfig.displayConfigVersion;
             tMP.text = str;
             //Debug.LogError("ACEO Tweaks | DEBUG: AddTweaksLabel Ran");  <------ This does not log, it is not avaiable yet! It does work, with no errors.
         }

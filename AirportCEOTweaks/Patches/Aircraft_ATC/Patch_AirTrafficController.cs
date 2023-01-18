@@ -107,6 +107,8 @@ namespace AirportCEOTweaks
 			return false;
         }
     }
+	[HarmonyPatch(typeof(AirTrafficController))]
+
 
 	public class Extend_AirTrafficController
 	{
@@ -145,6 +147,7 @@ namespace AirportCEOTweaks
 			}
 			//yield break;
 		}
+
 	}
 
 }

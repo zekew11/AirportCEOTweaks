@@ -11,6 +11,7 @@ using UnityEngine.Events;
 using Newtonsoft;
 using TMPro;
 using System.Reflection;
+using UModFramework.API;
 
 
 
@@ -70,7 +71,9 @@ namespace AirportCEOTweaks
         }
         private void Start()
         {
-            //Debug.LogError(AllAircraftRanges());
+
+            //Debug.Log(StringAircraftStatistic());
+
             if (AirportCEOTweaksConfig.airlineNationality && !GameSettingManager.RealisticInternationalStands)
             {
                 DialogPanel.Instance.ShowQuestionPanelCustomOptions(new Action<bool>(EnableRealisticInternational), "ACEO Tweaks airline nationality is enabled. Realistic international stands setting is recommended! \n \n (ACEO Tweaks options are available via shift-F10)", "Enable", "Ignore", true, false);
@@ -341,7 +344,7 @@ namespace AirportCEOTweaks
             }
             return list.ToArray();
         }
-        public static string AllAircraftRanges()
+        public static string StringAircraftStatistic()
         {
             string stringy="";
             foreach (string aircraftString in CustomEnums.GetAircraftArray())
@@ -350,104 +353,11 @@ namespace AirportCEOTweaks
                 AircraftModel aircraftModel = Singleton<AirTrafficController>.Instance.GetAircraftModel(aircraftType.id);
 
                 stringy = stringy.Insert(stringy.Length,aircraftModel.aircraftType);
-                stringy = stringy.Insert(stringy.Length," fuel capacity = ");
-                stringy = stringy.Insert(stringy.Length,aircraftModel.fuelTankCapacityLiters.ToString());
-                stringy = stringy.Insert(stringy.Length," liters \n");
+                stringy = stringy.Insert(stringy.Length," model nbr = ");
+                stringy = stringy.Insert(stringy.Length,aircraftModel.modelNbr);
+                stringy = stringy.Insert(stringy.Length,"\n");
             }
             return stringy;
-        }
-        public static void TestSerializer()
-        {
-            Debug.LogError("ACEO Tweaks | Test Serializer Init");
-
-            string assetsPath = UModFramework.API.UMFData.AssetsPath;
-            Debug.LogError("ACEO Tweaks | UMF AsssetsPath = " + assetsPath);
-
-            string savePath = Path.Combine(Singleton<SaveLoadGameDataController>.Instance.GetUserSavedDataSearchPath(), Singleton<SaveLoadGameDataController>.Instance.saveName);
-            Debug.LogError("ACEO Tweaks | ACEO SavePath = " + savePath);
-
-            savePath = assetsPath;
-
-            AircraftTypeData datum = new AircraftTypeData
-            {
-                id = "A318",
-
-                size = Enums.GenericSize.Medium,
-
-                displayName = "A318",
-                manufacturer = "Airbus",
-                iCAOCode = "A318",
-
-                capacity_PAX = 107,
-                exitLimit_PAX = 136,
-                seatsAbreast = 6,
-                capacity_ULD = 0,
-
-                range_KM = 5740,
-                speed_KMH = 829,
-                etops_Minutes = 180,
-                fuelCapacity_L = 24210,
-                jP1 = true,
-
-                takeoffDistance_M = 1780,
-                maxTOW_KG = 68000,
-                iCAO_Class = 'C',
-                numEngines = 2,
-                engineType = Enums.AircraftEngineType.Jet,
-
-                numBuilt = 81,
-                yearIntroduced = 2003,
-                yearLastProduced = 2013,
-                yearRetired = -1,
-
-                needStairs = true,
-                needPushback = true,
-                needPaved = true,
-                heavy = false,
-                canJetbridge = true,
-                canPushback = true,
-                sonicBoom = false,
-                vIP = false,
-                combi = false,
-                cargo = false,
-
-                loud = false,
-                quiet = false
-            };
-
-            List<AircraftTypeData> aircraftTypeDatas = new List<AircraftTypeData>
-            {
-                datum
-            };
-
-            //reused from TrySerializeAircrafts
-            Wrapper<AircraftTypeData> obj = new Wrapper<AircraftTypeData>
-            {
-                array = aircraftTypeDatas.ToArray()
-            };
-
-            string text;
-
-            try
-            {
-                text = JsonUtility.ToJson(datum);
-            }
-
-            catch (Exception ex3)
-            {
-                Debug.LogError("ACEO Tweaks | ERROR: AircraftTypeData object couldn't be serialized! Stack: " + ex3.StackTrace);
-                return;
-            }
-            if (Utils.CreateFromJSON<AircraftModelSerialized>(text) == null)
-            {
-                Debug.LogError("ACEO Tweaks | ERROR: .json AircraftTypeData not validated!");
-            }
-            if (!Utils.TryWriteFile(text, Path.Combine(savePath, "AircraftTypeData.json"), out string latestException))
-            {
-                Debug.LogError("[Saving] ERROR: Error when writing save file to: " + savePath + "/AircraftData.json");
-            }
-            Debug.LogError("ACEO Tweaks | Debug: Finished Test Serialize");
-            
         }
     }
 }

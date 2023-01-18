@@ -44,12 +44,12 @@ namespace AirportCEOTweaks
             
             if (jsonFiles == null)
             {
-                Debug.LogError("ACEO Tweaks | ERROR: OriginalDescription json is null!");
+                //Debug.LogError("ACEO Tweaks | ERROR: OriginalDescription json is null!");
                 return "ERROR: json is null";
             }
             if (jsonFiles[0] == null || jsonFiles.Length == 0)
             {
-                Debug.LogError("ACEO Tweaks | ERROR: OriginalDescription json is empty!");
+               //Debug.LogError("ACEO Tweaks | ERROR: OriginalDescription json is empty!");
                 return "ERROR: json is empty";
             }
             

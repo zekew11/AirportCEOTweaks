@@ -156,6 +156,14 @@ namespace AirportCEOTweaks
             }
             catch
             {
+                if (countryCode == "" && AirportCEOTweaksConfig.liveryLogs)
+                {
+                    Debug.LogWarning("ACEO Tweaks | Warn: In airline " + parent.businessName + " country code is empty string!");
+                }
+                else
+                {
+                    Debug.LogError("ACEO Tweaks | ERROR: In airline " + parent.businessName + " could not get country for counrty code [" + countryCode + "]!");
+                }
                 country = null;
             }
 
@@ -165,8 +173,6 @@ namespace AirportCEOTweaks
 
             Airline_Descriptions describer = new Airline_Descriptions();
             parent.businessDescription = describer?.Replace_Description(parent) ?? "";
-            
-
 
             //maxrange
             if (FleetModels.Length > 0)
@@ -257,20 +263,41 @@ namespace AirportCEOTweaks
                 foreach(string flag in AirportCEOTweaksConfig.noInternationalFlags)
                 {
                     if (parent.businessName.ToLower().Contains(flag.ToLower()))
-                    { return true; }
+                    { 
+                        if (AirportCEOTweaksConfig.liveryLogs)
+                        {
+                            Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged domestic by keywords");
+                        }
+                        return true; 
+                    }
                 }
                 if ((int)starRank+1 < AirportCEOTweaksConfig.minimumStarsForInternational && cargoProportion < 1f)
                 {
                     if(country == null)
                     {
+                        if (AirportCEOTweaksConfig.liveryLogs)
+                        {
+                            Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged NOT domestic by country == null");
+                        }
                         return false;
                     } //can't enforce nationality on the null pirates!
                     if (!TravelController.IsDomesticAirport(GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport, country))
                     {
+                        if (AirportCEOTweaksConfig.liveryLogs)
+                        {
+                            Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged NOT domestic becasue it would be unable to fly to player airport");
+                        }
                         return false;
                     } //we don't want to be making forien airlines domestic only
-                    
+                    if (AirportCEOTweaksConfig.liveryLogs)
+                    {
+                        Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged domestic due to low star rank && not cargo");
+                    }
                     return true;
+                }
+                if (AirportCEOTweaksConfig.liveryLogs)
+                {
+                    Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged NOT domestic by default");
                 }
                 return false;
             }
@@ -282,18 +309,34 @@ namespace AirportCEOTweaks
                 foreach (string flag in AirportCEOTweaksConfig.yesInternationalFlags)
                 {
                     if (parent.businessName.ToLower().Contains(flag.ToLower()))
-                    { return true; }
+                    {
+                        if (AirportCEOTweaksConfig.liveryLogs)
+                        {
+                            Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged international by keywords");
+                        }
+                        return true; 
+                    }
                 }
                 if (country == null)
                 {
+                    if (AirportCEOTweaksConfig.liveryLogs)
+                    {
+                        Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged international by country == null");
+                    }
                     return true;
                 } //can't enforce nationality on the null pirates!
                 if (!TravelController.IsDomesticAirport(GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport, country))
                 {
+                    if (AirportCEOTweaksConfig.liveryLogs)
+                    {
+                        Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged international because it is foreign to the player airport. Zeke has a hunch this is involved...");
+                    }
                     return true;
                 } //we don't want to be making forien airlines domestic only
-
-
+                if (AirportCEOTweaksConfig.liveryLogs)
+                {
+                    Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged NOT international by default");
+                }
                 return false;
             }
         }
@@ -365,6 +408,10 @@ namespace AirportCEOTweaks
             if (country == null)
             {
                 forceOrigin = false;
+                if (AirportCEOTweaksConfig.liveryLogs && AirportCEOTweaksConfig.airlineNationality)
+                {
+                    Debug.LogWarning("ACEO Tweaks | Warn: Generate flight for " + parent.businessName + "encountered (airline) country == null");
+                }
             }
             else
             {

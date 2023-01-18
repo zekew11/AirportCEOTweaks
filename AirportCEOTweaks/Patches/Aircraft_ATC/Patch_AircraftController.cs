@@ -15,10 +15,15 @@ namespace AirportCEOTweaks
         {
             if (AirportCEOTweaksConfig.cargoSystem == false) { return; }
 
+            if (__instance.FlightModel == null)
+            {
+                return;
+            }
+
             if (__instance.FlightModel is CommercialFlightModel)
             {
                 CommercialFlightModel f = __instance.FlightModel as CommercialFlightModel;
-
+                //Debug.Log("ACEO Tweaks | Debug: Launch Aircraft is Commercial");
                 if (f.currentTotalNbrOfArrivingPassengers==0 && f.currentTotalNbrOfDepartingPassengers==0)
                 {
                     NightLightHide n;
@@ -62,7 +67,6 @@ namespace AirportCEOTweaks
                 {
                     lac.DoLiveryComponentActions(obj);
                 }
-
             }
             catch
             {
