@@ -7,7 +7,7 @@ using System.Collections;
 namespace AirportCEOTweaks
 {
 	[HarmonyPatch(typeof(StandModel))]
-	class Patch_StandModel
+	class Patch_StandModelForFlightTypes
     {
         [HarmonyPatch("CheckConnections")]
         [HarmonyPrefix]

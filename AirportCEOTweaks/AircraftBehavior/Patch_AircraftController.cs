@@ -102,12 +102,6 @@ namespace AirportCEOTweaks
             return false;
         }
 
-
-    }
-
-    public static class Extend_AircraftController
-    {
-        
     }
 }
    

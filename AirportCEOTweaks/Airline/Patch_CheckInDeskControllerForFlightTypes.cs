@@ -7,7 +7,7 @@ using TMPro;
 namespace AirportCEOTweaks
 {
     [HarmonyPatch(typeof(CheckInDeskController))]
-    static class Patch_CheckInDeskController
+    static class Patch_CheckInDeskControllerForFlightTypes
     {
         [HarmonyPatch("CanAcceptBag")]
         [HarmonyPostfix]

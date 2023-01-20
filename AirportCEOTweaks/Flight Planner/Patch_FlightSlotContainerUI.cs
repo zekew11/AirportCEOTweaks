@@ -183,7 +183,7 @@ namespace AirportCEOTweaks
 
             //
 
-            DateTime takeoffTime = Extend_FlightModel.TakeoffTime(f, out TimeSpan flightTime, 3, 24);
+            DateTime takeoffTime = FlightModelUtils.TakeoffTime(f, out TimeSpan flightTime, 3, 24);
 
             if (f.isActivated)
             {

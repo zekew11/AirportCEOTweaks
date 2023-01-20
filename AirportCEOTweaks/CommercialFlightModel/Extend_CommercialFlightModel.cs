@@ -6,146 +6,6 @@ using System.Collections;
 
 namespace AirportCEOTweaks
 {
-    [HarmonyPatch(typeof(CommercialFlightModel))]
-    static class Patch_CommercialFlightModel
-    {
-        [HarmonyPatch("FinalizeFlightDetails")]
-        [HarmonyPostfix]
-        public static void PostfixFinalizeFlightDetails(ref CommercialFlightModel __instance)
-        {
-            Singleton<ModsController>.Instance.GetExtensions(__instance as CommercialFlightModel, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-            __instance.SetFlightPassengerTrafficValues(1);
-            ecfm.FinalizeFlightDetails();
-        }
-        
-        [HarmonyPatch("SetFlightPassengerTrafficValues")]
-        public static void Postfix(CommercialFlightModel __instance, float __0)
-        {
-            if (AirportCEOTweaksConfig.fixes == false && AirportCEOTweaksConfig.cargoSystem == false) { return; }
-
-            if (__instance.isAllocated)
-            {
-                int inhr =  __instance.arrivalTimeDT.Hour;
-                int outhr = __instance.departureTimeDT.Hour;
-
-                long seed = __instance.arrivalTimeDT.ToBinary() + __instance.departureRoute.routeNbr;
-                UnityEngine.Random.InitState((int)seed);
-
-                float mult = UnityEngine.Random.Range(.3f, 1.0f) + UnityEngine.Random.Range(.6f, 1.33f); //(0.66 +/- 0.33) + ( 1.0 +/- 0.33) /2
-                float mult2 = UnityEngine.Random.Range(.3f, 1.0f) + UnityEngine.Random.Range(.6f, 1.33f);
-
-                mult  += (float)(0.70 - 0.01986964 * inhr  + 0.009644035 * Math.Pow((double)inhr, 2d)  - 0.0003787513 * Math.Pow((double)inhr, 3d));
-                mult2 += (float)(0.70 - 0.01986964 * outhr + 0.009644035 * Math.Pow((double)outhr, 2d) - 0.0003787513 * Math.Pow((double)outhr, 3d));
-
-                mult  /= 3;
-                mult2 /= 3;
-
-                mult = mult.Clamp(0f, 1f);
-                mult2 = mult2.Clamp(0f, 1f);
-
-                __instance.currentTotalNbrOfArrivingPassengers = ((float)__instance.totalNbrOfArrivingPassengers * mult * __0).RoundToIntLikeANormalPerson();
-                __instance.currentTotalNbrOfDepartingPassengers = ((float)__instance.totalNbrOfDepartingPassengers * mult2 * __0).RoundToIntLikeANormalPerson();
-            }
-            else
-            {
-                __instance.currentTotalNbrOfArrivingPassengers = __instance.totalNbrOfArrivingPassengers;
-                __instance.currentTotalNbrOfDepartingPassengers = __instance.totalNbrOfDepartingPassengers;
-            }
-        }
-
-        [HarmonyPatch("SetFromSerializer")]
-        [HarmonyPostfix]
-        public static void Patch_AddExtensionsOnLoad( ref CommercialFlightModel __instance )
-        {
-            Singleton<ModsController>.Instance.GetExtensions(__instance, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-            __instance.SetFlightPassengerTrafficValues(1);
-
-            /*
-                  FlightTypes.FlightType outBound;
-                  FlightTypes.FlightType inBound;
-
-                  try
-                  {
-                      inBound = eam.GetFlightType(__instance);
-                      outBound = inBound;
-                  }
-                  catch
-                  {
-                      inBound = FlightTypes.FlightType.Vanilla;
-                      outBound = FlightTypes.FlightType.Vanilla;
-                      //Debug.LogError("ACEO Tweak | ERROR: could not recall flight type for " + __instance.departureFlightNbr);
-                  }
-
-
-                  Extend_CommercialFlightModel ecm = new Extend_CommercialFlightModel(__instance,inBound,outBound);
-                  ecm.Initialize(); */
-            
-        }
-
-        [HarmonyPatch("CancelFlight")]
-        [HarmonyPostfix]
-        public static void Patch_RemoveExtensionCan(CommercialFlightModel __instance)
-        {
-            try
-            {
-                Singleton<ModsController>.Instance.GetExtensions(__instance, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-                ecfm.CancelFlight();
-                //ecm = null;
-                //Singleton<ModsController>.Instance.commercialFlightExtensionDictionary.Remove(__instance);
-            }
-            catch
-            {
-                Debug.LogError("ACEO Tweaks | Error: Failed to remove commercial flight model extension from the dictionary and scope on flight cancel!");
-            }
-        }
-
-        [HarmonyPatch("CompleteFlight")]
-        [HarmonyPostfix]
-        public static void Patch_RemoveExtensionCom(CommercialFlightModel __instance)
-        {
-            if (!AirportCEOTweaksConfig.flightTypes)
-            { return; }
-            try
-            {
-                Singleton<ModsController>.Instance.GetExtensions(__instance, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-                ecfm.CompleteFlight();
-                //ecm = null;
-                //Singleton<ModsController>.Instance.commercialFlightExtensionDictionary.Remove(__instance);
-            }
-            catch
-            {
-                Debug.LogError("ACEO Tweaks | Error: Failed to remove commercial flight model extension from the dictionary and scope on flight complete!");
-            }
-
-        }
-
-        [HarmonyPatch("AllocateFlight")]
-        [HarmonyPostfix]
-        public static void Patch_RefreshSeriesOnAllocate(ref CommercialFlightModel __instance)
-        {
-            __instance.SetFlightPassengerTrafficValues(1);
-            try
-            {
-                Singleton<ModsController>.Instance.GetExtensions(__instance, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-                if (ecfm == default(Extend_CommercialFlightModel)) { Debug.LogError("nullecm"); }
-                ecfm.RefreshSeriesLen();
-            }
-            catch
-            {
-                Debug.LogError("ACEO Tweaks | Error: Failed to refresh commercial flight model extension on flight allocate!");
-            }
-        }
-        [HarmonyPatch("ActivateFlight")]
-        [HarmonyPrefix]
-        public static void Patch_RefreshOnActivate(CommercialFlightModel __instance)
-        {
-            Singleton<ModsController>.Instance.GetExtensions(__instance, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-
-            ecfm.RefreshServices();
-        }
-    }
-
-   // [Serializable]
     public class Extend_CommercialFlightModel : IComparable<Extend_CommercialFlightModel>
     {
         public int CompareTo(Extend_CommercialFlightModel other)
@@ -272,7 +132,7 @@ namespace AirportCEOTweaks
         public void FinalizeFlightDetails()
         {
             //RefreshFlightTypes();
-            Extend_FlightModel.IfNoPAX(parent);
+            FlightModelUtils.IfNoPAX(parent);
             //EvaluateServices();
 
             parent.Aircraft.am.CurrentWasteStored = parent.currentTotalNbrOfArrivingPassengers.ClampMin(2) + ((parent.Aircraft.am.MaxPax-parent.currentTotalNbrOfArrivingPassengers)*0.33f).RoundToIntLikeANormalPerson();
@@ -469,7 +329,7 @@ namespace AirportCEOTweaks
             {
                 TimeSpan flightTime;
                 
-                Extend_FlightModel.TakeoffTime(parent, out flightTime, 2f, 12f);
+                FlightModelUtils.TakeoffTime(parent, out flightTime, 2f, 12f);
                 if (flightTime.TotalMinutes < 240)
                 {
                     timeword = "Short";

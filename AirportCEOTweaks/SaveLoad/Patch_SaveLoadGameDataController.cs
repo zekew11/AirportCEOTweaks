@@ -18,9 +18,9 @@ namespace AirportCEOTweaks
         [HarmonyPostfix]
         public static void InvokeTweaksSaveGameData(string savePath, string oldSaveName, string ___userSavedDataSearchPath)
         {
-            GameObject attachto = UnityEngine.GameObject.Find("CoreGameControllers");
-            SaveGameDataDoer saveDoer = attachto.AddComponent<SaveGameDataDoer>();
-            saveDoer.Init(savePath, oldSaveName, ___userSavedDataSearchPath);
+            //GameObject attachto = UnityEngine.GameObject.Find("CoreGameControllers");
+            //SaveGameDataDoer saveDoer = attachto.AddComponent<SaveGameDataDoer>();
+            //saveDoer.Init(savePath, oldSaveName, ___userSavedDataSearchPath);
         } //whenever a save is invoked, create my save-doer componet so that theres an instance in the world to gather up what needs saving
 
         [HarmonyPatch("LoadGameDataCoroutine")]

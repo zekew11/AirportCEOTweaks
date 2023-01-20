@@ -4,48 +4,7 @@ using System;
 
 namespace AirportCEOTweaks
 {
-    [HarmonyPatch(typeof(FlightModel))]
-    static class Patch_FlightModel
-    {
-        [HarmonyPrefix]
-        [HarmonyPatch("ShouldActivateFlight")]
-        public static bool Prefix_ShouldActivateFlight(DateTime currentTime, ref bool __result, FlightModel __instance)
-        {
-            if (!AirportCEOTweaksConfig.fixes && !AirportCEOTweaksConfig.plannerChanges || !AirportCEOTweaksConfig.flightTypes) { return true; }
-
-            __result = __instance.arrivalTimeDT-currentTime < new TimeSpan(1,0,0);
-            return false;
-        }
-        [HarmonyPrefix]
-        [HarmonyPatch("TimeUntilFlightActivation")]
-        public static bool Prefix_TimeUntilFlightActivation(DateTime currentTime, ref TimeSpan __result, FlightModel __instance)
-        {
-            try
-            {
-            if (!AirportCEOTweaksConfig.fixes && !AirportCEOTweaksConfig.plannerChanges || !AirportCEOTweaksConfig.flightTypes) { return true; }
-
-            __result = Extend_FlightModel.TakeoffTime(__instance, out TimeSpan t, 0f, 99f) - currentTime.AddMinutes(-10);
-            return false;
-            }
-            catch
-            { return true; }
-        }
-        [HarmonyPatch("TurnaroundTime", MethodType.Getter)]
-        public static bool Prefix(FlightModel __instance, ref TimeSpan __result)
-        {
-            if (__instance is CommercialFlightModel)
-            {
-                Singleton<ModsController>.Instance.GetExtensions(__instance as CommercialFlightModel, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-                
-                __result = ecfm.TurnaroundTime;
-                return false;
-            }
-            return true;
-        }
-    }
-
-
-    public static class Extend_FlightModel
+    public static class FlightModelUtils
     {
         public static void IfNoPAX(FlightModel flight) // CargoMod
         {
@@ -108,7 +67,6 @@ namespace AirportCEOTweaks
             }
         }
     }
-    
 }
    
 

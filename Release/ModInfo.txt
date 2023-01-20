@@ -1,20 +1,21 @@
 Airport CEO Tweaks:
 
-2.2.0 Route Generation Respects Nationality By Default! Airport location will impact the flights you can recieve from different airlines, up to and including causeing airlines to offer no flights!
-
-Press shift-F10 in game to view the mod settings. The nationality system can be disabled. The rate of flight generation can be modified for more remote/more urban airports.
-
-Airlines for which nationality is undefined (including vanilla airlines and some mod airlines) disregaurd the nationality system.
-
-
-Known Bugs (2.2.0):
+Known Bugs (2.3.0):
 
 * Baggage loading stat decreases due to PAX checking baggage for flights without baggage service.
 * Small cargo aircraft depart prematurly
+* Planner minimum flight gap not enforced on player.
 
 Changelog:
 
-2.2.0
+2.3.0
+* Added system for importing new aircrafts
+* Added data structure for new aircraft including placeholders for future funtionality
+* Added data structure for airline behavior modifications including placeholders for future funtionality
+* Patch to ensure cargo aircraft remain on stand now applies only to cargo aircraft
+* Refactored and reorganaized much of the code base
+
+2.2.x
 * Completely rewrote route generation.
 * New route generation supports airline nationality.
 * Resolved flight planning issue causing skipped flights and hanging confirmation button.
@@ -23,16 +24,11 @@ Changelog:
 * credit humoresque: Structure auto-repair threshold now adjustable in F10 settings
 * credit humoresque: ACEO Tweaks version shown below game version
 
-2.1.3
-* Fixed automatic livery layer unhiding. But for real this time.
-
-2.1.2
-* Fixed automatic livery layer unhiding
-* Added "amazon air" cargo airline flag
-
-2.1.1
+2.1.x
 * Fixed airline satisfaction not changing
 * Revised version numbering. Conversion: 1.2.1 == (1.)2.1 --- This update can be though of as (1.)2.1.1
+* Fixed automatic livery layer unhiding
+* Added "amazon air" cargo airline flag
 
 1.2.1
 
