@@ -29,7 +29,18 @@ namespace AirportCEOTweaks
                 {
                     GameObject aircraftGameObject = MakeAircraftGameObject(aircraftTypeData, i);
 
-                    DoTweaksLiveryBakeIn(aircraftGameObject, aircraftTypeData);
+                    DoTweaksLiveryBakeIn(aircraftGameObject, aircraftTypeData); //must proceed scaling becasue scale is based off bounding box
+
+                    AircraftScaleManager scale;
+                    if(!aircraftGameObject.TryGetComponent<AircraftScaleManager>(out scale))
+                    {
+                        scale = aircraftGameObject.AddComponent<AircraftScaleManager>();
+                    }
+                    scale.forcedScale = aircraftTypeData.forcedReScale;
+                    scale.wingspan = aircraftTypeData.wingSpan_M;
+                    scale.length = aircraftTypeData.length_M;
+                    scale.fixShadow = aircraftTypeData.fixShadow;
+                    scale.Init();
 
                     aircraftGameObjectsSet.Add(aircraftGameObject);
                 }
@@ -160,7 +171,7 @@ namespace AirportCEOTweaks
             }
 
             GameObject tweaksContainer = new GameObject("tweaksContainer");
-            tweaksContainer.transform.SetParent(aircraftGameObject.transform.Find("Sprite"));
+            
             LiveryData liveryData = Utils.CreateFromJSON<LiveryData>(Utils.ReadFile(jsonFiles[0]));
             byte[] data = File.ReadAllBytes(PNGfiles[0]);
             Texture2D texture2D = new Texture2D(2, 2);
@@ -173,6 +184,7 @@ namespace AirportCEOTweaks
             Sprite[] spriteArray = new Sprite[liveryComponetArray.Length];
             Vector2 lhs = Vector2.zero;
             Vector2 lhs2 = Vector2.zero;
+
             for (int j = 0; j < liveryComponetArray.Length; j++)
             {
                 LiveryComponent liveryComponent = liveryComponetArray[j];
@@ -188,7 +200,7 @@ namespace AirportCEOTweaks
                     spriteArray[j] = spriteArray[j - 1];
                 }
                 GameObject newComponentGameObject = new GameObject(liveryComponent.name);
-                newComponentGameObject.transform.SetParent(tweaksContainer.transform);
+                newComponentGameObject.transform.SetParent(tweaksContainer.transform, false);
                 newComponentGameObject.layer = LayerMask.NameToLayer("Aircraft");
                 SpriteRenderer spriteRenderer = newComponentGameObject.AddComponent<SpriteRenderer>();
                 spriteRenderer.sprite = spriteArray[j];
@@ -202,21 +214,24 @@ namespace AirportCEOTweaks
                 newComponentGameObject.transform.localScale = liveryComponent.scale;
                 componentGameObjects.Add(newComponentGameObject);
             }
+
+            tweaksContainer.transform.SetParent(aircraftGameObject.transform.Find("Sprite"), false);
             tweaksContainer.transform.localPosition = Vector3.zero;
             tweaksContainer.transform.localEulerAngles = Vector3.zero;
-
 
             LiveryActiveComponent lac = aircraftGameObject.GetComponent<LiveryActiveComponent>();
             if (lac == null)
             {
                 lac = aircraftGameObject.AddComponent<LiveryActiveComponent>();
             }
-
+            
             foreach (GameObject obj in componentGameObjects)
             {
                 if (obj == null) { continue; }
                 lac.DoLiveryComponentActions(obj);
             }
+
+
         }
         
         private static List<AircraftTypeData> ProccessAircraftPaths(string[] args)

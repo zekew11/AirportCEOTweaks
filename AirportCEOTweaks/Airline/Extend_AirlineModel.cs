@@ -3,6 +3,7 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using Random = UnityEngine.Random;
 
 namespace AirportCEOTweaks
@@ -18,12 +19,23 @@ namespace AirportCEOTweaks
 
             parent = airline;
 
-            Singleton<ModsController>.Instance.RegisterThisEAM(this, airline);
+            Singleton<ModsController>.Instance.RegisterThisEAM(this, airline); //This also triggers refresh of AirlineBuisinessData
 
             //Basic
 
             starRank = parent?.businessClass ?? Enums.BusinessClass.Small;
             economyTier = GetEconomyTiers(airline.businessName, airline.businessDescription, airline.businessClass);
+
+            //Load AirlineBusinessData
+            
+            if (Singleton<ModsController>.Instance.airlineBusinessDataDic.TryGetValue(parent.businessName,out AirlineBusinessData data))
+            {
+                airlineBusinessData = data;
+            }
+            else
+            {
+                airlineBusinessData = default(AirlineBusinessData);
+            }
 
             //Nationality
 
@@ -116,6 +128,7 @@ namespace AirportCEOTweaks
         private string countryCode;
         public Country country;
         private SortedDictionary<int, TypeModel> typeModelDictionary;
+        public AirlineBusinessData airlineBusinessData;
 
         // Properties ------------------------------------------------------------------------------------------------------
 
@@ -230,7 +243,42 @@ namespace AirportCEOTweaks
         private void MakeTypeModelDictionary()
         {
             typeModelDictionary = new SortedDictionary<int, TypeModel>();
+
+            //Replace Fleet with TweaksFleet
+            bool tweaksFleet = false;
+
+            if (airlineBusinessData.tweaksFleet==null)
+            {
+                goto CreateFleetCount;
+            }
+
+            if (airlineBusinessData.tweaksFleet.Length > 0)
+            {
+                parent.aircraftFleetModels = airlineBusinessData.tweaksFleet;
+                tweaksFleet = true;
+            }
+            else
+            {
+                airlineBusinessData.tweaksFleet = parent.aircraftFleetModels;
+            }
+
+            if(airlineBusinessData.tweaksFleetCount == null)
+            {
+                goto CreateFleetCount;
+            }
+            if (airlineBusinessData.tweaksFleetCount.Length > 0 && tweaksFleet)
+            {
+                parent.fleetCount = airlineBusinessData.tweaksFleetCount;
+            }
+            else
+            {
+                //patch tweaks fleet count after we make sure fleet count exists
+            }
+
+            
             // Create a fleet counts if none exists ........................................................................................
+            CreateFleetCount:
+
             if (FleetCount == null || FleetCount.Length != FleetModels.Length)
             {
                 FleetCount = new int[FleetModels.Length];
@@ -239,10 +287,18 @@ namespace AirportCEOTweaks
                     FleetCount[i] = 2 * ((int)parent.businessClass);
                     //Debug.LogError("Airline " + parent.businessName + " has " + FleetCount[i] + " aircraft of type "+ FleetModels[i]);
                 }
+
+                airlineBusinessData.tweaksFleetCount = parent.fleetCount;
             }
             for (int i = 0; i<FleetModels.Length ;i++)
             {
                 typeModelDictionary.Add(i, new TypeModel(FleetModels[i], FleetCount[i]));
+            }
+            // Make sure we're in the business list
+
+            if (FleetModels.Length>0)
+            {
+                Singleton<BusinessController>.Instance.AddToBusinessList(parent);
             }
         }
         public bool GenerateFlight(AirlineModel airlineModel, bool isEmergency = false, bool isAmbulance = false)

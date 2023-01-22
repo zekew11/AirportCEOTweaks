@@ -102,6 +102,18 @@ namespace AirportCEOTweaks
             return false;
         }
 
+        [HarmonyPrefix]
+        [HarmonyPatch("ResetLivery")]
+        public static bool Patch_LetParentScaleLiv(GameObject livery, Transform ___liveryTransform)
+        {
+            if (livery != null)
+            {
+                livery.transform.SetParent(___liveryTransform, false);
+                livery.transform.localPosition = Vector3.zero;
+                livery.transform.localEulerAngles = Vector3.zero;
+            }
+            return false;
+        }
     }
 }
    

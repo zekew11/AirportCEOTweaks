@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
+using UnityEngine;
 
 namespace AirportCEOTweaks
 {
@@ -14,7 +15,7 @@ namespace AirportCEOTweaks
         [HarmonyPatch("AddLivery")]
         private static bool EnsureTypeExists(string aircraftType, LiveryController __instance)
         {
-            foreach(AirlineLivery airlineLivery in __instance.allLiveriesList)
+            foreach (AirlineLivery airlineLivery in __instance.allLiveriesList)
             {
                 if (airlineLivery.aircraftType == aircraftType)
                 {

@@ -65,6 +65,8 @@ namespace AirportCEOTweaks
 		public short numEngines;
 		public float wingSpan_M;
 		public float length_M;
+		public float forcedReScale;
+		public bool fixShadow;
 
 		public Enums.GenericSize size;
 		public Enums.ThreeStepScale threeStepSize;

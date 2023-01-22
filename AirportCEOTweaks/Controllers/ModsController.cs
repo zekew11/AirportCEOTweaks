@@ -23,8 +23,9 @@ namespace AirportCEOTweaks
         private Dictionary<string, Extend_CommercialFlightModel> commercialFlightExtensionRefDictionary = new Dictionary<string, Extend_CommercialFlightModel>();
         
         private Dictionary<string, Extend_AirlineModel> airlineExtensionRefDictionary = new Dictionary<string, Extend_AirlineModel>();
-        public ModsController()
-        { }
+
+        public Dictionary<string, AirlineBusinessData> airlineBusinessDataDic = new Dictionary<string, AirlineBusinessData>();
+
         private void Update()
         {
             if (FlightPlannerPanelUI.Instance != null && FlightPlannerPanelUI.Instance.isDisplayed == true)
@@ -85,6 +86,8 @@ namespace AirportCEOTweaks
                     GameSettingManager.RealisticInternationalStands = true;
                 }
             }
+
+            UpdateAirlineBuisinessDataDictionary();
             
         }
 
@@ -277,34 +280,6 @@ namespace AirportCEOTweaks
                 eam = new Extend_AirlineModel(airline);
             }
         }
-        public void RegisterECFM(ref Extend_CommercialFlightModel ecfm, CommercialFlightModel cfm)
-        {
-            Extend_CommercialFlightModel tempecfm;
-            if (commercialFlightExtensionRefDictionary.TryGetValue(cfm.ReferenceID,out tempecfm))
-            {
-                ecfm = tempecfm;
-                Debug.LogError("ACEO Tweak | WARN: Attempted to double-register ECFM for " + cfm.departureFlightNbr);
-                return;
-            }
-            else
-            {
-                commercialFlightExtensionRefDictionary.Add(cfm.ReferenceID, ecfm);
-            }
-        }
-        public void RegisterEAM(ref Extend_AirlineModel eam, AirlineModel am)
-        {
-            Extend_AirlineModel tempeam;
-            if(airlineExtensionRefDictionary.TryGetValue(am.referenceID,out tempeam))
-            {
-                eam = tempeam;
-                Debug.LogError("ACEO Tweak | WARN: Attempted to double-register EAM for " + am.businessName);
-                return;
-            }
-            else
-            {
-                airlineExtensionRefDictionary.Add(am.referenceID, eam);
-            }
-        }
         public void RegisterThisECFM(Extend_CommercialFlightModel ecfm, CommercialFlightModel cfm)
         {
             if (commercialFlightExtensionRefDictionary.ContainsKey(cfm.ReferenceID))
@@ -325,9 +300,8 @@ namespace AirportCEOTweaks
             }
 
             airlineExtensionRefDictionary.Add(am.referenceID, eam);
-            
+            UpdateAirlineBuisinessDataDictionary();
         }
-
         public Extend_CommercialFlightModel[] AllExtendCommercialFlightModels()
         {
             //Extend_CommercialFlightModel[] array = new Extend_CommercialFlightModel[] { };
@@ -343,6 +317,29 @@ namespace AirportCEOTweaks
                 i++;
             }
             return list.ToArray();
+        }
+        private void UpdateAirlineBuisinessDataDictionary()
+        {
+            foreach(string path in AirportCEOTweaks.airlinePaths)
+            {
+                string[] files = Directory.GetFiles(path);
+                foreach (string file in files)
+                {
+                    if (!file.EndsWith(".json"))
+                    {
+                        continue;
+                    }
+                    AirlineBusinessData data;
+                    data = Utils.CreateFromJSON<AirlineBusinessData>(Utils.ReadFile(file));
+                    if (data.name.Length==0)
+                    {
+                        continue;
+                    }
+                    airlineBusinessDataDic.Add(data.name, data);
+                    break;
+                }
+            }
+            AirportCEOTweaks.airlinePaths.Clear();
         }
         public static string StringAircraftStatistic()
         {

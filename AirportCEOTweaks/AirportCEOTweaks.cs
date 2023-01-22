@@ -11,6 +11,7 @@ namespace AirportCEOTweaks
     class AirportCEOTweaks
     {
         public static List<string> aircraftPaths = new List<string>();
+        public static List<string> airlinePaths = new List<string>();
         
         internal static void Log(string text, bool clean = false)
         {
@@ -26,7 +27,7 @@ namespace AirportCEOTweaks
         {
         }
 
-		[UMFHarmony(45)] //Set this to the number of harmony patches in your mod.
+		[UMFHarmony(47)] //Set this to the number of harmony patches in your mod.
         public static void Start()
 		{
 			Log("AirportCEOTweaks v" + UMFMod.GetModVersion().ToString(), true);

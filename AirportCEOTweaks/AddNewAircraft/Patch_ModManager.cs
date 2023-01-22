@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
 using UnityEngine;
+using UModFramework.API;
 
 namespace AirportCEOTweaks
 {
@@ -23,6 +24,7 @@ namespace AirportCEOTweaks
 				if (directories[i].SafeSubstring(directories[i].Length - 8, 8).Equals("Aircraft"))
 				{
 					AirportCEOTweaks.aircraftPaths.Add(path);
+					Debug.Log("AirportCEOTweaks v" + UMFMod.GetModVersion().ToString());
 					Debug.Log("ACEO Tweaks | Log : added path "+path+" to List<> aircraftPaths");
 				}
 			}

@@ -358,19 +358,19 @@ namespace AirportCEOTweaks
 
         void Move(HashSet<GameObject> gameObjects, Vector3 position, bool rel)
         {
-
+            float scale = Scale();
             foreach (GameObject obj in gameObjects)
             {
                 if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogError("ACEO Tweaks | Livery Debug: moving " + obj.name + " oldpos = " + obj.transform.localPosition.ToString()); }
                 if (rel)
                 {
-                    obj.transform.localPosition += position;
+                    obj.transform.position += (position*scale);
                 }
                 else
                 {
-                    obj.transform.localPosition = position;
+                    obj.transform.localPosition = (position*scale);
                 }
-                if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogError("ACEO Tweaks | Livery Debug: moved " + obj.name + " newpos = " + obj.transform.localPosition.ToString()); }
+                if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogError("ACEO Tweaks | Livery Debug: moved " + obj.name + " newpos = " + obj.transform.localPosition.ToString() + "(move scaled by " + scale + ")"); }
             }
         }
         void EnableDisable(HashSet<GameObject> gameObjects, bool flag)
@@ -475,6 +475,21 @@ namespace AirportCEOTweaks
             }
 
             shadowObject.GetComponent<SpriteRenderer>().sprite = gameObject.GetComponent<SpriteRenderer>().sprite;
+        }
+        float Scale()
+        {
+            float scale = 1f;
+            AircraftScaleManager scaleManager = gameObject.GetComponent<AircraftScaleManager>();
+            if (scaleManager != null)
+            {
+                scale = scaleManager.scale;
+            }
+            else
+            {
+                //Debug.LogWarning("ACEO Tweaks | Warn: Livery Active Component couldn't find aircraft scale manager");
+            }
+            return 1f;
+            return scale;
         }
     }
 }
