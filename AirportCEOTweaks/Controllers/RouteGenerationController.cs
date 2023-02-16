@@ -157,7 +157,7 @@ namespace AirportCEOTweaks
 
 			return routeContainers;
 		}
-		public SortedSet<RouteContainer> SelectRouteContainers(float maxRange = 16000, float minRange = 0, bool forceDomestic = false, bool forceOrigin = false, Country origin = null)
+		public SortedSet<RouteContainer> SelectRouteContainers(float maxRange = 16000, float minRange = 0, bool forceDomestic = false, bool forceOrigin = false, Country[] origin = null)
 		{
 			forceOrigin = origin == null ? false : forceOrigin;
 			
@@ -271,9 +271,15 @@ namespace AirportCEOTweaks
         {
 			return new SortedSet<RouteContainer>(originalSet.Where(route => route.Domestic).ToList());
         }
-		private SortedSet<RouteContainer> FilterByOrigin(SortedSet<RouteContainer> originalSet, Country origin)
+		private SortedSet<RouteContainer> FilterByOrigin(SortedSet<RouteContainer> originalSet, Country[] origin)
         {
-			return new SortedSet<RouteContainer>(originalSet.Where(route => route.country == origin).ToList());
+			return new SortedSet<RouteContainer>(originalSet.Where(route => origin.Contains(route.country)).ToList());
+		}
+		private SortedSet<RouteContainer> FilterByForbidenOrigin(SortedSet<RouteContainer> originalSet, Country[] forbidden)
+		{
+			originalSet.RemoveWhere(route => forbidden.Contains(route.route.ToAirport.Country));
+			originalSet.RemoveWhere(route => forbidden.Contains(route.route.FromAirport.Country));
+			return originalSet;
 		}
 		private SortedSet<RouteContainer> FilterByDistance(SortedSet<RouteContainer> originalSet, float maxDistance, float minDistance)
 		{

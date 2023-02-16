@@ -12,7 +12,7 @@ namespace AirportCEOTweaks
 
 		public string[] tweaksFleet;                       // Optional: Overwrites "fleet" when tweaks is installed.
 		public int[] tweaksFleetCount;                     // Optional: Overwirtes "fleetCount" when teaks is installed. Future features will expect this to be a count of aircraft, not a ratio.
-		public string[] arrayHomeCountryCodes;             // Optional: Like countryCode but can accept multiple. Overwrites countryCode if defined.
+		public string[] arrayHomeCountryCodes;             // Optional: Like countryCode but can accept multiple. Adds to countryCode if defined.
 		public string[] arrayForbiddenCountryCodes;		   // Optional: Extends the "nationality" system by forbidding any flights to or from the listed countries.
 		public string[] arrayHubIATAs;					   // Optional: Can be used with other settings to refine airline routing.
 		public int[] arrayRangesFromHubs_KM;               // Optional: Used with "arrayHubIATAs" to define maximum distances from each hub that the airline may operate to. If only one value is provided this value applies to all hubs.

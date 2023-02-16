@@ -15,15 +15,24 @@ namespace AirportCEOTweaks
         public float wingspan; // y size in small grids
         public float forcedScale = 0f; //override
         public float scale; // the result of either caluating the right rescale factor or just doing the override
-        public bool fixShadow = false; // should I bother doing anything to the shadow
+        public float shadowfix = 0f; // should I bother doing anything to the shadow
+        public bool rescalingEnabled = true; //should any rescale happen ever at all
         public void Start() //After Init()
         {
+            if (rescalingEnabled == false)
+            {
+                Destroy(this);
+            }
             DoRescale();
             
-            //FixShadow(fixShadow); //not ready
+            FixShadow((shadowfix >= 0.01f));
         }
         public void Init() //Here we calculate the right rescale factor
         {
+            if (rescalingEnabled == false)
+            {
+                Destroy(this);
+            }
             if (init)
             {
                 return;
@@ -56,7 +65,7 @@ namespace AirportCEOTweaks
 
             if (forcedScale != 0f) //do we just ignore all that and get the scale out of the json?
             {
-                scale = forcedScale;
+                scale = forcedScale/.7f;
                 Debug.Log("ACEO Tweaks | Log: Gameobject " + gameObject.name + " forced scale = " + scale);
             }
             else
@@ -134,7 +143,11 @@ namespace AirportCEOTweaks
             shadow.transform.localScale.Set(1,1,1);
             Bounds shadowBounds = shadow.GetComponent<SpriteRenderer>().bounds;
 
-            shadow.transform.localScale.Set(bounds.size.x/shadowBounds.size.x,bounds.size.y/shadowBounds.size.y,1);
+            Vector3 scaler = new Vector3(shadowfix, shadowfix, 1);
+            scaler.Scale(new Vector3(bounds.size.x / shadowBounds.size.x, bounds.size.y / shadowBounds.size.y, 1));
+
+            shadow.transform.localScale = scaler;
+            shadow.transform.localPosition = bounds.center;
 
             Debug.Log("ACEO Tweaks | Log: Gameobject " + gameObject.name + " shadow requested new scale factor = " + bounds.size.x / shadowBounds.size.x + ", " + bounds.size.y / shadowBounds.size.y);
             Debug.Log("ACEO Tweaks | Log: Gameobject " + gameObject.name + " shadow new scale factor = " + shadow.transform.localScale.ToString());

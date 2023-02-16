@@ -43,25 +43,59 @@ namespace AirportCEOTweaks
 
             if (!AirportCEOTweaksConfig.airlineNationality)
             {
-                country = null;
+                countries = null;
                 goto describer;
             }
 
             try
             {
-                country = TravelController.GetCountryByCode(countryCode);
+                HashSet<string> codeList = new HashSet<string>();
+                List<Country> countryList = new List<Country>();
+                Country country;
+
+                if (airlineBusinessData.arrayHomeCountryCodes != null)
+                {
+                    codeList.UnionWith(airlineBusinessData.arrayHomeCountryCodes);
+                }
+                codeList.Add(countryCode);
+
+
+                foreach (string code in codeList)
+                {
+                    try
+                    {
+                        country = TravelController.GetCountryByCode(code);
+                        if (country != null && !countryList.Contains(country))
+                        {
+                            countryList.Add(country);
+                        }
+                    }
+                    catch
+                    {
+                        if (code == "")
+                        {
+                            if (AirportCEOTweaksConfig.liveryLogs)
+                            {
+                                Debug.LogWarning("ACEO Tweaks | Warn: In airline " + parent.businessName + " country code is empty string!");
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogError("ACEO Tweaks | ERROR: In airline " + parent.businessName + " could not get country for counrty code [" + countryCode + "]!");
+                        }
+                    }
+                }
+                                
+                countries = countryList.ToArray();
+                if (countryList.Count == 0)
+                {
+                    countries = null;
+                }
             }
             catch
             {
-                if (countryCode == "" && AirportCEOTweaksConfig.liveryLogs)
-                {
-                    Debug.LogWarning("ACEO Tweaks | Warn: In airline " + parent.businessName + " country code is empty string!");
-                }
-                else
-                {
-                    Debug.LogError("ACEO Tweaks | ERROR: In airline " + parent.businessName + " could not get country for counrty code [" + countryCode + "]!");
-                }
-                country = null;
+                Debug.LogError("ACEO Tweaks | ERROR: In airline " + parent.businessName + "; problem parsing country code(s)");
+                countries = null;
             }
 
             //Describer
@@ -126,7 +160,7 @@ namespace AirportCEOTweaks
         public float cargoProportion = 0f;
         public float maxRange = 0f;
         private string countryCode;
-        public Country country;
+        public Country[] countries;
         private SortedDictionary<int, TypeModel> typeModelDictionary;
         public AirlineBusinessData airlineBusinessData;
 
@@ -158,6 +192,10 @@ namespace AirportCEOTweaks
         {
             get
             {
+                if (airlineBusinessData.domesticOnly)
+                {
+                    return true;
+                }
                 foreach(string flag in AirportCEOTweaksConfig.noInternationalFlags)
                 {
                     if (parent.businessName.ToLower().Contains(flag.ToLower()))
@@ -171,7 +209,7 @@ namespace AirportCEOTweaks
                 }
                 if ((int)starRank+1 < AirportCEOTweaksConfig.minimumStarsForInternational && cargoProportion < 1f)
                 {
-                    if(country == null)
+                    if(countries == null)
                     {
                         if (AirportCEOTweaksConfig.liveryLogs)
                         {
@@ -179,7 +217,8 @@ namespace AirportCEOTweaks
                         }
                         return false;
                     } //can't enforce nationality on the null pirates!
-                    if (!TravelController.IsDomesticAirport(GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport, country))
+
+                    if (!Singleton<ModsController>.Instance.IsDomestic(countries))
                     {
                         if (AirportCEOTweaksConfig.liveryLogs)
                         {
@@ -187,6 +226,7 @@ namespace AirportCEOTweaks
                         }
                         return false;
                     } //we don't want to be making forien airlines domestic only
+
                     if (AirportCEOTweaksConfig.liveryLogs)
                     {
                         Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged domestic due to low star rank && not cargo");
@@ -204,6 +244,10 @@ namespace AirportCEOTweaks
         {
             get
             {
+                if(airlineBusinessData.domesticOnly)
+                {
+                    return false;
+                }
                 foreach (string flag in AirportCEOTweaksConfig.yesInternationalFlags)
                 {
                     if (parent.businessName.ToLower().Contains(flag.ToLower()))
@@ -215,7 +259,7 @@ namespace AirportCEOTweaks
                         return true; 
                     }
                 }
-                if (country == null)
+                if (countries == null)
                 {
                     if (AirportCEOTweaksConfig.liveryLogs)
                     {
@@ -223,7 +267,7 @@ namespace AirportCEOTweaks
                     }
                     return true;
                 } //can't enforce nationality on the null pirates!
-                if (!TravelController.IsDomesticAirport(GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport, country))
+                if (!Singleton<ModsController>.Instance.IsDomestic(countries))
                 {
                     if (AirportCEOTweaksConfig.liveryLogs)
                     {
@@ -342,11 +386,11 @@ namespace AirportCEOTweaks
             float maxRange=0;
             float minRange=float.MaxValue;
             float desiredRange;
-            try { Country country = this.country; } catch { country = null; }
+            try { Country[] countries = this.countries; } catch { countries = null; }
             bool forceDomestic=Utils.ChanceOccured(0f) || (IsDomestic&&!ForceInternational);
             bool forceOrigin;
             
-            if (country == null)
+            if (countries == null)
             {
                 forceOrigin = false;
                 if (AirportCEOTweaksConfig.liveryLogs && AirportCEOTweaksConfig.airlineNationality)
@@ -356,9 +400,9 @@ namespace AirportCEOTweaks
             }
             else
             {
-                forceOrigin = forceDomestic ? true : !TravelController.IsDomesticAirport(GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport, country);
+                forceOrigin = forceDomestic ? true : !Singleton<ModsController>.Instance.IsDomestic(countries);
             }
-            if (forceOrigin && forceDomestic && !TravelController.IsDomesticAirport(GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport, country))
+            if (forceOrigin && forceDomestic && !Singleton<ModsController>.Instance.IsDomestic(countries))
             {
                 Debug.LogWarning("ACEO Tweaks | WARN: Generate flight for " + parent.businessName + " failed due to forceDomestic on internationally based operator");
                 //return true;
@@ -389,14 +433,16 @@ namespace AirportCEOTweaks
             }
             if (!CalcMinMaxRange()) { Debug.LogWarning("ACEO Tweaks | WARN: Generate flight for " + parent.businessName + " failed due to failure to caluclate min/max airline range"); return true; }
             desiredRange = Math.Abs(Random.Range(-maxRange, maxRange)+Random.Range(-maxRange, maxRange)+Random.Range(-maxRange, maxRange)) /3;
-            
+
 
             // Route gen ............................................................................................................
 
+            RouteGenerationController routeGC = UnityEngine.GameObject.Find("CoreGameControllers").GetComponent<RouteGenerationController>();
+
             SortedSet<RouteContainer> routeContainers = new SortedSet<RouteContainer>();
-            routeContainers = UnityEngine.GameObject.Find("CoreGameControllers").GetComponent<RouteGenerationController>().SelectRouteContainers((desiredRange*1.1f).ClampMax(maxRange), (desiredRange / 1.5f).ClampMin(minRange), forceDomestic, forceOrigin, country);
+            routeContainers = routeGC.SelectRouteContainers((desiredRange*1.1f).ClampMax(maxRange), (desiredRange / 1.5f).ClampMin(minRange), forceDomestic, forceOrigin, countries);
             SortedSet<RouteContainer> routeContainer = new SortedSet<RouteContainer>();
-            routeContainer = UnityEngine.GameObject.Find("CoreGameControllers").GetComponent<RouteGenerationController>().NewSelectRoutesByChance(routeContainers);
+            routeContainer = routeGC.NewSelectRoutesByChance(routeContainers);
 
             if (routeContainer.Count == 0)
             {
@@ -764,55 +810,11 @@ namespace AirportCEOTweaks
             }
 
         }
-        public FlightTypes.FlightType GetFlightType(AircraftModel aircraft, string flightNumber)
-        {
-            string flightNumeric = "";
-            int flightint = 0;
-
-            foreach (char c in flightNumber)
-            {
-                if (c >= '0' && c <= '9')
-                {
-                    flightNumeric = string.Concat(flightNumeric, c);
-                }
-                else
-                {
-                    continue;
-                }
-            }
-
-            flightint = System.Convert.ToInt32(flightNumeric);
-
-            return GetFlightType(aircraft, flightint);
-        }
         public FlightTypes.FlightType GetFlightType(CommercialFlightModel cfm)
         {
             AircraftModel acm = Singleton<AirTrafficController>.Instance.GetAircraftModel(cfm.aircraftTypeString);
 
             return GetFlightType(acm, cfm.arrivalRoute.routeNbr);
-        }
-        private float RangeByFlightType(FlightTypes.FlightType flightType, bool min = true)
-        {
-            float value;
-            switch (flightType)
-            {
-                case FlightTypes.FlightType.Cargo: value = min ? 0.1f : .5f; break;
-                case FlightTypes.FlightType.SpecialCargo: value = min ? 0.05f : .8f; break;
-
-                case FlightTypes.FlightType.Divert: value = min ? 0.1f : .9f; break;
-                case FlightTypes.FlightType.Positioning: value = min ? 0.05f : 1.25f; break;
-
-                case FlightTypes.FlightType.Vanilla: value = min ? 0.05f : 1f; break;
-
-                case FlightTypes.FlightType.Economy: value = min ? 0.5f : 1f; break;
-                case FlightTypes.FlightType.Commuter: value = min ? 0.25f : .85f; break;
-                case FlightTypes.FlightType.Mainline: value = min ? 0.65f : 1f; break;
-                case FlightTypes.FlightType.Flagship: value = min ? 0.75f : 1f; break;
-                case FlightTypes.FlightType.VIP: value = min ? 0.05f : 1.25f; break;
-
-                default: value = min ? 0.05f : 1f; break;
-            }
-            return value;
         }
         public void ReportRating(int satisfaction, int demerits, Enums.ThreeStepScale weight)
         {

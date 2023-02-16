@@ -12,6 +12,7 @@ namespace AirportCEOTweaks
     {
         public static List<string> aircraftPaths = new List<string>();
         public static List<string> airlinePaths = new List<string>();
+        public static Dictionary<GameObject,GameObject> aircraftPrefabOverwrites = new Dictionary<GameObject,GameObject>();
         
         internal static void Log(string text, bool clean = false)
         {

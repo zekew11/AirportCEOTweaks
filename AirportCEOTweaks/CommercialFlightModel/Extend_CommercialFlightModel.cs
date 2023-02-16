@@ -301,11 +301,7 @@ namespace AirportCEOTweaks
         public void AfterLoadRefresh(float wait = 0.5f)
         {
             GameObject attachto = UnityEngine.GameObject.Find("CoreGameControllers");
-            /*if (!attachto.TryGetComponent<Refresher>(out Refresher myRefresher))
-            {
-                myRefresher = attachto.AddComponent<Refresher>();
-            }
-            */
+
             Refresher myRefresher = attachto.AddComponent<Refresher>();
             myRefresher.Me = this;
             myRefresher.maxWait = wait;
@@ -443,8 +439,6 @@ namespace AirportCEOTweaks
         }
         public int[] RefreshServices(bool evaluate = false)
         {
-
-
             int[] tempint = new int[5] { 0, 0, 0, 0, 0 };
 
             if (turnaroundServices.Count < tempint.Length)
@@ -479,9 +473,7 @@ namespace AirportCEOTweaks
 
                     if (evaluate)
                     {
-                        //Debug.LogError("ACEO Tweaks | DEBUG: About to do the thing!");
                         service.ServiceRequestSetter(true);
-                        //Debug.LogError("ACEO Tweaks | DEBUG: Survived the thing!");
                     }
                 }
                 else

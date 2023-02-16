@@ -11,3 +11,4 @@ C:\Users\Ezekiel\Documents\ACEOTweaks\AirportCEOTweaks\AirportCEOTweaks\obj\Rele
 C:\Users\Ezekiel\Documents\ACEOTweaks\AirportCEOTweaks\AirportCEOTweaks\obj\Release\AirportCEOTweaks.csproj.CoreCompileInputs.cache
 C:\Users\Ezekiel\Documents\ACEOTweaks\AirportCEOTweaks\AirportCEOTweaks\obj\Release\AirportCEOTweaks.csproj.CopyComplete
 C:\Users\Ezekiel\Documents\ACEOTweaks\AirportCEOTweaks\AirportCEOTweaks\obj\Release\AirportCEOTweaks.dll
+C:\Users\Ezekiel\Documents\ACEOTweaks\AirportCEOTweaks\AirportCEOTweaks\obj\Release\AirportCEOTweaks.csproj.AssemblyReference.cache

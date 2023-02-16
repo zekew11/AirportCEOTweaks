@@ -48,7 +48,7 @@ namespace AirportCEOTweaks
                         ecfm.ResetTurnaroundTime();
 
                         StandModel standByReferenceID = Singleton<BuildingController>.Instance.GetObjectByReferenceID<StandModel>(__instance.rowStandReferenceID);
-                        DateTime arrivalDT = Extend_FlightSlotContainerUI.ArrivalDTFromContainer(__instance,i);
+                        DateTime arrivalDT = Statics_FlightSlotContainerUI.ArrivalDTFromContainer(__instance,i);
                         f.turnaroundTime = ecfm.TurnaroundTime;
                         DateTime departureDT = arrivalDT.Add(f.TurnaroundTime);
 
@@ -142,7 +142,7 @@ namespace AirportCEOTweaks
 
             //TimeofDay
             DateTime cTime = Singleton<TimeController>.Instance.GetCurrentContinuousTime();
-            DateTime fTime = Extend_FlightSlotContainerUI.ArrivalDTFromContainer(__instance, 0);
+            DateTime fTime = Statics_FlightSlotContainerUI.ArrivalDTFromContainer(__instance, 0);
             DateTime weekday = ModsController.NextWeekday(FlightPlannerPanelUI.Instance.selectedWeekday, 0);
             DateTime fDTime = fTime + f.turnaroundTime;
 
@@ -164,8 +164,8 @@ namespace AirportCEOTweaks
                 __instance.SetMessageDisplay("Cannot Schedule For Different Day!");
                 return false;
             }
-            //Big Overlap
-            if (!AirTrafficController.Instance.CanAllocateFlightSerie(new DateTime[] { fTime }, f.TurnaroundTime, stand.ReferenceID, 0))
+            //Overlap
+            if (!AirTrafficController.Instance.CanAllocateFlightSerie(new DateTime[] { fTime }, f.TurnaroundTime, stand.ReferenceID, Singleton<AirportController>.Instance.AirportData.flightSeparatorMinutes))
             {
                 __instance.SetMessageDisplay("Too Much Overlap!");
                 return false;
@@ -285,7 +285,7 @@ namespace AirportCEOTweaks
         }
 
     }
-    public static class Extend_FlightSlotContainerUI
+    public static class Statics_FlightSlotContainerUI
     {
         public static DateTime ArrivalDTFromContainer(FlightSlotContainerUI slot, int offsetDays = 0)
         {

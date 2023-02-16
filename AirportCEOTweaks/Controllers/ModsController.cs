@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
 using Newtonsoft;
+using Newtonsoft.Json;
 using TMPro;
 using System.Reflection;
 using UModFramework.API;
@@ -320,7 +321,10 @@ namespace AirportCEOTweaks
         }
         private void UpdateAirlineBuisinessDataDictionary()
         {
-            foreach(string path in AirportCEOTweaks.airlinePaths)
+            string filetext;
+
+
+            foreach (string path in AirportCEOTweaks.airlinePaths)
             {
                 string[] files = Directory.GetFiles(path);
                 foreach (string file in files)
@@ -329,12 +333,33 @@ namespace AirportCEOTweaks
                     {
                         continue;
                     }
-                    AirlineBusinessData data;
-                    data = Utils.CreateFromJSON<AirlineBusinessData>(Utils.ReadFile(file));
-                    if (data.name.Length==0)
+                    filetext = Utils.ReadFile(file);
+                    if (filetext == null)
                     {
                         continue;
                     }
+
+                    List<string> errors = new List<string>();
+                    AirlineBusinessData data = JsonConvert.DeserializeObject<AirlineBusinessData>(
+                        filetext,
+                        new JsonSerializerSettings
+                        {
+                            Error = delegate (object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
+                            {
+                                errors.Add(args.ErrorContext.Error.Message);
+                                args.ErrorContext.Handled = true;
+                            }
+                        });
+                    if (errors.Count>0)
+                    {
+                        Debug.LogWarning("ACEO Tweaks | WARN: Airline buisness data deserialization encountered errors:\n\n");
+                    }
+
+                    if (data.name == null || data.name.Length==0 || airlineBusinessDataDic.ContainsKey(data.name))
+                    {
+                        continue;
+                    }
+
                     airlineBusinessDataDic.Add(data.name, data);
                     break;
                 }
@@ -356,5 +381,42 @@ namespace AirportCEOTweaks
             }
             return stringy;
         }
+
+        public bool IsDomestic(Country countryA, Country countryB = null)
+        {
+            if (countryB == null)
+            {
+                countryB = GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport.Country;
+            }
+            return IsDomestic(new Country[] { countryA }, new Country[] { countryB });
+        }
+        public bool IsDomestic(Airport airportA, Airport airportB = null)
+        {
+            if (airportB == null)
+            {
+                airportB = GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport;
+            }
+            return IsDomestic(airportA.Country,airportB.Country);
+        }
+        public bool IsDomestic(Country[] countriesA, Country[] countriesB = null)
+        {
+            if (countriesB == null)
+            {
+                countriesB = new Country[] { GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport.Country };
+            }
+
+            foreach(Country countryA in countriesA)
+            {
+                foreach (Country countryB in countriesB)
+                {
+                    if (countryA==countryB)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
     }
 }
