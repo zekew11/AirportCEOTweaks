@@ -10,6 +10,7 @@ namespace AirportCEOTweaks
 	{
 		public string name;                                // Picks up the name field from the vanilla file for validation purposes.
 
+		public string shortName;                           // Optional: Will eventually be used in certain GUI elements. Eg. "Such&Such Airlines - Retro Liveries" becomes "Such&Such Airlines"
 		public string[] tweaksFleet;                       // Optional: Overwrites "fleet" when tweaks is installed.
 		public int[] tweaksFleetCount;                     // Optional: Overwirtes "fleetCount" when teaks is installed. Future features will expect this to be a count of aircraft, not a ratio.
 		public string[] arrayHomeCountryCodes;             // Optional: Like countryCode but can accept multiple. Adds to countryCode if defined.
@@ -21,6 +22,7 @@ namespace AirportCEOTweaks
 		public bool onlyFlyHubtoHub;                       // Optional: Used with "arrayHubIATAs" to force all flights to have both endpoints at a listed "hub". At this point you are fully definig the route network.
 														   //           Not reccomended, envisioned as something an end user might do for a "hardcore simulation" playthrough.
 		public bool domesticOnly;                          // Optional: If true, airline cannot operate routes which have any endpoint outside of the Home Country(s) (either from "countryCode" or "arrayHomeCountryCodes")
+		public bool cargo;                                 // Optional: If true, airline only operates cargo service.
 
 
 		public int[] overrideServiceLevelByAircraftType;   // Optional: [Not to be Implimeneted in 2.3.0] Previously the "flight types" system, flight service level is set by airline star rank:

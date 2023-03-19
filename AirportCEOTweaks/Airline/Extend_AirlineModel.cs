@@ -141,7 +141,7 @@ namespace AirportCEOTweaks
                         return;
                     }
                     myFlights.Add(ecfm);
-                    ecfm.RefreshFlightTypes(this);
+                    //ecfm.RefreshFlightTypes(this);
                 }
             }
 
@@ -520,53 +520,25 @@ namespace AirportCEOTweaks
             }
             if (!SelectAircaft()) { if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: Generate flight for " + parent.businessName + " failed due to failure to select an aircraft"); } return true; }
 
-            // Determine the flight types ...........................................................................................
+            // Determine the flight data ...........................................................................................
 
-            FlightTypes.FlightType inBound = GetFlightType(selectedAircraft, flightnumber);
-            FlightTypes.FlightType outBound = inBound;
+            FlightDataBuilder.GetSpecificFlightDatas(this, selectedAircraft, route, route2, out FlightTypeData inboundFlightData, out FlightTypeData outboundFlightData);
 
             // Instantiate the flights ..............................................................................................
-            int seriesLength = GetSeriesLength(inBound, outBound);
-            InstantiateFlightSeries(selectedAircraftType.id, seriesLength, route, route2, inBound, outBound);
+            int seriesLength = GetSeriesLength(inboundFlightData);
+            InstantiateFlightSeries(selectedAircraftType.id, seriesLength, route, route2, inboundFlightData, outboundFlightData);
 
             return true;
         }
-        public int GetSeriesLength(FlightTypes.FlightType inbound, FlightTypes.FlightType outbound)
+        public int GetSeriesLength(FlightTypeData flightData)
         {
             //assuming inbound and outbound are same
 
-            float value = parent.Rating.ClampMin(.33f);
-            switch (starRank)
-            {
-                case Enums.BusinessClass.Cheap: value *= 5; break;
+            int value = Random.Range(flightData.minOfferRepetition[0], flightData.maxOfferRepetition[0] + 1); // UnityEngine.Random.Range<int>(inclusiveLower,exclusiveUpper)
 
-                case Enums.BusinessClass.Small: value *= 7; break;
-
-                case Enums.BusinessClass.Medium: value *= 10; break;
-
-                case Enums.BusinessClass.Large: value *= 14; break;
-
-                case Enums.BusinessClass.Exclusive: value *= 21; break;
-
-                default: value = 7f; break;
-            }
-            switch (inbound)
-            {
-                case FlightTypes.FlightType.Vanilla: value = Utils.RandomRangeI(2, 5); break;
-
-                case FlightTypes.FlightType.SpecialCargo:
-                case FlightTypes.FlightType.VIP: value *= Utils.RandomRangeF(.1f, .5f); break;
-
-                case FlightTypes.FlightType.Mainline: value *= Utils.RandomRangeF(.9f, 1.45f); break;
-
-                case FlightTypes.FlightType.Cargo: value *= Utils.RandomRangeF(.5f, 2.5f); break;
-
-                default: value *= Utils.RandomRangeF(.8f, 1.2f); break;
-            }
-
-            return value.RoundToIntLikeANormalPerson().Clamp(1, 20);
+            return value.Clamp(1, 20);
         }
-        public HashSet<CommercialFlightModel> InstantiateFlightSeries(string AircraftType, int seriesLength, Route arrivalRoute, Route departureRoute, FlightTypes.FlightType arrivalType = FlightTypes.FlightType.Vanilla, FlightTypes.FlightType departureType = FlightTypes.FlightType.Vanilla)
+        public HashSet<CommercialFlightModel> InstantiateFlightSeries(string AircraftType, int seriesLength, Route arrivalRoute, Route departureRoute, FlightTypeData inboundFlightData, FlightTypeData outboundFlightData)
         {
             HashSet<CommercialFlightModel> set = new HashSet<CommercialFlightModel>();
             AircraftModel aircraftModel;
@@ -614,22 +586,20 @@ namespace AirportCEOTweaks
                 aircraftModel = Singleton<AirTrafficController>.Instance.GetAircraftModel(AircraftType);
                 seatsin = aircraftModel.maxPax;
                 seatsout = seatsin;
+                int exitLimit = seatsin;
 
                 ref int operand = ref seatsin;
-                FlightTypes.FlightType flightType = arrivalType;
+                FlightTypeData currentFlightData = inboundFlightData;
+
+                if (TryGetAircraftData(AircraftType, out AircraftTypeData aircraftTypeData, out int typeDataIndex))
+                {
+                    exitLimit = aircraftTypeData.exitLimit_PAX[typeDataIndex];
+                }
 
                 for (var i = 0; i < 2; i++)
                 {
-                    switch (flightType)
-                    {
-                        case FlightTypes.FlightType.Economy: operand = (operand * 1.15f).RoundToIntLikeANormalPerson(); break;
-                        case FlightTypes.FlightType.VIP: operand = (operand * 0.5f).RoundToIntLikeANormalPerson(); break;
-
-                        case FlightTypes.FlightType.Cargo:
-                        case FlightTypes.FlightType.SpecialCargo:
-                        case FlightTypes.FlightType.Positioning: operand = 0; break;
-                    }
-                    flightType = departureType;
+                    operand = (operand * currentFlightData.paxMod[0]).RoundToIntLikeANormalPerson().ClampMax(exitLimit);
+                    currentFlightData = outboundFlightData;
                     operand = ref seatsout;
                 }
             }
@@ -715,106 +685,102 @@ namespace AirportCEOTweaks
                 default: return 2f;
             }
         }
-        public FlightTypes.FlightType GetFlightType(AircraftModel aircraft, int flightNumber)
+        public int GetServiceLevel(string aircraftType)
         {
-            if (AirportCEOTweaksConfig.cargoSystem == true)
+            int index = -1;
+
+            if(airlineBusinessData.tweaksFleet == null)
             {
-                foreach (string flag in AirportCEOTweaksConfig.cargoAirlineFlags)
+                //Debug.LogWarning("ACEO Tweaks | WARN: tweaksfleet == null for " + parent.businessName);
+                goto DefaultReturn;
+            }
+
+            for (int i = 0; i<airlineBusinessData.tweaksFleet.Length;i++)
+            {
+                if (airlineBusinessData.tweaksFleet[i] == aircraftType)
                 {
-                    if (parent.businessName.ToLower().Contains(flag.ToLower()) && AirportCEOTweaksConfig.cargoSystem == true)
-                    {
-                        if (starRank == Enums.BusinessClass.Exclusive)
-                        {
-                            return FlightTypes.FlightType.SpecialCargo;
-                        }
-                        else
-                        {
-                            return FlightTypes.FlightType.Cargo;
-                        }
-                    }
+                    index = i;
+                    break;
                 }
             }
-            if (!AirportCEOTweaksConfig.flightTypes)
+
+            if (index==-1 || airlineBusinessData.overrideServiceLevelByAircraftType == null)
             {
-                return FlightTypes.FlightType.Vanilla;
+                Debug.LogWarning("ACEO Tweaks | WARN: index == -1 ("+index+") catch for " + parent.businessName);
+                goto DefaultReturn;
             }
 
-            int intEconomyTier = (economyTier * 73f).RoundToIntLikeANormalPerson();
-            bool rounddown = (flightNumber % 73 > intEconomyTier % 73);
-
-            intEconomyTier = rounddown ? intEconomyTier - intEconomyTier % 73 : intEconomyTier + (73 - (intEconomyTier % 73));
-
-            if (intEconomyTier % 73 != 0)
+            if (index<airlineBusinessData.overrideServiceLevelByAircraftType.Length)
             {
-                Debug.LogError("shucks, zeke can't do math!");
+                try
+                {
+                    return airlineBusinessData.overrideServiceLevelByAircraftType[index];
+                }
+                catch
+                {
+                    Debug.LogWarning("ACEO Tweaks | WARN: couldn't return overrideServiceLevelByAircraftType[index] for " + parent.businessName);
+                }
             }
             else
             {
-                //Debug.LogError("zeke can do math. " + flightNumber.ToString() + " economy tier = " + (intEconomyTier/73).ToString());
+                try
+                {
+                    return airlineBusinessData.overrideServiceLevelByAircraftType[0];
+                }
+                catch
+                {
+                    Debug.LogWarning("ACEO Tweaks | WARN: couldn't return overrideServiceLevelByAircraftType[0] for " + parent.businessName);
+                }
             }
 
-            intEconomyTier /= 73;
-            intEconomyTier = AirTrafficController.IsSupersonic(aircraft.aircraftType) ? intEconomyTier += 1 : intEconomyTier;
-            intEconomyTier = Utils.Clamp(intEconomyTier, 0, 4);
-
-
-
-            switch (intEconomyTier)
-            {
-                case 0: return FlightTypes.FlightType.Economy;
-                case 1: //-------------------------------------------------------------Economy
-                    if ((aircraft.rangeKM < 3500 + ((flightNumber % 10) * 100) && flightNumber % 3 == 2))
-                    {
-                        return FlightTypes.FlightType.Commuter;
-                    }
-                    else
-                    {
-                        return FlightTypes.FlightType.Economy;
-                    }
-                case 2: //--------------------------------------------------------------Mainline
-                    if ((aircraft.rangeKM > 10000 + ((flightNumber % 30) * 100)) && flightNumber % 6 == 2)
-                    {
-                        return FlightTypes.FlightType.Flagship;
-                    }
-                    else if (aircraft.rangeKM < 2500 + ((flightNumber % 10) * 100))
-                    {
-                        return FlightTypes.FlightType.Commuter;
-                    }
-                    else
-                    {
-                        return FlightTypes.FlightType.Mainline;
-                    }
-                case 3: //--------------------------------------------------------------Full Service
-                    if (aircraft.rangeKM > 10000)
-                    {
-                        return FlightTypes.FlightType.Flagship;
-                    }
-                    else if (flightNumber % 3 == 2)
-                    {
-                        return FlightTypes.FlightType.Mainline;
-                    }
-                    else
-                    {
-                        return FlightTypes.FlightType.Flagship;
-                    }
-                case 4: //---------------------------------------------------------------VIP
-                    if (flightNumber % 3 == 1 && aircraft.rangeKM < 5000)
-                    {
-                        return FlightTypes.FlightType.Flagship;
-                    }
-                    else
-                    {
-                        return FlightTypes.FlightType.VIP;
-                    }
-                default: Debug.LogError("ACEO Tweaks | ERROR: Economy tier fell out of range while setting flight type!"); return FlightTypes.FlightType.Vanilla;
-            }
-
+            DefaultReturn:
+            return (int)parent.businessClass;
         }
-        public FlightTypes.FlightType GetFlightType(CommercialFlightModel cfm)
+        public bool GetCargo(string aircraftType)
         {
-            AircraftModel acm = Singleton<AirTrafficController>.Instance.GetAircraftModel(cfm.aircraftTypeString);
+            if (airlineBusinessData.cargo)
+            {
+                return true;
+            }
 
-            return GetFlightType(acm, cfm.arrivalRoute.routeNbr);
+            if (AirportCEOTweaks.aircraftTypeDataDict.TryGetValue(aircraftType, out AircraftTypeData aircraftTypeData))
+            {
+                for (int i = 0; i< aircraftTypeData.id.Length; i++)
+                {
+                    int index = 0;
+                    if (aircraftTypeData.id[i] == aircraftType && i<aircraftTypeData.cargo.Length)
+                    {
+                        index = i;
+                        break;
+                    }
+
+                    return aircraftTypeData.cargo[i];
+                }
+            }
+
+            return false;
+        }
+        public bool TryGetAircraftData(string aircraftType, out AircraftTypeData aircraftTypeData, out int index)
+        {
+            index = 0;
+            if (AirportCEOTweaks.aircraftTypeDataDict.TryGetValue(aircraftType, out aircraftTypeData))
+            {
+                for (int i = 0; i < aircraftTypeData.id.Length; i++)
+                {
+                    index = 0;
+                    if (aircraftTypeData.id[i] == aircraftType && i < aircraftTypeData.cargo.Length)
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+                return true;
+            }
+            else
+            {
+                aircraftTypeData = default;
+                return false;
+            }
         }
         public void ReportRating(int satisfaction, int demerits, Enums.ThreeStepScale weight)
         {
@@ -872,32 +838,8 @@ namespace AirportCEOTweaks
             services *= ((int)extend_CommercialFlightModel.parent.weightClass + 1);
             basePay -= 500* ((int)extend_CommercialFlightModel.parent.weightClass + 1);
             basePay += 125 * services;
+            basePay *= ((extend_CommercialFlightModel.flightDatas[0].payMod[0] + extend_CommercialFlightModel.flightDatas[1].payMod[0]) / 2);
 
-            switch (economyTier.RoundToIntLikeANormalPerson())
-            {
-                case 0: basePay *= .33f; break;
-                case 1: basePay *= .66f; break;
-                case 2: basePay *= 1f; break;
-                case 3: basePay *= 1.25f; break;
-                case 4: basePay *= 2f; break;
-            }
-            switch (extend_CommercialFlightModel.turnaroundType)
-            {
-                case FlightTypes.TurnaroundType.FuelOnly: basePay *= .4f; break;
-                case FlightTypes.TurnaroundType.Reduced: basePay *= 1.15f; break;
-                case FlightTypes.TurnaroundType.Exended: basePay *= 1.15f; break;
-                case FlightTypes.TurnaroundType.Cargo: basePay *= AirportCEOTweaksConfig.cargoPayMod; break;
-                case FlightTypes.TurnaroundType.SpecialCargo: basePay *= (AirportCEOTweaksConfig.cargoPayMod*1.5f); break;
-            }
-            switch (starRank)
-            {
-                case Enums.BusinessClass.Cheap: basePay *= 1f; break;
-                case Enums.BusinessClass.Small: basePay *= 1f; break;
-                case Enums.BusinessClass.Medium: basePay *= 1.1f; break;
-                case Enums.BusinessClass.Large: basePay *= 1.2f; break;
-                case Enums.BusinessClass.Exclusive: basePay *= 1.25f; break;
-                default: basePay = 1f; break;
-            }
             if (AirTrafficController.IsInternational(extend_CommercialFlightModel.parent))
             {
                 basePay *= 1.33f;

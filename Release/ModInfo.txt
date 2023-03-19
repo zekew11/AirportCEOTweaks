@@ -12,7 +12,14 @@ Changelog:
 * Added system for importing new aircrafts
 * Added data structure for new aircraft including placeholders for future funtionality
 * Added data structure for airline behavior modifications including placeholders for future funtionality
+* Added data structure to save/load some additional data per each commmercial flight. Save/load util
+   is credit to humoresque.
+* Replaced the flight types system with a more robust system that, in the
+   future, may be user-definable in json.
+* Reworked turnaround service progress tracking t take advantage of the ability to save and load data
 * Patch to ensure cargo aircraft remain on stand now applies only to cargo aircraft
+* Converted turnaround time modifiers from floats about 1.0f to shorts about 100 in an attempt to curb 
+   turnaround time rounding drift.
 * Refactored and reorganaized much of the code base
 
 2.2.x

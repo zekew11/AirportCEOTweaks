@@ -22,7 +22,9 @@ namespace AirportCEOTweaks
     public class ModsController : Singleton<ModsController>, IDontDestroyOnLoad
     {
         private Dictionary<string, Extend_CommercialFlightModel> commercialFlightExtensionRefDictionary = new Dictionary<string, Extend_CommercialFlightModel>();
-        
+
+        public Dictionary<CommercialFlightModel, CommercialFlightSaveData> commercialFlightLoadDataDict = new Dictionary<CommercialFlightModel, CommercialFlightSaveData>();
+
         private Dictionary<string, Extend_AirlineModel> airlineExtensionRefDictionary = new Dictionary<string, Extend_AirlineModel>();
 
         public Dictionary<string, AirlineBusinessData> airlineBusinessDataDic = new Dictionary<string, AirlineBusinessData>();

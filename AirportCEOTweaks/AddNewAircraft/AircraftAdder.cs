@@ -43,6 +43,11 @@ namespace AirportCEOTweaks
                     scale.Init();
 
                     aircraftGameObjectsSet.Add(aircraftGameObject);
+
+                    if (!AirportCEOTweaks.aircraftTypeDataDict.ContainsKey(aircraftTypeData.id[i]))
+                    {
+                        AirportCEOTweaks.aircraftTypeDataDict.Add(aircraftTypeData.id[i], aircraftTypeData);
+                    }
                 }
 
             }

@@ -29,7 +29,6 @@ namespace AirportCEOTweaks
             Singleton<ModsController>.Instance.GetExtensions(flight as CommercialFlightModel, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
             if (ecfm != null && AirportCEOTweaksConfig.flightTypes)
             {
-                ecfm.RefreshFlightTypes();
                 ecfm.RefreshServices();
             }
             return true;
@@ -60,7 +59,7 @@ namespace AirportCEOTweaks
                 Singleton<ModsController>.Instance.GetExtensions(flight as CommercialFlightModel, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
                 if (ecfm != null)
                 {
-                    FrqValueText.text = ecfm.GetDescription(true, true, false, false); //wont work with international = true
+                    FrqValueText.text = ecfm.GetDescription(true, true, true, true); 
                 }
             }
         }
@@ -71,7 +70,6 @@ namespace AirportCEOTweaks
             Singleton<ModsController>.Instance.GetExtensions(flight as CommercialFlightModel, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
             if (ecfm != null && AirportCEOTweaksConfig.flightTypes)
             {
-                ecfm.RefreshFlightTypes();
                 ecfm.RefreshServices();
             }
             return true;
@@ -99,7 +97,7 @@ namespace AirportCEOTweaks
                 Singleton<ModsController>.Instance.GetExtensions(flight as CommercialFlightModel, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
                 if (ecfm != null)
                 {
-                    FrqValueText.text = ecfm.GetDescription(true, true, false, false);
+                    FrqValueText.text = ecfm.GetDescription(true, true, true, true);
                 }
             }
         }
@@ -114,16 +112,6 @@ namespace AirportCEOTweaks
 
             bool[] haveService = { airportData.cateringServiceEnabled, airportData.aircraftCabinCleaningServiceEnabled, airportData.jetA1RefuelingServiceEnabled, airportData.rampAgentServiceRoundEnabled, airportData.baggageHandlingSystemEnabled };
 
-/*
-            int[] tempint = new int[5] { 0, 0, 0, 0, 0 };
-            tempint[0] = EvaluateCatering(evaluate);
-            tempint[1] = EvaluateCleaning(evaluate);
-            tempint[2] = EvaluateFueling(evaluate);
-            tempint[3] = EvaluateRampService(evaluate);
-            tempint[4] = EvaluateBaggage(evaluate);
-            return tempint;
-*/
-
             Transform[] icons = new Transform[5];
 
             icons[3] = transform2.Find("ServiceRoundIcon");
@@ -134,15 +122,15 @@ namespace AirportCEOTweaks
 
             Singleton<ModsController>.Instance.GetExtensions(___flight as CommercialFlightModel, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
 
-            int[] tempint = ecfm.RefreshServices();
+            int[] serviceDesireArray = ecfm.RefreshServices();
 
-            for (int i = 0; i < tempint.Length; i++)
+            for (int i = 0; i < serviceDesireArray.Length; i++)
             {
                 //not requested
                 if (!ecfm.turnaroundServices.GetValueSafe((Extend_CommercialFlightModel.TurnaroundServices)i).Requested)//Requested
                 {
                     //switch on desire level
-                    switch (tempint[i])
+                    switch (serviceDesireArray[i])
                     {
                         case -1:
                         case 0:
@@ -151,17 +139,17 @@ namespace AirportCEOTweaks
                     }
                 } // does not neccesarily continue
 
-                //failed is black or clear
+                //failed
                 if (ecfm.turnaroundServices.GetValueSafe((Extend_CommercialFlightModel.TurnaroundServices)i).Failed)//Failed
                 {
-                    switch (tempint[i])
+                    switch (serviceDesireArray[i])
                     {
                         case 0: icons[i].GetComponent<Image>().color = Color.clear; continue;
-                        case 1: icons[i].GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.darkOrange; continue;
-                        case 2: icons[i].GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.darkRed; continue;
+                        case 1: icons[i].GetComponent<Image>().color = Color.red; continue;
+                        case 2: icons[i].GetComponent<Image>().color = Color.red; continue;
                         default:
                             icons[i].GetComponent<Image>().color = Color.blue;
-                            Debug.LogError("ACEO Tweaks | WARN: turnaround service " + ((Extend_CommercialFlightModel.TurnaroundServices)i).ToString() + " is failed with invalid tempint [i==" + i.ToString() + "] == " + tempint[i].ToString());
+                            Debug.LogWarning("ACEO Tweaks | WARN: turnaround service " + ((Extend_CommercialFlightModel.TurnaroundServices)i).ToString() + " is failed with unexpected desire == " + serviceDesireArray[i].ToString());
                             continue;
                     }
                 } //continues
@@ -169,56 +157,55 @@ namespace AirportCEOTweaks
                 //succeeded is green
                 if (ecfm.turnaroundServices.GetValueSafe((Extend_CommercialFlightModel.TurnaroundServices)i).Succeeded)//Succeeded
                 {
-                    switch (tempint[i])
+                    switch (serviceDesireArray[i])
                     {
-                        //case -1: icons[i].GetComponent<Image>().color = Color.blue; break;
                         case 0: icons[i].GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.lightGreen; continue;
                         case 1: icons[i].GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.lightGreen; continue;
                         case 2: icons[i].GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.lightGreen; continue;
                         default:
                             icons[i].GetComponent<Image>().color = Color.blue;
-                            Debug.LogError("ACEO Tweaks | WARN: turnaround service " + ((Extend_CommercialFlightModel.TurnaroundServices)i).ToString() + " is succeeded with invalid tempint [i==" + i.ToString() + "] == " + tempint[i].ToString());
+                            Debug.LogWarning("ACEO Tweaks | WARN: turnaround service " + ((Extend_CommercialFlightModel.TurnaroundServices)i).ToString() + " is succeeded with unexpected desire == " + serviceDesireArray[i].ToString());
                             continue;
                     }
                 } //continues
 
-                //requested, completed, but not failed or succeeded is an error catch
-                if (ecfm.turnaroundServices.GetValueSafe((Extend_CommercialFlightModel.TurnaroundServices)i).Completed) //Completed
-                {
-                    Debug.LogError("ACEO Tweaks | WARN: turnaround service " + ((Extend_CommercialFlightModel.TurnaroundServices)i).ToString() + " is completed but not failed nor succeeded with tempint[" + i.ToString() + "] == " + tempint[i].ToString());
-                    icons[i].GetComponent<Image>().color = Color.blue; continue;
-                } //continues
+                ////requested, completed, but not failed or succeeded is an error catch
+                //if (ecfm.turnaroundServices.GetValueSafe((Extend_CommercialFlightModel.TurnaroundServices)i).Completed) //Completed
+                //{
+                //    //Debug.LogWarning("ACEO Tweaks | WARN: turnaround service " + ((Extend_CommercialFlightModel.TurnaroundServices)i).ToString() + " is completed but not failed nor succeeded with desire == " + serviceDesireArray[i].ToString());
+                //    //icons[i].GetComponent<Image>().color = Color.grey; continue;
+                //} //continues
                 
-                // now we are not refused, failed, succeeded, or completed, so we must be a pending request
+                // now we are not refused, failed, succeeded, or completed, so we must be a pending
 
                 //switch on desire level
-                switch (tempint[i])
+                switch (serviceDesireArray[i])
                 {
                     case 0:
-                        icons[i].GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.lightGray;
+                        icons[i].GetComponent<Image>().color = Color.white.Opacity(.3f);
                         continue;
                     case 1:
                         if (haveService[i])
                         {
-                            icons[i].GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.offWhite;
+                            icons[i].GetComponent<Image>().color = Color.white;
                         }
                         else
                         {
-                            icons[i].GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.lightOrange;
+                            icons[i].GetComponent<Image>().color = Color.yellow;
                         }
                         continue;
                     case 2:
                         if (haveService[i])
                         {
-                            icons[i].GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.white;
+                            icons[i].GetComponent<Image>().color = Color.white;
                         }
                         else
                         {
-                            icons[i].GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.lightRed;
+                            icons[i].GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.orange;
                         }
                         continue;
                     default:
-                        Debug.LogError("ACEO Tweaks | WARN: turnaround service " + ((Extend_CommercialFlightModel.TurnaroundServices)i).ToString() + " is by deduction a pending request with ?invalid? tempint[" + i.ToString() + "] == " + tempint[i].ToString());
+                        Debug.LogWarning("ACEO Tweaks | WARN: turnaround service " + ((Extend_CommercialFlightModel.TurnaroundServices)i).ToString() + " is by deduction a pending request with unexpected desire == " + serviceDesireArray[i].ToString());
                         icons[i].GetComponent<Image>().color = Color.blue; continue;
                 }
                 
@@ -228,9 +215,6 @@ namespace AirportCEOTweaks
             transform2.Find("DeicingIcon").GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.clear;
         }
 
-
-
     }
-
    
 }

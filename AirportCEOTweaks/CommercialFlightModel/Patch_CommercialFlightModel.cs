@@ -118,6 +118,14 @@ namespace AirportCEOTweaks
 
             ecfm.RefreshServices();
         }
+        //CompleteAllTurnaroundActivities()
+        [HarmonyPatch("CompleteAllTurnaroundActivities")]
+        [HarmonyPrefix]
+        public static void Patch_FailIncomplete(CommercialFlightModel __instance)
+        {
+            Singleton<ModsController>.Instance.GetExtensions(__instance, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
+            ecfm.RefreshServices(true);
+        }
     }
 
 

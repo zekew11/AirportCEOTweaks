@@ -29,23 +29,11 @@ namespace AirportCEOTweaks
         private int routeNbr;
         private int satisfaction = 0;
         private int demerits = 0;
-        public float turnaroundBias;
-        public float turnaroundPlayerBias = 1f;
-
-        public FlightTypes.FlightType inboundFlightType;
-        public FlightTypes.FlightType outboundFlightType;
-        public FlightTypes.TurnaroundType turnaroundType;
+        //public short turnaroundBiasPercent;                 //floats are bad because round numbers to us are not round in float world
+        public short turnaroundPlayerBiasPercent = 100;     //floats are bad because round numbers to us are not round in float world
+        public FlightTypeData[] flightDatas; 
 
         public Dictionary<TurnaroundServices,TurnaroundService> turnaroundServices = new Dictionary<TurnaroundServices, TurnaroundService>();
-
-        [Serializable]
-        public struct CommercialFlightModelData
-        {
-            public string airlineString;
-            public string flightNumberString;
-            public string arrivalDateTimeString;
-        }
-
         public Extend_CommercialFlightModel(CommercialFlightModel parent, Extend_AirlineModel eam)
         {
             this.referenceID = Guid.NewGuid().ToString();
@@ -56,12 +44,35 @@ namespace AirportCEOTweaks
 
             Singleton<ModsController>.Instance.RegisterThisECFM(this, parent);
 
+            CreateRefresherObj(0f);
+        }
+        public Extend_CommercialFlightModel(CommercialFlightSaveData data)
+        {
+            this.referenceID = data.referenceID;
+            this.reference = new Reference(this.referenceID);
 
-            RefreshFlightTypes(eam);
-            AfterLoadRefresh(0f);
+            //Airline airline = Singleton<BusinessController>.Instance.GetAirline(data.airlineString);
+
+            parent = Singleton<AirTrafficController>.Instance.GetFlightByReferenceID<CommercialFlightModel>(data.parentFlightReferenceID);
+            if (parent == null) { Debug.LogError("ACEO Tweaks | Error: Tried adding commercial flight model extension to null comercial flight model!"); }
+            
+            Singleton<ModsController>.Instance.RegisterThisECFM(this, parent);
+
+            satisfaction = data.satisfaction;
+            demerits = data.demerits;
+
+            flightDatas = data.flightDatas;
+
+            foreach (TurnaroundService.TurnaroundServiceData turnaroundServiceData in data.turnaroundServiceDatas)
+            {
+                turnaroundServices.Add(turnaroundServiceData.service, new TurnaroundService(turnaroundServiceData, parent, this, ParentAirlineExtension));
+            }
+
+            CreateRefresherObj(0f);
         }
         public void Initialize()
         {
+            flightDatas = FlightDataBuilder.GetSpecificFlightDatasArray(parent);
             try
             {
                 turnaroundTime = parent.turnaroundTime;
@@ -82,19 +93,18 @@ namespace AirportCEOTweaks
             }
             try
             {
-
-                if (inboundFlightType == FlightTypes.FlightType.Cargo || inboundFlightType == FlightTypes.FlightType.SpecialCargo || inboundFlightType == FlightTypes.FlightType.Positioning)
+                if (flightDatas[0].paxMod[0] == 0)
                 {
                     parent.ResetArrivingPassengers();
                 }
-                if (outboundFlightType == FlightTypes.FlightType.Cargo || outboundFlightType == FlightTypes.FlightType.SpecialCargo || outboundFlightType == FlightTypes.FlightType.Positioning)
+                if (flightDatas[1].paxMod[0] == 0)
                 {
                     parent.ResetDeparingPassengers();
                 }
             }
             catch
             {
-                Debug.LogError("ACEO Tweaks | WARN: Failed to set turnaround time and PAX levels in ECM Init");
+                Debug.LogError("ACEO Tweaks | WARN: Failed to set PAX levels in ECM Init");
             }
             try
             {
@@ -109,25 +119,21 @@ namespace AirportCEOTweaks
         }
         private void InitializeTurnaroundTime()
         {
-            int num = routeNbr % 12;
-            float[] modifiers = { 0.85f, 0.9f, 1f, 1.1f, 1.15f };
-
-
-            turnaroundBias = num < 2 ? modifiers[0] : num < 4 ? modifiers[1] : num < 9 ? modifiers[2] : num < 11 ? modifiers[3] : modifiers[4];
-
-
-            TimeSpan tempTurnaroundTime = SingletonNonDestroy<FlightTypesController>.Instance.GetTurnaroundTime(this, turnaroundType, 1f);
             if (parent.isAllocated)
             {
-                turnaroundPlayerBias = ((float)(parent.turnaroundTime.TotalMinutes / tempTurnaroundTime.TotalMinutes));
+                TimeSpan tempTurnaroundTime = AirTrafficController.GetTurnaroundTime(parent.weightClass, parent.isEmergency, parent.StandIsRemote);
+                turnaroundPlayerBiasPercent = (short)((parent.TurnaroundTime.TotalMinutes / tempTurnaroundTime.TotalMinutes)*100);
+            }
+            else
+            {
+                turnaroundPlayerBiasPercent = 100;
             }
 
-            TurnaroundTime = SingletonNonDestroy<FlightTypesController>.Instance.GetTurnaroundTime(this, turnaroundType, turnaroundPlayerBias);
+            TurnaroundTime = parent.TurnaroundTime;
         }
-        public void ResetTurnaroundTime(bool baseline = false)
+        public void ResetTurnaroundTime()
         {
-            float b = baseline ? 1f : turnaroundPlayerBias;
-            TurnaroundTime = SingletonNonDestroy<FlightTypesController>.Instance.GetTurnaroundTime(this, turnaroundType, b);
+            TurnaroundTime = TimeSpan.FromMinutes(AirTrafficController.GetTurnaroundTime(parent.weightClass, parent.isEmergency, parent.StandIsRemote).TotalMinutes * (turnaroundPlayerBiasPercent/100f));
         }
         public void FinalizeFlightDetails()
         {
@@ -137,7 +143,7 @@ namespace AirportCEOTweaks
 
             parent.Aircraft.am.CurrentWasteStored = parent.currentTotalNbrOfArrivingPassengers.ClampMin(2) + ((parent.Aircraft.am.MaxPax-parent.currentTotalNbrOfArrivingPassengers)*0.33f).RoundToIntLikeANormalPerson();
 
-            AfterLoadRefresh(0.5f);
+            RefreshServices();
         }
         public void CompleteFlight()// ------------- RENEWAL CODE WITHIN ------------------------------
         {
@@ -167,7 +173,7 @@ namespace AirportCEOTweaks
                     DateTime lastArrivalTime = parent.arrivalTimeDT;
                     DateTime lastDepartureTime = parent.departureTimeDT;
                     StandModel lastStand = parent.Stand;
-                    float lastTurnaroundPlayerBias = turnaroundPlayerBias;
+                    float lastTurnaroundPlayerBias = turnaroundPlayerBiasPercent/100f;
 
                     foreach (CommercialFlightModel commercialFlightModel in mySeries)
                     {
@@ -182,7 +188,7 @@ namespace AirportCEOTweaks
                         }
 
                         lastStand = lastArrivalTime > commercialFlightModel.arrivalTimeDT ? lastStand : commercialFlightModel.Stand;
-                        lastTurnaroundPlayerBias = lastArrivalTime > commercialFlightModel.arrivalTimeDT ? lastTurnaroundPlayerBias : other_ecfm.turnaroundPlayerBias;
+                        lastTurnaroundPlayerBias = lastArrivalTime > commercialFlightModel.arrivalTimeDT ? lastTurnaroundPlayerBias : other_ecfm.turnaroundPlayerBiasPercent/100f;
                         
                         //Do anything else before changeing the time vars so they can be used in comparisons.
 
@@ -200,7 +206,7 @@ namespace AirportCEOTweaks
 
                     // Instantiate and allocate the new flight(s)
 
-                    HashSet<CommercialFlightModel> cfmSet = eam.InstantiateFlightSeries(parent.aircraftTypeString, num, parent.arrivalRoute, parent.departureRoute);
+                    HashSet<CommercialFlightModel> cfmSet = eam.InstantiateFlightSeries(parent.aircraftTypeString, num, parent.arrivalRoute, parent.departureRoute, flightDatas[0], flightDatas[1]);
                     foreach (CommercialFlightModel cfm in cfmSet)
                     {
                         cfm.AllocateFlight(lastArrivalTime.AddDays(num), lastDepartureTime.AddDays(num), parent.Stand);  // eg 3 renewals Adddays 3,2,1
@@ -265,40 +271,7 @@ namespace AirportCEOTweaks
                 }
             }
         }
-        public void RefreshFlightTypes()
-        {
-             Singleton<ModsController>.Instance.GetExtensions(parent, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-             RefreshFlightTypes(eam);
-        }
-        public void RefreshFlightTypes(Extend_AirlineModel myAirlineExtension)
-        {
-            if (!AirportCEOTweaksConfig.flightTypes)
-            {
-                inboundFlightType = FlightTypes.FlightType.Vanilla;
-                outboundFlightType = inboundFlightType;
-                turnaroundType = FlightTypes.TurnaroundType.Vanilla;
-            }
-            try
-            {
-                if (parent == null)
-                {
-                    Debug.LogError("ACEO Tweaks | ERROR: In RefreshTypes(), parent (cfm) == null");
-                }
-                if (myAirlineExtension == null)
-                {
-                    Debug.LogError("ACEO Tweaks | ERROR: In RefreshTypes(), airline extension == null");
-                }
-
-                inboundFlightType = myAirlineExtension.GetFlightType(parent);
-                outboundFlightType = inboundFlightType;
-                this.turnaroundType = SingletonNonDestroy<FlightTypesController>.Instance.GetTurnaroundType(parent,inboundFlightType, outboundFlightType);
-            }
-            catch
-            {
-                Debug.LogError("ACEO Tweaks | ERROR: Failed to Set Flight Types in RefreshTypes()");
-            }
-        }
-        public void AfterLoadRefresh(float wait = 0.5f)
+        public void CreateRefresherObj(float wait = 0.5f)
         {
             GameObject attachto = UnityEngine.GameObject.Find("CoreGameControllers");
 
@@ -309,7 +282,7 @@ namespace AirportCEOTweaks
         public string GetDescription(bool flight_type, bool turnaround_type, bool international, bool duration)
         {
             string stringy = "";
-            string post = "";
+            //string post = "";
             string timeword= "";
 
             if (parent.isAmbulance)
@@ -326,17 +299,18 @@ namespace AirportCEOTweaks
                 TimeSpan flightTime;
                 
                 FlightModelUtils.TakeoffTime(parent, out flightTime, 2f, 12f);
+                
                 if (flightTime.TotalMinutes < 240)
                 {
                     timeword = "Short";
                     if (flightTime.TotalMinutes < 90)
                     {
-                        timeword = "Very short";
+                        timeword = "Very-Short";
                     }
                 }
                 else if (flightTime.TotalMinutes > 420)
                 {
-                    timeword = "Long-haul";
+                    timeword = "Long-Haul";
                     if (flightTime.TotalMinutes > 660)
                     {
                         //timeword = "Extreme-long-haul";
@@ -344,104 +318,34 @@ namespace AirportCEOTweaks
                 }
                 else
                 {
-                    timeword = "";
+                    timeword = "Mid-Range";
                 }
             }
 
-            if (international && !duration)
+            if (duration)
             {
-                if (parent.Stand.onlyAcceptInternational)
-                {
-                    stringy += "International ";
-                    
-                }
-                else
-                {
-                    stringy += "";
-                    
-                }
+                stringy += timeword;
             }
-            if (international && duration)
-            {
-                if (parent.Stand.onlyAcceptInternational)
-                {
-                    stringy +="International "+timeword ;
-                    
-                }
-                else
-                {
-                    stringy +=""+ timeword;
-                    
-                }
-            }
-
             if (flight_type)
             {
-                if (turnaround_type)
-                {
-                    post = "";
-                }
-                else
-                {
-                    post = " Flight";
-                }
-                FlightTypes.FlightType ftype = parent.currentTravelDirection == Enums.TravelDirection.Arrival ? inboundFlightType : outboundFlightType;
-                if (!international)
-                {
-                    stringy += "";
-                }
-                else
-                {
-                    stringy += "";
-                }
-                switch (ftype)
-                {
-                    case FlightTypes.FlightType.Vanilla: stringy += "Vanilla"; break;
-
-                    case FlightTypes.FlightType.Economy:  stringy += "Economy"; break;
-                    case FlightTypes.FlightType.Commuter: stringy += "Commuter"; break;
-                    case FlightTypes.FlightType.Mainline: stringy += "Main-Line"; break;
-                    case FlightTypes.FlightType.Flagship: stringy += "Flagship"; break;
-                    case FlightTypes.FlightType.VIP:      stringy += "VIP"; break;
-
-                    case FlightTypes.FlightType.Positioning: stringy += "Positioning"; break;
-                    case FlightTypes.FlightType.Divert: stringy = parent.departureFlightNbr + "Diverting!"; return stringy;
-
-                    case FlightTypes.FlightType.Cargo: stringy += "Cargo"; break;
-                    case FlightTypes.FlightType.SpecialCargo: stringy += "Specialty Cargo"; break;
-                }
+                stringy += " " + flightDatas[0].description;
             }
-
-            stringy += post;
-
-            if (turnaround_type)
+            if (international && IsInternational)
             {
-                stringy += "; Requests ";
-                switch (turnaroundType)
-                {
-                    case FlightTypes.TurnaroundType.Vanilla: stringy += "Vanilla Turnaround"; break;
-
-                    case FlightTypes.TurnaroundType.FuelOnly: stringy += "Refueling Only!"; break;
-                    case FlightTypes.TurnaroundType.Reduced: stringy += "Fast Turnaround"; break;
-                    case FlightTypes.TurnaroundType.Normal: stringy += "Normal Turnaround"; break;
-                    case FlightTypes.TurnaroundType.Full: stringy += "Full Services"; break;
-                    case FlightTypes.TurnaroundType.Exended: stringy += "Extended Turnaround"; break;
-
-                    case FlightTypes.TurnaroundType.Maintenance: stringy += "Hanger Services!"; break;
-
-                    case FlightTypes.TurnaroundType.Cargo: stringy += "Cargo Services"; break;
-                    case FlightTypes.TurnaroundType.SpecialCargo: stringy += "Cargo Services"; break;
-                }
+                stringy += "; International.";
             }
-
+            else
+            {
+                stringy += ".";
+            }
 
             return stringy;
         }
-        public int[] RefreshServices(bool evaluate = false)
+        public int[] RefreshServices(bool lastPass = false)
         {
-            int[] tempint = new int[5] { 0, 0, 0, 0, 0 };
+            int[] serviceDesireArray = new int[5] { 0, 0, 0, 0, 0 };
 
-            if (turnaroundServices.Count < tempint.Length)
+            if (turnaroundServices.Count < serviceDesireArray.Length)
             {
                 if (parent == null)
                 {
@@ -464,25 +368,20 @@ namespace AirportCEOTweaks
             }
 
 
-            for (var i = 0; i<tempint.Length; i++)
+            for (var i = 0; i<serviceDesireArray.Length; i++)
             {
                 TurnaroundService service;
                 if (turnaroundServices.TryGetValue((TurnaroundServices)i, out service))
                 {
-                    tempint[i] = (int)service.MyDesire;
-
-                    if (evaluate)
-                    {
-                        service.ServiceRequestSetter(true);
-                    }
+                    serviceDesireArray[i] = (int)service.MyDesire;
+                    service.ServiceRefresh(lastPass);
                 }
                 else
                 {
                     Debug.LogError("ACEO Tweaks | ERROR: failed to find turnaround service index ==" + i.ToString());
                 }
             }
-
-            return tempint;
+            return serviceDesireArray;
         }
         public float GetPaymentPercentAndReportRating(bool rate = true)
         {
@@ -490,25 +389,15 @@ namespace AirportCEOTweaks
             demerits = 0;
             float maxDelay = GetMaxDelay();
 
-            int[] services = RefreshServices(true);
+            RefreshServices(rate);
 
             if (parent.delayCounter > maxDelay)
             {
                 SatisfactionAdder = -1;
-
-                if (parent.delayCounter > maxDelay*2 || turnaroundType == FlightTypes.TurnaroundType.Reduced)
-                {
-                    SatisfactionAdder = -1;
-                }
             }
             else if (parent.delayCounter < maxDelay*.5)
             {
                 SatisfactionAdder = 1;
-
-                if (parent.delayCounter == 0 || outboundFlightType == FlightTypes.FlightType.Economy)
-                {
-                    SatisfactionAdder = 1;
-                }
             }
 
             if (rate)
@@ -545,35 +434,32 @@ namespace AirportCEOTweaks
                 case Enums.BusinessClass.Large: maxDelay = 45f; break;
                 case Enums.BusinessClass.Exclusive: maxDelay = 30f; break;
             }
-            switch (outboundFlightType)
-            {
-                case FlightTypes.FlightType.Economy:
-                case FlightTypes.FlightType.Commuter: maxDelay *= 0.7f; break;
-
-                case FlightTypes.FlightType.VIP:
-                case FlightTypes.FlightType.SpecialCargo: maxDelay *= 0.5f; break;
-
-                case FlightTypes.FlightType.Mainline: break;
-
-                case FlightTypes.FlightType.Flagship: maxDelay *= 1.25f; break;
-
-                case FlightTypes.FlightType.Positioning:
-                case FlightTypes.FlightType.Cargo: maxDelay *= 2f; break;
-            }
-
             return maxDelay;
         }
-
-        public CommercialFlightModelData SerializedData()
+        public CommercialFlightSaveData SerializedData()
         {
-            CommercialFlightModelData data = new CommercialFlightModelData();
+            CommercialFlightSaveData data = new CommercialFlightSaveData();
+            data.referenceID = this.referenceID;
+            data.parentFlightReferenceID = parent.referenceID;
             data.airlineString = parent.Airline.businessName;
             data.flightNumberString = parent.departureFlightNbr;
             data.arrivalDateTimeString = parent.arrivalTimeDTString;
+            data.turnaroundDurationString = parent.turnaroundTimeString;
+
+            data.satisfaction = satisfaction;
+            data.demerits = demerits;
+
+            data.flightDatas = flightDatas;
+
+            List<TurnaroundService.TurnaroundServiceData> list = new List<TurnaroundService.TurnaroundServiceData>();
+            foreach (KeyValuePair<TurnaroundServices,TurnaroundService> kvp in turnaroundServices)
+            {
+                list.Add(kvp.Value.MyTurnaroundServiceData);
+            }
+            data.turnaroundServiceDatas = list.ToArray();
 
             return data;
         }
-
         private DateTime CurrentTime
         {
             get
@@ -598,7 +484,7 @@ namespace AirportCEOTweaks
             set
             {
                 if (value < 0)
-                { demerits -= value; }
+                { demerits -= value; } // -(-value) ~~ demerits + (+)value
                 satisfaction += value;
             }
         }
@@ -666,6 +552,13 @@ namespace AirportCEOTweaks
                 }
             }
         }
+        public bool IsInternational
+        {
+            get
+            {
+                return !TravelController.IsDomesticAirport(parent.arrivalRoute.FromAirport, parent.arrivalRoute.ToAirport);
+            }
+        }
         public AirlineModel Airline
         {
             get
@@ -700,20 +593,13 @@ namespace AirportCEOTweaks
                 switch (IsRemote)
                 {
                     case true:
-                        if (outboundFlightType == FlightTypes.FlightType.Vanilla )
-                        {
-                            switch (WeightClass)
-                            {
-                                case Enums.ThreeStepScale.Large: return turnaroundTime.Add(TimeSpan.FromMinutes(45));
-                                case Enums.ThreeStepScale.Medium: return turnaroundTime.Add(TimeSpan.FromMinutes(45));
-                                case Enums.ThreeStepScale.Small: return turnaroundTime.Add(TimeSpan.FromMinutes(45));
-                                default: return turnaroundTime;
-                            }
-                        }
-                        else
-                        {
-                            return turnaroundTime;
-                        }
+                       switch (WeightClass)
+                       {
+                           case Enums.ThreeStepScale.Large: return turnaroundTime.Add(TimeSpan.FromMinutes(60));
+                           case Enums.ThreeStepScale.Medium: return turnaroundTime.Add(TimeSpan.FromMinutes(45));
+                           case Enums.ThreeStepScale.Small: return turnaroundTime.Add(TimeSpan.FromMinutes(30));
+                           default: return turnaroundTime;
+                       };
                     case false: return turnaroundTime;
                     default: return turnaroundTime;
                 }
@@ -742,6 +628,8 @@ namespace AirportCEOTweaks
             }
             IEnumerator RefreshCoRoutine()
             {
+                //Debug.Log("ACEO Tweaks | Debug: Refresh works cool");
+                
                 while (!SaveLoadGameDataController.loadComplete)
                 {
                     yield return null;
@@ -752,9 +640,6 @@ namespace AirportCEOTweaks
                 try
                 {
                     Singleton<ModsController>.Instance.GetExtensions(Me.parent, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-                    Me.RefreshFlightTypes(eam);
-                    
-                    
                     Me.RefreshServices();
                 }
                 catch
@@ -774,6 +659,8 @@ namespace AirportCEOTweaks
             private bool failed = false;
             private bool succeeded = false;
             private bool capable = true;
+            private bool impactAssessed = false;
+            private Desire myDesire = Desire.Unint;
             private TurnaroundServices service;
             private readonly int[] primes = {13,17,19,23,29,31,37,41,43,47};
             private HashSet<TurnaroundService> children = new HashSet<TurnaroundService>();
@@ -799,24 +686,63 @@ namespace AirportCEOTweaks
                 }
             }
             private TurnaroundService(TurnaroundServices service, string nameString, FlightModel flightModel, Extend_CommercialFlightModel ecfm, Extend_AirlineModel eam)
-            {
+            { 
                 this.nameString = nameString;
                 this.service = service;
                 this.flightModel = flightModel;
                 this.ecfm = ecfm;
                 this.eam = eam;
+                Desire des = MyDesire;
             }
-
-            [Serializable]
-            struct TurnaroundServiceData
+            public TurnaroundService(TurnaroundServiceData data, FlightModel flightModel, Extend_CommercialFlightModel ecfm, Extend_AirlineModel eam)
             {
-                private bool failed;
-                private bool succeeded;
-                private TurnaroundServices service;
-                private TurnaroundServiceData[] turnaroundServiceDataChildren;
+                failed = data.failed;
+                succeeded = data.succeeded;
+                impactAssessed = data.impactAssessed;
+                nameString = data.namestring;
+                service = data.service;
+                Desire des = MyDesire;
+
+                foreach (TurnaroundServiceData child in data.turnaroundServiceDataChildren)
+                {
+                    children.Add(new TurnaroundService(child, flightModel, ecfm, eam));
+                }
+            }
+            [Serializable]
+            public struct TurnaroundServiceData
+            {
+                public bool failed;
+                public bool succeeded;
+                public bool impactAssessed;
+                public string namestring;
+                public TurnaroundServices service;
+                public TurnaroundServiceData[] turnaroundServiceDataChildren;
+            }
+            public TurnaroundServiceData MyTurnaroundServiceData
+            {
+                get
+                {
+                    TurnaroundServiceData[] childData = new TurnaroundServiceData[children.Count];
+                    int i = 0;
+                    foreach (TurnaroundService child in children)
+                    {
+                        childData[i] = child.MyTurnaroundServiceData;
+                        i++;
+                    }
+                    return new TurnaroundServiceData
+                    {
+                        failed = Failed,
+                        succeeded = Succeeded,
+                        impactAssessed = impactAssessed,
+                        namestring = nameString,
+                        service = service,
+                        turnaroundServiceDataChildren = childData
+                    };
+                }
             }
             public enum Desire
             {
+                Unint = -99,
                 Refused = -1,
                 Indiffernt,
                 Desired,
@@ -826,35 +752,38 @@ namespace AirportCEOTweaks
             {
                 get 
                 {
-                    switch (service)
+                    if (myDesire == Desire.Unint)
                     {
-                        case TurnaroundServices.Catering:    return (Desire)EvaluateCatering(); 
-                        case TurnaroundServices.Cleaning:    return (Desire)EvaluateCleaning(); 
-                        case TurnaroundServices.Fueling:     return (Desire)EvaluateFueling(); 
-                        case TurnaroundServices.RampService: return (Desire)EvaluateRampService(); 
-                        case TurnaroundServices.Baggage:     return (Desire)EvaluateBaggage();
-                        default:                             return Desire.Refused;
+                        switch (service)
+                        {
+                            case TurnaroundServices.Catering: return (Desire)EvaluateCateringDesire();
+                            case TurnaroundServices.Cleaning: return (Desire)EvaluateCleaningDesire();
+                            case TurnaroundServices.Fueling: return (Desire)EvaluateFuelingDesire();
+                            case TurnaroundServices.RampService: return (Desire)EvaluateRampServiceDesire();
+                            case TurnaroundServices.Baggage: return (Desire)EvaluateBaggageDesire();
+                            default: Debug.LogError("ACEO Tweaks | ERROR : Turnaround service " + service.ToString() +"not given a MyDesire"); return Desire.Unint;
+                        }
                     }
+                    else
+                    {
+                        return myDesire;
+                    }
+                }
+                set
+                {
+                    myDesire = value;
                 }
             }
             public bool Succeeded
             {
                 get
                 {
-                    if (Requested && Completed && !Failed)
-                    {
-                        Succeeded = true;
-                    }
-
                     return succeeded;
-
                 }
                 set
                 {
-                    failed = !value;
+                    //failed = !value;
                     succeeded = value;
-
-                    Completed = true;
                 }
             }
             public bool Failed
@@ -865,54 +794,29 @@ namespace AirportCEOTweaks
                 }
                 set
                 {
-                    succeeded = !value;
+                    //succeeded = !value;
                     failed = value;
-
-                    Completed = true;
                 }
             }
             public bool Completed
             {
                 get
                 {
-                    if (succeeded && failed)
-                    {
-                        failed = false;
-                        Completed = true;
-                        Debug.LogError("ACEO Tweaks | WARN: Turnaround service had both succeeded and failed. Reverted to (valid) succeeded (and not failed) state.");
-                        return true;
-                    }
-
                     string stringy = nameString + "Completed";
                     bool value = (bool)flightModel.GetType().GetField(stringy).GetValue(flightModel);
-
-                    if (value == false)
+                    if (value && !Failed)
                     {
-                        failed = false;
-                        succeeded = false;
+                        ReportSucceed(value);
                     }
-                    else if (value == true && !Requested)
-                    {
-                        failed = true;
-                        succeeded = false;
-                    }
-
                     return value;
                 }
-                set
-                {
-                    if (!AirportCEOTweaksConfig.flightTypes)
-                    { return; }
-                    string stringy = nameString + "Completed";
-                    flightModel.GetType().GetField(stringy).SetValue(flightModel,value);
-
-                    if (value == false)
-                    {
-                        failed = false;
-                        succeeded = false;
-                        Requested = true;
-                    }
-                }
+                //set
+                //{
+                //    if (!AirportCEOTweaksConfig.flightTypes)
+                //    { return; }
+                //    string stringy = nameString + "Completed";
+                //    flightModel.GetType().GetField(stringy).SetValue(flightModel,value);
+                //}
             }
             public bool Requested
             {
@@ -920,25 +824,25 @@ namespace AirportCEOTweaks
                 {
                     string stringy = nameString + "Requested";
                     bool value = (bool)flightModel.GetType().GetField(stringy).GetValue(flightModel);
-
                     return value;
                 }
                 set
                 {
                     if (!AirportCEOTweaksConfig.flightTypes)
                     { return; }
-                    string stringy = nameString + "Requested";
-                    flightModel.GetType().GetField(stringy).SetValue(flightModel, value);
 
-                    if (value == false)
-                    {
-                        failed = true;
-                        succeeded = false;
-                        Completed = true;
-                    }
+                    string stringy = nameString + "Requested";
+                    //bool oldValue = (bool)flightModel.GetType().GetField(stringy).GetValue(flightModel);
+                    flightModel.GetType().GetField(stringy).SetValue(flightModel, value);
                 }
             }
-            private int EvaluateCatering()
+            public void ReportSucceed(bool succeeded = true)
+            {
+                Succeeded = succeeded;
+                Failed = !succeeded;
+                AssessServiceImpact(MyDesire, succeeded);
+            }
+            private int EvaluateCateringDesire()
             {
                 // -1 = refuse
                 //  0 = indifferent; might do it
@@ -949,40 +853,31 @@ namespace AirportCEOTweaks
 
                 capable = Singleton<AirportController>.Instance.AirportData.cateringServiceEnabled;
 
-                switch (ecfm.outboundFlightType)
+                switch (ecfm.flightDatas[1].catering[0])
                 {
-                    case FlightTypes.FlightType.Vanilla: return 1;
+                    case RequestLevel.Demand: return 2;
+                    case RequestLevel.Accept:
+                        if (capable)
+                        {
+                            return 1;
+                        }
+                        else
+                        {
+                            return 0;
+                        }
+                    case RequestLevel.Reject: return -1;
+                }
 
-                    case FlightTypes.FlightType.Economy: result = -1; break;
-                    case FlightTypes.FlightType.Commuter: result = Math.Min(eam.economyTier.RoundToIntLikeANormalPerson() - 1, 2); break;
-                    case FlightTypes.FlightType.Mainline: result = Math.Min(eam.economyTier.RoundToIntLikeANormalPerson(), 2); break;
-                    case FlightTypes.FlightType.Flagship: result = Math.Min(eam.economyTier.RoundToIntLikeANormalPerson() + 1, 2); break;
-                    case FlightTypes.FlightType.VIP: result = 2; break;
-
-                    default: result = -10; break;
-                }
-                switch (ecfm.turnaroundType)
-                {
-                    case FlightTypes.TurnaroundType.Reduced: result -= 1; break;
-                    case FlightTypes.TurnaroundType.FuelOnly: result -= 10; break;
-                }
-                if (ecfm.parent.departureRoute.routeDistance / ecfm.aircraftModel.flyingSpeed > 8) // longhaul
-                {
-                    result += 1;
-                }
-                else if (ecfm.parent.departureRoute.routeDistance / ecfm.aircraftModel.flyingSpeed < 4) //short
-                {
-                    result -= 1;
-                }
                 if (ecfm.parent.weightClass == Enums.ThreeStepScale.Small)
                 {
                     result = -10;
                 }
 
                 result = result.Clamp(-1, 2);
+                MyDesire = (Desire)result;
                 return result;
             }
-            private int EvaluateCleaning()
+            private int EvaluateCleaningDesire()
             {
                 // -1 = refuse
                 //  0 = indifferent; might do it
@@ -990,76 +885,48 @@ namespace AirportCEOTweaks
                 //  2 = demanded, will be displeased if not available
                 int result = 0;
                 capable = Singleton<AirportController>.Instance.AirportData.aircraftCabinCleaningServiceEnabled;
-                switch (ecfm.inboundFlightType)
+                switch (ecfm.flightDatas[0].cleaning[0])
                 {
-                    case FlightTypes.FlightType.Vanilla: return 1;
-
-                    case FlightTypes.FlightType.Economy: result = 0; break;
-                    case FlightTypes.FlightType.Commuter: result = Math.Min(eam.economyTier.RoundToIntLikeANormalPerson(), 2); break;
-                    case FlightTypes.FlightType.Mainline: result = Math.Min(eam.economyTier.RoundToIntLikeANormalPerson(), 2); break;
-                    case FlightTypes.FlightType.Flagship: result = Math.Min(eam.economyTier.RoundToIntLikeANormalPerson() + 1, 2); break;
-                    case FlightTypes.FlightType.VIP: result = 2; break;
-
-                    case FlightTypes.FlightType.Divert: result = 0; break;
-                    case FlightTypes.FlightType.Cargo: result = 0; break;
-                    case FlightTypes.FlightType.SpecialCargo: result = 0; break;
-
-                    default: result = -10; break;
-                }
-                switch (ecfm.turnaroundType)
-                {
-                    case FlightTypes.TurnaroundType.Reduced: result -= 1; break;
-                    case FlightTypes.TurnaroundType.FuelOnly: result -= 10; break;
-                }
-                if (ecfm.parent.arrivalRoute.routeDistance / ecfm.aircraftModel.flyingSpeed > 8) // longhaul
-                {
-                    result += 1;
-                }
-                else if (ecfm.parent.arrivalRoute.routeDistance / ecfm.aircraftModel.flyingSpeed < 4) //short
-                {
-                    result -= 1;
+                    case RequestLevel.Demand: return 2;
+                    case RequestLevel.Accept:
+                        if (capable)
+                        {
+                            return 1;
+                        }
+                        else
+                        {
+                            return 0;
+                        }
+                    case RequestLevel.Reject: return -1;
                 }
                 if (ecfm.parent.weightClass == Enums.ThreeStepScale.Small)
                 {
                     result = -10;
                 }
                 result = result.Clamp(-1, 2);
+                MyDesire = (Desire)result;
                 return result;
             }
-            private int EvaluateFueling()
+            private int EvaluateFuelingDesire()
             {
                 // -1 = refuse
                 //  0 = indifferent; might do it
                 //  1 = will take if available, will be pleased
                 //  2 = demanded, will be displeased if not available
 
-                int result = 0;
+                int result = 1;
                 capable = ecfm.aircraftModel.FuelType == Enums.FuelType.JetA1 ? Singleton<AirportController>.Instance.AirportData.jetA1RefuelingServiceEnabled : Singleton<AirportController>.Instance.AirportData.avgas100LLRefuelingServiceEnabled;
-                switch (ecfm.inboundFlightType)
-                {
-                    case FlightTypes.FlightType.Vanilla: return 1;
-
-                    case FlightTypes.FlightType.Positioning: result = 2; break;
-                    case FlightTypes.FlightType.Divert: result = 0; break;
-                    case FlightTypes.FlightType.Cargo: result = 2; break;
-                    case FlightTypes.FlightType.SpecialCargo: result = 2; break;
-
-                    default: result = 1; break;
-                }
 
                 if (flightModel.departureRoute.routeDistance / ecfm.aircraftModel.rangeKM > 0.5)
                 {
                     result += 3;
                 }
-                if (ecfm.turnaroundType == FlightTypes.TurnaroundType.FuelOnly)
-                {
-                    result += 3;
-                }
 
                 result = result.Clamp(-1, 2);
+                MyDesire = (Desire)result;
                 return result;
             }
-            private int EvaluateRampService()
+            private int EvaluateRampServiceDesire()
             {
                 // -1 = refuse
                 //  0 = indifferent; might do it
@@ -1085,9 +952,10 @@ namespace AirportCEOTweaks
                 }
 
                 result = result.Clamp(-1, 2);
+                MyDesire = (Desire)result;
                 return result;
             }
-            private int EvaluateBaggage()
+            private int EvaluateBaggageDesire()
             {
                 // -1 = refuse
                 //  0 = indifferent; might do it
@@ -1096,39 +964,10 @@ namespace AirportCEOTweaks
                 int result = 0;
                 capable = Singleton<AirportController>.Instance.AirportData.baggageHandlingSystemEnabled;
 
-                switch (ecfm.turnaroundType)
-                {
-                    case FlightTypes.TurnaroundType.FuelOnly: result = -20; break;
-                    case FlightTypes.TurnaroundType.Reduced: result = -1; break;
-                    case FlightTypes.TurnaroundType.Normal: result = 1; break;
-                    case FlightTypes.TurnaroundType.Exended: result = 2; break;
-
-                    default: result = -10; break;
-                }
-
-                switch (eam.economyTier)
-                {
-                    case 0: result -= 10; break;
-                    case 1: break;
-                    case 2: break;
-                    case 3: result = Math.Max(1, result++); break;
-                    case 4: result = Math.Max(1, result++); break;
-                }
-                switch (ecfm.inboundFlightType)
-                {
-                    case FlightTypes.FlightType.Cargo: result -= 10; break;
-                    case FlightTypes.FlightType.SpecialCargo: result -= 10; break;
-                }
-                switch (ecfm.outboundFlightType)
-                {
-                    case FlightTypes.FlightType.Cargo: result -= 10; break;
-                    case FlightTypes.FlightType.SpecialCargo: result -= 10; break;
-                }
-
                 if (ecfm.aircraftModel.weightClass == Enums.ThreeStepScale.Small && AirportCEOTweaksConfig.smallPlaneBaggageOff)
                 {
-                    result = result.Clamp(-1, 0);
                     capable = false;
+                    return -1;
                 }
                 try
                 {
@@ -1138,6 +977,24 @@ namespace AirportCEOTweaks
                     }
                 }
                 catch { } //disconnectedbaggagebaybaggagething
+
+                RequestLevel level = (RequestLevel)Math.Max((int)ecfm.flightDatas[0].baggage[0], (int)ecfm.flightDatas[1].baggage[0]);
+
+                switch (level)
+                {
+                    case RequestLevel.Demand: result = 2; break;
+                    case RequestLevel.Accept:
+                        if (capable)
+                        {
+                            result = 1;
+                        }
+                        else
+                        {
+                            result = 0;
+                        }
+                        break;
+                    case RequestLevel.Reject: result = -1; break;
+                }
 
                 result = result.Clamp(-1, 2);
                 if ((result == 0 || result == 1) && this.flightModel.isActivated)
@@ -1166,14 +1023,21 @@ namespace AirportCEOTweaks
 
                     capable = capable == false ? false : cta;
                 }
-                
+                MyDesire = (Desire)result;
                 return result;
             }
-            private void ServiceResultEvaluator(Desire desire, bool complete)
+            private void AssessServiceImpact(Desire desire, bool succeeded)
             {
+                if (impactAssessed)
+                {
+                    return;
+                }
+
+                impactAssessed = true;
+
                 if (desire == Desire.Desired || desire == Desire.Demanded)
                 {
-                    if (complete == true)
+                    if (succeeded == true)
                     {
                         ecfm.SatisfactionAdder = 1;
                     }
@@ -1183,14 +1047,19 @@ namespace AirportCEOTweaks
                     }
                 }
             }
-            public void ServiceRequestSetter(bool evaluate = false, bool impact = true)
+            public void ServiceRefresh(bool lastPass = false, bool impact = true)
             {
+                if (impactAssessed)
+                {
+                    return;
+                }
+                //Trigger like fucntion in child services
                 foreach (TurnaroundService child in children)
                 {
-                    child.ServiceRequestSetter(evaluate, false);
+                    child.ServiceRefresh(lastPass, false);
                 }
                 
-                int hours = ((int)MyDesire - 1).Clamp(-1, 1);
+                float hours = ((int)MyDesire - 1.25f).Clamp(-1f, 1f);
                 int mod = primes[(int)service];
 
                 try
@@ -1200,56 +1069,50 @@ namespace AirportCEOTweaks
                 catch
                 {
                     hours = 0;
+                    Debug.LogWarning("ACEO Tweaks | WARN: Turnaround service try/catch hours=0");
                 } //dumb block for flight less than 1hr into world
-                bool departing = flightModel.isAllocated ? (flightModel.departureTimeDT.AddHours(hours) < ecfm.CurrentTime) : false;
 
+                bool departing = flightModel.isAllocated ? (flightModel.departureTimeDT.AddHours(hours) < ecfm.CurrentTime) : false; //hours defines willingness to wait for critical services
 
                 //set request
                 switch (MyDesire)
                 {
                     case Desire.Refused: Requested = false; break;
                     case Desire.Indiffernt: Requested = (flightModel.departureRoute.routeNbr % mod <= mod / 2) ? false : true; break;
-                    default: Requested = true; break;
+                    //default: Requested = true; break;
                 }
 
-                if (departing)
+                if (!Requested)
                 {
-                    if (!Completed)
+                    return;
+                }
+
+                if (flightModel.HasOccupiedStand)
+                {
+                    if(!capable)
                     {
-                        Failed = true; //also sets completed to true
+                        Failed = true;
+                        if (impact)
+                        {
+                            AssessServiceImpact(MyDesire, false);
+                        }
                     }
                 }
 
-                switch (Requested)
+                if (departing || lastPass)
                 {
-                    case false:
-                        break;
-                    case true:
-
-                        if (!flightModel.isAllocated || flightModel.arrivalTimeDT > ecfm.CurrentTime)
-                        {
-                            Completed = false;
-                            return;
-                        }
-
-                        if (evaluate)
-                        {
-                            departing = true;
-                        }
-
-                        if (departing)
-                        {
-                            if (evaluate && impact) 
-                            { 
-                                if (Completed && !Failed)
-                                {
-                                    Succeeded = true;
-                                }
-                                ServiceResultEvaluator(MyDesire, Succeeded);
-                            }
-                        }
-
-                        break;
+                    if (!Completed)
+                    {
+                        Failed = true;
+                    }
+                    if (Completed && !Failed)
+                    {
+                        Succeeded = true;
+                    }
+                    if(impact)
+                    {
+                        AssessServiceImpact(MyDesire, Succeeded);
+                    }
                 }
             }
         }
@@ -1260,7 +1123,8 @@ namespace AirportCEOTweaks
             Cleaning,
             Fueling,
             RampService,
-            Baggage
+            Baggage,
+            Jetbridge
         }
     }
 }

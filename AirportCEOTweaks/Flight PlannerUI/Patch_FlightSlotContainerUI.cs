@@ -44,7 +44,7 @@ namespace AirportCEOTweaks
                     if (f != null)
                     {
                         Singleton<ModsController>.Instance.GetExtensions(f, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-                        ecfm.turnaroundPlayerBias = Singleton<ModsController>.Instance.TurnaroundBias;
+                        ecfm.turnaroundPlayerBiasPercent = (short)(Singleton<ModsController>.Instance.TurnaroundBias*100);
                         ecfm.ResetTurnaroundTime();
 
                         StandModel standByReferenceID = Singleton<BuildingController>.Instance.GetObjectByReferenceID<StandModel>(__instance.rowStandReferenceID);
@@ -243,8 +243,8 @@ namespace AirportCEOTweaks
             {
                 Singleton<ModsController>.Instance.GetExtensions(__instance.flight, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
                 Singleton<ModsController>.Instance.TurnaroundBiasFromBuffer();
-                ecfm.turnaroundPlayerBias = Singleton<ModsController>.Instance.TurnaroundBias;
-                ecfm.ResetTurnaroundTime(false);
+                ecfm.turnaroundPlayerBiasPercent = (short)(Singleton<ModsController>.Instance.TurnaroundBias*100);
+                ecfm.ResetTurnaroundTime();
                 //Debug.LogError("ACEO Tweaks | Info: FlightSlotContainerUI OnDrag Patch!");
             }
             catch
@@ -261,7 +261,7 @@ namespace AirportCEOTweaks
             try 
             {
                 Singleton<ModsController>.Instance.GetExtensions(__instance.flight, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-                Singleton<ModsController>.Instance.turnaroundBiasBuffer = ecfm.turnaroundPlayerBias;
+                Singleton<ModsController>.Instance.turnaroundBiasBuffer = ecfm.turnaroundPlayerBiasPercent/100f;
             }
             catch
             {

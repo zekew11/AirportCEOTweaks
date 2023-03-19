@@ -14,8 +14,6 @@ namespace AirportCEOTweaks
         [HarmonyPostfix]
         public static void Postfix(Airline airline, AirlineModel __instance)
         {
-            //Debug.LogError("AirlineModelConstructor.");
-            //__instance = new ModAirlineModel(airline);
             if (__instance == null)
             {
                 return;
