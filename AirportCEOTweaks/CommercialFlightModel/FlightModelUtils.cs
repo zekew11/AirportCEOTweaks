@@ -49,15 +49,48 @@ namespace AirportCEOTweaks
         {
             try
             {
-                int speed = Singleton<AirTrafficController>.Instance.GetAircraftModel(flight.aircraftTypeString).speedKMh;
-                float distance = flight.arrivalRoute.routeDistance;
-                double hours = Utils.Clamp((distance / (float)speed) + .75, minHours, maxHours);
+                int speed;
+                try
+                {
+                    speed = Singleton<AirTrafficController>.Instance.GetAircraftModel(flight.aircraftTypeString).speedKMh;
+                }
+                catch
+                {
+                    Debug.LogError("ACEO Tweaks | ERROR: TakeoffTime could not get aircraft speed!");
+                    speed = 750;
+                }
+                if(speed < 100)
+                {
+                    Debug.LogError("ACEO Tweaks | ERROR: TakeoffTime got too low aircrarft speed!");
+                    speed = 750;
+                }
+                float distance;
+                try
+                {
+                    distance = flight.arrivalRoute.routeDistance;
+                }
+                catch
+                {
+                    Debug.LogError("ACEO Tweaks | ERROR: TakeoffTime could not get route distance!");
+                    distance = 1000;
+                }
+
+                double hours = Utils.Clamp((distance / speed) + .75, minHours, maxHours);
+
                 flightTime = TimeSpan.FromHours(hours);
-                return flight.arrivalTimeDT - flightTime;
+
+                try
+                {
+                    return flight.arrivalTimeDT - flightTime;
+                }
+                catch
+                {
+                    return Singleton<TimeController>.Instance.GetCurrentContinuousTime() + flightTime;
+                }
             }
             catch
             {
-                //Debug.LogError("TakeoffTime Catch!");
+                Debug.LogError("ACEO Tweaks | ERROR: TakeoffTime Catch!");
                 flightTime = new TimeSpan(minHours.RoundToIntLikeANormalPerson(),0,0);
                 DateTime cTime = Singleton<TimeController>.Instance.GetCurrentContinuousTime();
                 //Debug.LogError("Flight Time = " + flightTime.ToString());

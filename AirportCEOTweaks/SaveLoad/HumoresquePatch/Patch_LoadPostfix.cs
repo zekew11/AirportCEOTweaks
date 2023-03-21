@@ -103,7 +103,11 @@ namespace AirportCEOTweaks
                     Debug.LogError("ACEO Tweaks | Error: a flight data refrenceid is null or empty!");
                     continue;
                 }
-
+                if (flightModel == null)
+                {
+                    //Debug.LogError("ACEO Tweaks | Error: a vanilla saved flight ref id returns a null flight!");
+                    continue;
+                }
                 if (!Singleton<ModsController>.Instance.commercialFlightLoadDataDict.ContainsKey(flightModel))
                 {
                     Singleton<ModsController>.Instance.commercialFlightLoadDataDict.Add(flightModel, flight.flightData);

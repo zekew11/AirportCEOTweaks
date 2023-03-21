@@ -29,8 +29,8 @@ namespace AirportCEOTweaks
         private int routeNbr;
         private int satisfaction = 0;
         private int demerits = 0;
-        //public short turnaroundBiasPercent;                 //floats are bad because round numbers to us are not round in float world
-        public short turnaroundPlayerBiasPercent = 100;     //floats are bad because round numbers to us are not round in float world
+        //public short turnaroundAirlineBiasPercent = 100;          //floats are bad because round numbers to us are not round in float world
+        private int turnaroundPlayerBiasMins = 0;
         public FlightTypeData[] flightDatas; 
 
         public Dictionary<TurnaroundServices,TurnaroundService> turnaroundServices = new Dictionary<TurnaroundServices, TurnaroundService>();
@@ -119,21 +119,55 @@ namespace AirportCEOTweaks
         }
         private void InitializeTurnaroundTime()
         {
+            turnaroundTime = parent.TurnaroundTime;
+
             if (parent.isAllocated)
             {
-                TimeSpan tempTurnaroundTime = AirTrafficController.GetTurnaroundTime(parent.weightClass, parent.isEmergency, parent.StandIsRemote);
-                turnaroundPlayerBiasPercent = (short)((parent.TurnaroundTime.TotalMinutes / tempTurnaroundTime.TotalMinutes)*100);
+                turnaroundPlayerBiasMins = 0;
+                TimeSpan savedTime = parent.TurnaroundTime;
+                DetermineUnmodifiedTurnaroundTime(out TimeSpan rawTurnaroundTime);
+                TurnaroundPlayerBiasMins = ((float)(savedTime.TotalMinutes - rawTurnaroundTime.TotalMinutes)).RoundToIntLikeANormalPerson();
             }
             else
             {
-                turnaroundPlayerBiasPercent = 100;
+                TurnaroundPlayerBiasMins = 0;
+            }
+        }
+        public void DetermineTurnaroundTime()
+        {
+            DetermineUnmodifiedTurnaroundTime(out TimeSpan timeSpan);
+        }
+        public void DetermineUnmodifiedTurnaroundTime(out TimeSpan rawTurnaroundTime, bool resetBias = false)
+        {
+            if (parent.isEmergency)
+            {
+                turnaroundPlayerBiasMins = 0;
+                rawTurnaroundTime = AirTrafficController.GetTurnaroundTime(parent.weightClass, parent.isEmergency, parent.StandIsRemote);
+                TurnaroundTimeSetRawGetTrue = rawTurnaroundTime;
+                return;
+            }
+            if (resetBias)
+            {
+                turnaroundPlayerBiasMins = 0;
             }
 
-            TurnaroundTime = parent.TurnaroundTime;
-        }
-        public void ResetTurnaroundTime()
-        {
-            TurnaroundTime = TimeSpan.FromMinutes(AirTrafficController.GetTurnaroundTime(parent.weightClass, parent.isEmergency, parent.StandIsRemote).TotalMinutes * (turnaroundPlayerBiasPercent/100f));
+            float hours = 0;
+
+            switch (GetDynamicFlightSize())
+            {
+                case Tweaks8SizeScale.Jumbo : hours = 5.5f; break;
+                case Tweaks8SizeScale.VeryLarge: hours = 5.25f; break;
+                case Tweaks8SizeScale.Large: hours = 4.75f; break;
+                case Tweaks8SizeScale.SuperMedium: hours = 4.25f; break;
+                case Tweaks8SizeScale.Medium: hours = 4f; break;
+                case Tweaks8SizeScale.SubMedium: hours = 3.5f; break;
+                case Tweaks8SizeScale.Small: hours = 3f; break;
+                case Tweaks8SizeScale.VerySmall: hours = 2.5f; break;
+            }
+
+            hours *= flightDatas[1].timeMod[0];
+            rawTurnaroundTime = TimeSpan.FromHours(hours);
+            TurnaroundTimeSetRawGetTrue = rawTurnaroundTime;
         }
         public void FinalizeFlightDetails()
         {
@@ -173,7 +207,7 @@ namespace AirportCEOTweaks
                     DateTime lastArrivalTime = parent.arrivalTimeDT;
                     DateTime lastDepartureTime = parent.departureTimeDT;
                     StandModel lastStand = parent.Stand;
-                    float lastTurnaroundPlayerBias = turnaroundPlayerBiasPercent/100f;
+                    int lastTurnaroundPlayerBiasMins = TurnaroundPlayerBiasMins;
 
                     foreach (CommercialFlightModel commercialFlightModel in mySeries)
                     {
@@ -188,7 +222,7 @@ namespace AirportCEOTweaks
                         }
 
                         lastStand = lastArrivalTime > commercialFlightModel.arrivalTimeDT ? lastStand : commercialFlightModel.Stand;
-                        lastTurnaroundPlayerBias = lastArrivalTime > commercialFlightModel.arrivalTimeDT ? lastTurnaroundPlayerBias : other_ecfm.turnaroundPlayerBiasPercent/100f;
+                        lastTurnaroundPlayerBiasMins = lastArrivalTime > commercialFlightModel.arrivalTimeDT ? lastTurnaroundPlayerBiasMins : other_ecfm.TurnaroundPlayerBiasMins;
                         
                         //Do anything else before changeing the time vars so they can be used in comparisons.
 
@@ -279,7 +313,7 @@ namespace AirportCEOTweaks
             myRefresher.Me = this;
             myRefresher.maxWait = wait;
         }
-        public string GetDescription(bool flight_type, bool turnaround_type, bool international, bool duration)
+        public string GetDescription(bool flight_type, bool size, bool international, bool duration)
         {
             string stringy = "";
             //string post = "";
@@ -294,13 +328,13 @@ namespace AirportCEOTweaks
                 return parent.departureFlightNbr + " has decalared an emergency!";
             }
 
-            if (duration && false)
+            if (duration)
             {
                 TimeSpan flightTime;
                 
-                FlightModelUtils.TakeoffTime(parent, out flightTime, 2f, 12f);
+                FlightModelUtils.TakeoffTime(parent, out flightTime, 2f, 10f);
                 
-                if (flightTime.TotalMinutes < 240)
+                if (flightTime.TotalMinutes < 165)
                 {
                     timeword = "Short";
                     if (flightTime.TotalMinutes < 90)
@@ -310,10 +344,10 @@ namespace AirportCEOTweaks
                 }
                 else if (flightTime.TotalMinutes > 420)
                 {
-                    timeword = "Long-Haul";
+                    timeword = "Longhaul";
                     if (flightTime.TotalMinutes > 660)
                     {
-                        //timeword = "Extreme-long-haul";
+                        timeword = "Ultra-Longhaul";
                     }
                 }
                 else
@@ -321,7 +355,11 @@ namespace AirportCEOTweaks
                     timeword = "Mid-Range";
                 }
             }
-
+            if (size)
+            {
+                stringy += GetDynamicFlightSize().ToString();
+                if (duration) { stringy += ", "; } else { stringy += " "; }
+            }
             if (duration)
             {
                 stringy += timeword;
@@ -460,6 +498,103 @@ namespace AirportCEOTweaks
 
             return data;
         }
+        public bool TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData, out int index)
+        {
+            return ParentAirlineExtension.TryGetAircraftData(parent.aircraftTypeString, out aircraftTypeData, out index);
+        }
+
+        public Tweaks8SizeScale GetDynamicFlightSize()
+        {
+            if (TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData, out int index))
+            {
+                float wingspan = aircraftTypeData.wingSpan_M;
+                float length = aircraftTypeData.length_M;
+                int PAX = aircraftTypeData.capacity_PAX[0];
+                int abreast = aircraftTypeData.seatsAbreast[0];
+
+                if (wingspan < 19.8 && length < 19.8)
+                {
+                    return Tweaks8SizeScale.VerySmall;
+                }
+                if (wingspan < 36.3 && length < 29.8)
+                {
+                    return Tweaks8SizeScale.Small;
+                }
+                if (wingspan < 48.2 && length < 46.8)
+                {
+                    if (PAX < 100)
+                    {
+                        return Tweaks8SizeScale.SubMedium;
+                    }
+                    else
+                    {
+                        return Tweaks8SizeScale.Medium;
+                    }
+                }
+                if (wingspan < 52.1 && length < 56.7)
+                {
+                    if (abreast <= 6)
+                    {
+                        return Tweaks8SizeScale.SuperMedium;
+                    }
+                    else
+                    {
+                        return Tweaks8SizeScale.Large;
+                    }
+                }
+                if (wingspan < 65.2 && length < 66.6)
+                {
+                    return Tweaks8SizeScale.VeryLarge;
+                }
+                if (wingspan < 82.2 && length < 79.3)
+                {
+                    return Tweaks8SizeScale.Jumbo;
+                }
+                else
+                {
+                    return Tweaks8SizeScale.NA;
+                }
+            }
+
+            else
+            {
+                switch(parent.weightClass)
+                {
+                    case Enums.ThreeStepScale.Small:
+                        if (parent.totalNbrOfArrivingPassengers < 10)
+                        {
+                            return Tweaks8SizeScale.VerySmall;
+                        }
+                        else
+                        {
+                            return Tweaks8SizeScale.Small;
+                        }
+                    case Enums.ThreeStepScale.Medium:
+                        if (parent.totalNbrOfArrivingPassengers < 200)
+                        {
+                            return Tweaks8SizeScale.Medium;
+                        }
+                        else
+                        {
+                            return Tweaks8SizeScale.SuperMedium;
+                        }
+                    case Enums.ThreeStepScale.Large:
+                        if (parent.totalNbrOfArrivingPassengers < 200)
+                        {
+                            return Tweaks8SizeScale.Large;
+                        }
+                        if (parent.totalNbrOfArrivingPassengers < 400)
+                        {
+                            return Tweaks8SizeScale.VeryLarge;
+                        }
+                        else
+                        {
+                            return Tweaks8SizeScale.Jumbo;
+                        }
+                    default: return Tweaks8SizeScale.NA;
+                }
+            }
+        }
         private DateTime CurrentTime
         {
             get
@@ -488,6 +623,18 @@ namespace AirportCEOTweaks
                 satisfaction += value;
             }
         }
+        public int TurnaroundPlayerBiasMins
+        {
+            get
+            {
+                return turnaroundPlayerBiasMins;
+            }
+            set
+            {
+                turnaroundPlayerBiasMins = value;
+                DetermineTurnaroundTime();
+            }
+        }
         public string AircraftManufactuer
         {
             get
@@ -500,37 +647,13 @@ namespace AirportCEOTweaks
                 parent.aircraftManufacturer = value;
             }
         }
-        public string aircraftModelNbr
-        {
-            get
-            {
-                return this.aircraftModelNbr;
-            }
-            set
-            {
-                this.aircraftModelNbr = value;
-                parent.aircraftModelNbr = value;
-            }
-        }
-        public string aircraftTypeString
-        {
-            get
-            {
-                return this.aircraftTypeString;
-            }
-            set
-            {
-                this.aircraftTypeString = value;
-                parent.aircraftTypeString = value;
-            }
-        }
         public bool IsRemote
         {
             get
             {
                 try
                 {
-                    return parent.Stand.isRemote;
+                    return parent.StandIsAssigned && parent.StandIsRemote;
                 }
                 catch
                 {
@@ -581,32 +704,20 @@ namespace AirportCEOTweaks
                 }
             }
         }
-        public TimeSpan TurnaroundTime
+        public TimeSpan TurnaroundTimeSetRawGetTrue // setter bakes in player bias
         {
             get
             {
                 if (AirportCEOTweaksConfig.forceNormalTurnaroundTime)
                 {
-                    bool remote = parent.StandIsAssigned ? parent.StandIsRemote : false;
-                    return AirTrafficController.GetTurnaroundTime(parent.weightClass, parent.isEmergency, remote);
+                    return AirTrafficController.GetTurnaroundTime(parent.weightClass, parent.isEmergency, IsRemote);
                 }
-                switch (IsRemote)
-                {
-                    case true:
-                       switch (WeightClass)
-                       {
-                           case Enums.ThreeStepScale.Large: return turnaroundTime.Add(TimeSpan.FromMinutes(60));
-                           case Enums.ThreeStepScale.Medium: return turnaroundTime.Add(TimeSpan.FromMinutes(45));
-                           case Enums.ThreeStepScale.Small: return turnaroundTime.Add(TimeSpan.FromMinutes(30));
-                           default: return turnaroundTime;
-                       };
-                    case false: return turnaroundTime;
-                    default: return turnaroundTime;
-                }
+                return turnaroundTime;
             }
             set
             {
-                turnaroundTime = TimeSpan.FromMinutes(Utils.RoundToNearest(((float)value.TotalMinutes), 5f));
+                turnaroundTime = value + TimeSpan.FromMinutes(TurnaroundPlayerBiasMins);
+                turnaroundTime = TimeSpan.FromMinutes(Utils.RoundToNearest(((float)turnaroundTime.TotalMinutes), 5f));
                 parent.turnaroundTime = turnaroundTime;
             }
         }
@@ -752,7 +863,16 @@ namespace AirportCEOTweaks
             {
                 get 
                 {
-                    if (myDesire == Desire.Unint)
+                    if (flightModel.isAmbulance || flightModel.isEmergency)
+                    {
+                        switch (service)
+                        {
+                            case TurnaroundServices.Fueling: return (Desire)EvaluateFuelingDesire();
+                            case TurnaroundServices.RampService: return (Desire)EvaluateRampServiceDesire();
+                            default: MyDesire = Desire.Refused; return Desire.Refused;
+                        }
+                    }
+                    else if (myDesire == Desire.Unint)
                     {
                         switch (service)
                         {
@@ -853,6 +973,24 @@ namespace AirportCEOTweaks
 
                 capable = Singleton<AirportController>.Instance.AirportData.cateringServiceEnabled;
 
+                if(ecfm.TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData, out int index))
+                {
+                    if (aircraftTypeData.cateringPoints[index] == 0)
+                    {
+                        capable = false;
+                        MyDesire = Desire.Refused;
+                        impactAssessed = true;
+                        return -1;
+                    }
+                }
+                if (ecfm.parent.StandIsAssigned && ecfm.parent.Stand.objectSize == Enums.ThreeStepScale.Small)
+                {
+                    capable = false;
+                    MyDesire = Desire.Refused;
+                    impactAssessed = true;
+                    return -1;
+                }
+
                 switch (ecfm.flightDatas[1].catering[0])
                 {
                     case RequestLevel.Demand: return 2;
@@ -885,6 +1023,25 @@ namespace AirportCEOTweaks
                 //  2 = demanded, will be displeased if not available
                 int result = 0;
                 capable = Singleton<AirportController>.Instance.AirportData.aircraftCabinCleaningServiceEnabled;
+
+                if (ecfm.TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData, out int index))
+                {
+                    if (aircraftTypeData.cleaningPoints[index] == 0)
+                    {
+                        capable = false;
+                        MyDesire = Desire.Refused;
+                        impactAssessed = true;
+                        return -1;
+                    }
+                }
+                if (ecfm.parent.StandIsAssigned && ecfm.parent.Stand.objectSize == Enums.ThreeStepScale.Small)
+                {
+                    capable = false;
+                    MyDesire = Desire.Refused;
+                    impactAssessed = true;
+                    return -1;
+                }
+
                 switch (ecfm.flightDatas[0].cleaning[0])
                 {
                     case RequestLevel.Demand: return 2;
@@ -963,6 +1120,16 @@ namespace AirportCEOTweaks
                 //  2 = demanded, will be displeased if not available
                 int result = 0;
                 capable = Singleton<AirportController>.Instance.AirportData.baggageHandlingSystemEnabled;
+                if (ecfm.TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData, out int index))
+                {
+                    if (aircraftTypeData.conveyerPoints[index] == 0 && aircraftTypeData.capacityULDLowerDeck[index] == 0 && aircraftTypeData.capacityULDUpperDeck[index] == 0)
+                    {
+                        capable = false;
+                        MyDesire = Desire.Refused;
+                        impactAssessed = true;
+                        return -1;
+                    }
+                }
 
                 if (ecfm.aircraftModel.weightClass == Enums.ThreeStepScale.Small && AirportCEOTweaksConfig.smallPlaneBaggageOff)
                 {

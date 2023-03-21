@@ -47,57 +47,35 @@ namespace AirportCEOTweaks
                 goto describer;
             }
 
-            try
+            HashSet<string> codeList = new HashSet<string>();
+            List<Country> countryList = new List<Country>();
+
+
+            if (airlineBusinessData.arrayHomeCountryCodes != null && airlineBusinessData.arrayHomeCountryCodes.Length>0)
             {
-                HashSet<string> codeList = new HashSet<string>();
-                List<Country> countryList = new List<Country>();
-                Country country;
-
-                if (airlineBusinessData.arrayHomeCountryCodes != null)
-                {
-                    codeList.UnionWith(airlineBusinessData.arrayHomeCountryCodes);
-                }
-                codeList.Add(countryCode);
-
-
-                foreach (string code in codeList)
-                {
-                    try
-                    {
-                        country = TravelController.GetCountryByCode(code);
-                        if (country != null && !countryList.Contains(country))
-                        {
-                            countryList.Add(country);
-                        }
-                    }
-                    catch
-                    {
-                        if (code == "")
-                        {
-                            if (AirportCEOTweaksConfig.liveryLogs)
-                            {
-                                Debug.LogWarning("ACEO Tweaks | Warn: In airline " + parent.businessName + " country code is empty string!");
-                            }
-                        }
-                        else
-                        {
-                            Debug.LogError("ACEO Tweaks | ERROR: In airline " + parent.businessName + " could not get country for counrty code [" + countryCode + "]!");
-                        }
-                    }
-                }
-                                
-                countries = countryList.ToArray();
-                if (countryList.Count == 0)
-                {
-                    countries = null;
-                }
+                //Debug.Log("codeList pre union: " + codeList);
+                codeList.UnionWith(airlineBusinessData.arrayHomeCountryCodes);
+                //Debug.Log("codeList post union: " + codeList);
             }
-            catch
+            codeList.Add(countryCode);
+            //Debug.Log("added " + countryCode + " to code list == " + codeList.ToString());
+            countries = CountryRetriever(codeList.ToArray());
+            //Debug.Log("countries came back size of " + countries.Length);
+
+            codeList.Clear();
+            if (airlineBusinessData.arrayForbiddenCountryCodes != null && airlineBusinessData.arrayForbiddenCountryCodes.Length>0)
             {
-                Debug.LogError("ACEO Tweaks | ERROR: In airline " + parent.businessName + "; problem parsing country code(s)");
-                countries = null;
+                codeList.UnionWith(airlineBusinessData.arrayForbiddenCountryCodes);
             }
+            forbidCountries = CountryRetriever(codeList.ToArray());
 
+            //codeList.Clear();
+            //if (airlineBusinessData.arrayHubIATAs != null && airlineBusinessData.arrayRangesFromHubs_KM != null && airlineBusinessData.arrayHubIATAs.Length>0 && airlineBusinessData.arrayRangesFromHubs_KM.Length>0)
+            //{
+            //    codeList.UnionWith(airlineBusinessData.arrayHubIATAs);
+            //}
+            //hUBs = AirportRetriver(codeList.ToArray(), airlineBusinessData.arrayRangesFromHubs_KM);
+            hUBs = null;
             //Describer
 
             describer:
@@ -105,8 +83,10 @@ namespace AirportCEOTweaks
             Airline_Descriptions describer = new Airline_Descriptions();
             parent.businessDescription = describer?.Replace_Description(parent) ?? "";
 
+
+            MakeTypeModelDictionary();
             //maxrange
-            if (FleetModels.Length > 0)
+            if (FleetModels != null && FleetModels.Length > 0)
             {
                 foreach (string aircraftModelString in FleetModels)
                 {
@@ -120,6 +100,11 @@ namespace AirportCEOTweaks
                         continue;
                     }
                 }
+            }
+            else
+            {
+                parent.CancelContract();
+                Debug.LogWarning("ACEO Tweaks | WARN: Airline " + airline.businessName + "contract canceled due to no valid fleet!");
             }
 
             //list flights
@@ -141,11 +126,11 @@ namespace AirportCEOTweaks
                         return;
                     }
                     myFlights.Add(ecfm);
-                    //ecfm.RefreshFlightTypes(this);
+                    ecfm.RefreshServices();
                 }
             }
 
-            MakeTypeModelDictionary();
+            
         }
 
 
@@ -155,12 +140,12 @@ namespace AirportCEOTweaks
         public Enums.BusinessClass starRank;
         public float economyTier = 2;
         public HashSet<Extend_CommercialFlightModel> myFlights;
-        private int maxFlights = 30;
-        private int maxSeries = 3;
         public float cargoProportion = 0f;
         public float maxRange = 0f;
         private string countryCode;
         public Country[] countries;
+        public Country[] forbidCountries;
+        public Dictionary<Airport,float> hUBs;
         private SortedDictionary<int, TypeModel> typeModelDictionary;
         public AirlineBusinessData airlineBusinessData;
 
@@ -188,102 +173,143 @@ namespace AirportCEOTweaks
                 parent.fleetCount = value;
             }
         }
-        public bool IsDomestic
+        public bool RemainInHomeCodes
         {
             get
             {
-                if (airlineBusinessData.domesticOnly)
-                {
-                    return true;
-                }
-                foreach(string flag in AirportCEOTweaksConfig.noInternationalFlags)
-                {
-                    if (parent.businessName.ToLower().Contains(flag.ToLower()))
-                    { 
-                        if (AirportCEOTweaksConfig.liveryLogs)
-                        {
-                            Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged domestic by keywords");
-                        }
-                        return true; 
-                    }
-                }
-                if ((int)starRank+1 < AirportCEOTweaksConfig.minimumStarsForInternational && cargoProportion < 1f)
-                {
-                    if(countries == null)
-                    {
-                        if (AirportCEOTweaksConfig.liveryLogs)
-                        {
-                            Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged NOT domestic by country == null");
-                        }
-                        return false;
-                    } //can't enforce nationality on the null pirates!
-
-                    if (!Singleton<ModsController>.Instance.IsDomestic(countries))
-                    {
-                        if (AirportCEOTweaksConfig.liveryLogs)
-                        {
-                            Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged NOT domestic becasue it would be unable to fly to player airport");
-                        }
-                        return false;
-                    } //we don't want to be making forien airlines domestic only
-
-                    if (AirportCEOTweaksConfig.liveryLogs)
-                    {
-                        Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged domestic due to low star rank && not cargo");
-                    }
-                    return true;
-                }
-                if (AirportCEOTweaksConfig.liveryLogs)
-                {
-                    Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged NOT domestic by default");
-                }
-                return false;
-            }
-        }
-        public bool ForceInternational
-        {
-            get
-            {
-                if(airlineBusinessData.domesticOnly)
-                {
-                    return false;
-                }
-                foreach (string flag in AirportCEOTweaksConfig.yesInternationalFlags)
-                {
-                    if (parent.businessName.ToLower().Contains(flag.ToLower()))
-                    {
-                        if (AirportCEOTweaksConfig.liveryLogs)
-                        {
-                            Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged international by keywords");
-                        }
-                        return true; 
-                    }
-                }
-                if (countries == null)
-                {
-                    if (AirportCEOTweaksConfig.liveryLogs)
-                    {
-                        Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged international by country == null");
-                    }
-                    return true;
-                } //can't enforce nationality on the null pirates!
                 if (!Singleton<ModsController>.Instance.IsDomestic(countries))
                 {
                     if (AirportCEOTweaksConfig.liveryLogs)
                     {
-                        Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged international because it is foreign to the player airport. Zeke has a hunch this is involved...");
+                        Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged NOT domestic becasue it would be unable to fly to player airport");
                     }
-                    return true;
+                    return false;
                 } //we don't want to be making forien airlines domestic only
-                if (AirportCEOTweaksConfig.liveryLogs)
+
+                if (airlineBusinessData.remainWithinHomeCodes)
                 {
-                    Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged NOT international by default");
+                    return true;
                 }
+
+                if(countries == null)
+                {
+                    if (AirportCEOTweaksConfig.liveryLogs)
+                    {
+                        Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged NOT domestic by country == null");
+                    }
+                    return false;
+                } //can't enforce nationality on the null pirates!
+
                 return false;
             }
         }
         // Methods ---------------------------------------------------------------------------------------------------------
 
+        private Dictionary<Airport, float> AirportRetriver(string[] codes, int[] ranges)
+        {
+            if (String.IsNullOrEmpty(codes[0]) || true)
+            {
+                return null;
+            }
+
+            Dictionary<Airport,float> airportDictionary = new Dictionary<Airport, float>();
+            HashSet<Airport> allKnownAirports = new HashSet<Airport>();
+
+            int i = 0;
+            int runningIdGuess = 0;
+            bool whileloop;
+
+            foreach (string code in codes)
+            {
+                whileloop = true;
+                foreach(Airport airportCanidate in allKnownAirports)
+                {
+                    if (airportCanidate.airportIATACode == code)
+                    {
+                        float range = ranges.Length < i ? ranges[0] : ranges[i];
+                        airportDictionary.Add(airportCanidate, range);
+                        whileloop = false;
+                    }
+                }
+                while(whileloop)
+                {
+                    if (runningIdGuess > 2000000)
+                    {
+                        Debug.LogError("ACEO Tweaks | ERROR: Failed to resolve all IATA codes!");
+                        break;
+                    }
+
+                    Airport newAirport = TravelController.GetAirportById(runningIdGuess);
+                    runningIdGuess++;
+
+                    if (newAirport != null)
+                    {
+                        allKnownAirports.Add(newAirport);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                    if (newAirport.airportIATACode == code)
+                    {
+                        //good
+                        float range = ranges.Length < i ? ranges[0] : ranges[i];
+                        airportDictionary.Add(newAirport, range);
+                        break;
+                    }
+                }
+                if (runningIdGuess > 2000000)
+                {
+                    break;
+                }
+                i++;
+            }
+            return airportDictionary;
+        }
+        private Country[] CountryRetriever(string[] codes)
+        {
+            if (codes == null || codes.Length==0)
+            {
+                //Debug.LogWarning("country retiever codes null or zero-length: "+codes);
+                return null;
+            }
+
+            HashSet<string> codeList = new HashSet<string>();
+            
+            foreach(string code in codes)
+            {
+                codeList.Add(code);
+            }
+
+            //Debug.Log("array size: " + codes.Length + " | codes[0] = "+ codes[0] +" | hashSetsize: " + codeList.Count());
+
+            List<Country> countryList = new List<Country>();
+            Country country;
+
+            foreach (string code in codeList)
+            {
+                try
+                {
+                    country = TravelController.GetCountryByCode(code);
+                    if (country != null && !countryList.Contains(country))
+                    {
+                        countryList.Add(country);
+                    }
+                }
+                catch
+                {
+                    if (code == "")
+                    {
+
+                    }
+                    else
+                    {
+                        Debug.LogError("ACEO Tweaks | ERROR: In airline " + parent.businessName + " could not get country for counrty code [" + countryCode + "]!");
+                    }
+                }
+            }
+            return countryList.ToArray();
+        }
         private void MakeTypeModelDictionary()
         {
             typeModelDictionary = new SortedDictionary<int, TypeModel>();
@@ -347,23 +373,37 @@ namespace AirportCEOTweaks
         }
         public bool GenerateFlight(AirlineModel airlineModel, bool isEmergency = false, bool isAmbulance = false)
         {
+            //Debug.Log("Generating Flight For " + airlineModel.businessName);
             if (!AirportCEOTweaksConfig.flightTypes) { return false; }
             if (FleetCount.Length == 0)
             {
                 Debug.LogWarning("ACEO Tweaks | WARN: Generate flight for " + parent.businessName + " failed due to FleetCount.Length==0");
+                parent.CancelContract();
+                Debug.LogWarning("ACEO Tweaks | WARN: Airline " + parent.businessName + "contract canceled due to no valid fleet!");
                 return true;
-                
             } //error catch
-
+            if (FleetModels.Length == 0)
+            {
+                Debug.LogWarning("ACEO Tweaks | WARN: Generate flight for " + parent.businessName + " failed due to FleetModels.Length==0");
+                parent.CancelContract();
+                Debug.LogWarning("ACEO Tweaks | WARN: Airline " + parent.businessName + "contract canceled due to no valid fleet!");
+                return true;
+            }
+            Debug.Log("Passed Error Catch");
             // Maybe don't generate a flight if there are lots already...............................................................
 
             //later
 
+            //
+            //
             // Preselect route number ...............................................................................................
+            //
+            //
 
             int maxflightnumber = (((int)starRank + 3) ^ 2) * 50 + Utils.RandomRangeI(100f, 200f);
             int flightnumber = Utils.RandomRangeI(1f, maxflightnumber);
 
+            //duplicate checking
             for (int i = 0; ; i++)
             {
                 if (Singleton<ModsController>.Instance.FlightsByFlightNumber(parent, parent.airlineFlightNbr + flightnumber).Count > 0)
@@ -381,26 +421,32 @@ namespace AirportCEOTweaks
                 }
             } //no duplicate flight #s
 
+            //
+            //
             // Parameterize for route gen ...........................................................................................
-
+            //
+            //
+            //Debug.Log("Parameterizing...");
             float maxRange=0;
             float minRange=float.MaxValue;
             float desiredRange;
             try { Country[] countries = this.countries; } catch { countries = null; }
-            bool forceDomestic=Utils.ChanceOccured(0f) || (IsDomestic&&!ForceInternational);
+            bool forceDomestic=Utils.ChanceOccured(0f) || (RemainInHomeCodes);
             bool forceOrigin;
             
-            if (countries == null)
+            if (countries == null || countries.Length == 0)
             {
+                //Debug.Log("countries is null or length 0");
                 forceOrigin = false;
                 if (AirportCEOTweaksConfig.liveryLogs && AirportCEOTweaksConfig.airlineNationality)
                 {
-                    Debug.LogWarning("ACEO Tweaks | Warn: Generate flight for " + parent.businessName + "encountered (airline) country == null");
+                    //Debug.Log("ACEO Tweaks | Warn: Generate flight for " + parent.businessName + "encountered (airline) country == null");
                 }
             }
             else
             {
                 forceOrigin = forceDomestic ? true : !Singleton<ModsController>.Instance.IsDomestic(countries);
+                //Debug.Log("forceOrigin == " + forceOrigin) ;
             }
             if (forceOrigin && forceDomestic && !Singleton<ModsController>.Instance.IsDomestic(countries))
             {
@@ -411,6 +457,7 @@ namespace AirportCEOTweaks
 
             HashSet<TypeModel> typeModels = new HashSet<TypeModel>();
             
+            //Declaring inline function
             bool CalcMinMaxRange() //true iff success
             {
                 for (int i = 0; i < FleetModels.Length; i++)
@@ -424,28 +471,54 @@ namespace AirportCEOTweaks
                         minRange = workingModel.rangeKM < minRange ? workingModel.rangeKM : minRange;
                     }
                 }
-                minRange /= 4;
+                minRange /= 4; //factor of 4 repeated in dice rolls for desired range
                 minRange = minRange.Clamp(20f, 100f);
-                if (minRange > maxRange) { Debug.LogError("ACEO Tweaks | ERROR: min range > max range"); return false; }
-
+                if (minRange > maxRange) { Debug.LogError("ACEO Tweaks | ERROR: min range > max range ("+minRange+")>("+maxRange+")"); return false; }
                 
                 return true;
             }
-            if (!CalcMinMaxRange()) { Debug.LogWarning("ACEO Tweaks | WARN: Generate flight for " + parent.businessName + " failed due to failure to caluclate min/max airline range"); return true; }
-            desiredRange = Math.Abs(Random.Range(-maxRange, maxRange)+Random.Range(-maxRange, maxRange)+Random.Range(-maxRange, maxRange)) /3;
 
+            if (!CalcMinMaxRange()) { Debug.LogWarning("ACEO Tweaks | WARN: Generate flight for " + parent.businessName + " failed due to failure to caluclate min/max airline range"); return true; }
+            desiredRange = (Math.Abs(Random.Range(-maxRange, maxRange+minRange*4)+Random.Range(-maxRange, maxRange+minRange*4)+Random.Range(-maxRange, maxRange+minRange*4)) /3).Clamp(200f, maxRange*.95f);
+            //Debug.Log("Desired range = " + desiredRange);
 
             // Route gen ............................................................................................................
 
             RouteGenerationController routeGC = UnityEngine.GameObject.Find("CoreGameControllers").GetComponent<RouteGenerationController>();
 
             SortedSet<RouteContainer> routeContainers = new SortedSet<RouteContainer>();
-            routeContainers = routeGC.SelectRouteContainers((desiredRange*1.1f).ClampMax(maxRange), (desiredRange / 1.5f).ClampMin(minRange), forceDomestic, forceOrigin, countries);
+
+
+            Stack<Airport> hubs = new Stack<Airport>();
+            Stack<float> ranges = new Stack<float>();
+
+            if (hUBs != null)
+            {
+                foreach (KeyValuePair<Airport, float> kvp in hUBs)
+                {
+                    hubs.Push(kvp.Key);
+                    ranges.Push(kvp.Value);
+                }
+            }
+
+            //Debug.Log("About to select route containers");
+
+            routeContainers = routeGC.SelectRouteContainers(
+                (desiredRange*1.1f).ClampMax(maxRange), (desiredRange / 1.5f).ClampMin(minRange), 
+                forceDomestic, forceOrigin, countries,
+                forbidCountries,
+                airlineBusinessData.internationalMustOriginateAtHub,airlineBusinessData.allMustOriginateAtHub, false,
+                hubs.ToArray(),ranges.ToArray()
+                );
+
+            //Debug.Log("Selected " + routeContainers.Count + " route containers");
+            
             SortedSet<RouteContainer> routeContainer = new SortedSet<RouteContainer>();
-            routeContainer = routeGC.NewSelectRoutesByChance(routeContainers);
+            routeContainer = routeGC.SelectRoutesByChance(routeContainers);
 
             if (routeContainer.Count == 0)
             {
+                Debug.Log("SelectByChance gave 0 containers");
                 return true;
             }
 
@@ -465,6 +538,8 @@ namespace AirportCEOTweaks
 
             route.routeNbr = flightnumber;
             route2.routeNbr = flightnumber;
+
+            //Debug.Log("Route Selected");
 
             // Select Aircraft ......................................................................................................
 
@@ -520,14 +595,17 @@ namespace AirportCEOTweaks
             }
             if (!SelectAircaft()) { if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: Generate flight for " + parent.businessName + " failed due to failure to select an aircraft"); } return true; }
 
+            // Debug.Log("Aircraft selected");
             // Determine the flight data ...........................................................................................
 
             FlightDataBuilder.GetSpecificFlightDatas(this, selectedAircraft, route, route2, out FlightTypeData inboundFlightData, out FlightTypeData outboundFlightData);
+            //Debug.Log("FlightDataBuilt");
 
             // Instantiate the flights ..............................................................................................
             int seriesLength = GetSeriesLength(inboundFlightData);
+            //Debug.Log("Instantiating at length == "+ seriesLength);
             InstantiateFlightSeries(selectedAircraftType.id, seriesLength, route, route2, inboundFlightData, outboundFlightData);
-
+            //Debug.Log("GenerateFlightEND");
             return true;
         }
         public int GetSeriesLength(FlightTypeData flightData)

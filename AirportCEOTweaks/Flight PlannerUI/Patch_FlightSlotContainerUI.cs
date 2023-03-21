@@ -44,12 +44,12 @@ namespace AirportCEOTweaks
                     if (f != null)
                     {
                         Singleton<ModsController>.Instance.GetExtensions(f, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-                        ecfm.turnaroundPlayerBiasPercent = (short)(Singleton<ModsController>.Instance.TurnaroundBias*100);
-                        ecfm.ResetTurnaroundTime();
+                        ecfm.TurnaroundPlayerBiasMins = (int)Singleton<ModsController>.Instance.TurnaroundPlayerBiasMins.RoundToNearest(1);
+                        ecfm.DetermineTurnaroundTime();
 
                         StandModel standByReferenceID = Singleton<BuildingController>.Instance.GetObjectByReferenceID<StandModel>(__instance.rowStandReferenceID);
                         DateTime arrivalDT = Statics_FlightSlotContainerUI.ArrivalDTFromContainer(__instance,i);
-                        f.turnaroundTime = ecfm.TurnaroundTime;
+                        f.turnaroundTime = ecfm.TurnaroundTimeSetRawGetTrue;
                         DateTime departureDT = arrivalDT.Add(f.TurnaroundTime);
 
                         f.AllocateFlight(arrivalDT, departureDT, standByReferenceID);
@@ -243,8 +243,8 @@ namespace AirportCEOTweaks
             {
                 Singleton<ModsController>.Instance.GetExtensions(__instance.flight, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
                 Singleton<ModsController>.Instance.TurnaroundBiasFromBuffer();
-                ecfm.turnaroundPlayerBiasPercent = (short)(Singleton<ModsController>.Instance.TurnaroundBias*100);
-                ecfm.ResetTurnaroundTime();
+                ecfm.TurnaroundPlayerBiasMins = (int)Singleton<ModsController>.Instance.TurnaroundPlayerBiasMins.RoundToNearest(1);
+                ecfm.DetermineTurnaroundTime();
                 //Debug.LogError("ACEO Tweaks | Info: FlightSlotContainerUI OnDrag Patch!");
             }
             catch
@@ -261,7 +261,7 @@ namespace AirportCEOTweaks
             try 
             {
                 Singleton<ModsController>.Instance.GetExtensions(__instance.flight, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-                Singleton<ModsController>.Instance.turnaroundBiasBuffer = ecfm.turnaroundPlayerBiasPercent/100f;
+                Singleton<ModsController>.Instance.turnaroundPlayerBiasBufferMins = ecfm.TurnaroundPlayerBiasMins;
             }
             catch
             {

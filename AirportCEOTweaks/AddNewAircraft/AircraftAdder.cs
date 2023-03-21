@@ -73,14 +73,14 @@ namespace AirportCEOTweaks
             GameObject newGameObject;
             AircraftType aircraftType;
 
-            if (aircraftTypeData.id[index] == aircraftTypeData.CopyFromAircraftModel.aircraftType)
+            if (aircraftTypeData.id[index] == aircraftTypeData.copyFrom)
             {
-                Debug.Log("ACEO Tweaks | Log: Aircraft Adder MakeAircraftGameObject Conditional True");
+                //Debug.Log("ACEO Tweaks | Log: Aircraft Adder MakeAircraftGameObject Conditional True");
                 //Instantiate
                 newGameObject = GameObject.Instantiate(copyOf);
 
                 //AircraftType
-                if (!CustomEnums.TryGetAircraftType(copyOf.name, out aircraftType))
+                if (!CustomEnums.TryGetAircraftType(aircraftTypeData.copyFrom, out aircraftType))
                 {
                     Debug.LogError("ACEO Tweaks | Error: Couldn't find custom enum for " + copyOf.name);
                 }
@@ -102,7 +102,7 @@ namespace AirportCEOTweaks
             }
             else
             {
-                Debug.Log("ACEO Tweaks | Log: Aircraft Adder MakeAircraftGameObject Conditional Else");
+                //Debug.Log("ACEO Tweaks | Log: Aircraft Adder MakeAircraftGameObject Conditional Else");
                 //Instantiate
                 newGameObject = GameObject.Instantiate(copyOf);
                 aircraftType = new AircraftType
@@ -125,9 +125,9 @@ namespace AirportCEOTweaks
                 method.Invoke(obj: null, parameters: new object[] { new AircraftType[] { aircraftType } } );
             
             }
-            Debug.Log("ACEO Tweaks | Log: Aircraft Adder MakeAircraftGameObject Conditional End");
-            Debug.Log("ACEO Tweaks | Log: Aircraft Adder is for "+aircraftType.id);
-            Debug.Log("ACEO Tweaks | Log: Aircraft Adder is for json " + aircraftTypeData.id[0] +" - "+ index);
+            //Debug.Log("ACEO Tweaks | Log: Aircraft Adder MakeAircraftGameObject Conditional End");
+            //Debug.Log("ACEO Tweaks | Log: Aircraft Adder is for "+aircraftType.id);
+            //Debug.Log("ACEO Tweaks | Log: Aircraft Adder is for json " + aircraftTypeData.id[0] +" - "+ index);
 
 
             if (newGameObject == null)
@@ -145,7 +145,7 @@ namespace AirportCEOTweaks
                 Debug.LogError("ACEO Tweaks | Error: Aircraft Adder: newAircraftModel == null!");
             }
 
-            Debug.Log("ACEO Tweaks | Log: Aircraft Adder MakeAircraftGameObject Model Block Start");
+            //Debug.Log("ACEO Tweaks | Log: Aircraft Adder MakeAircraftGameObject Model Block Start");
 
             newAircraftModel.aircraftType = aircraftTypeData.id[index];  //must have an id at every index. Only manditory array.
             newAircraftModel.weightClass = aircraftTypeData.threeStepSize;
@@ -154,7 +154,7 @@ namespace AirportCEOTweaks
             newAircraftModel.maxPax = aircraftTypeData.capacity_PAX.Length > index ? aircraftTypeData.capacity_PAX[index] : aircraftTypeData.capacity_PAX[0];
             newAircraftModel.seatRows = aircraftTypeData.seatsAbreast.Length > index ? aircraftTypeData.seatsAbreast[index] : aircraftTypeData.seatsAbreast[0];
 
-            Debug.Log("ACEO Tweaks | Log: Aircraft Adder MakeAircraftGameObject Model Block End");
+            //Debug.Log("ACEO Tweaks | Log: Aircraft Adder MakeAircraftGameObject Model Block End");
 
             short capULDLower = aircraftTypeData.capacityULDLowerDeck.Length > index ? aircraftTypeData.capacityULDLowerDeck[index] : aircraftTypeData.capacityULDLowerDeck[0];
             short capULDUpper = aircraftTypeData.capacityULDUpperDeck.Length > index ? aircraftTypeData.capacityULDUpperDeck[index] : aircraftTypeData.capacityULDUpperDeck[0];
@@ -162,7 +162,7 @@ namespace AirportCEOTweaks
             newAircraftController.doNotUseULD = capULDLower + capULDUpper > 0 ? false : true;
             newAircraftController.requiresCargoTransferAssistance = (conveyerPoints > 0 || capULDLower + capULDUpper > 0) ? true : false; //belt or ULD
 
-            Debug.Log("ACEO Tweaks | Log: Aircraft Adder MakeAircraftGameObject Controller Block End");
+            //Debug.Log("ACEO Tweaks | Log: Aircraft Adder MakeAircraftGameObject Controller Block End");
 
             newAircraftModel.rangeKM = aircraftTypeData.range_KM.Length > index ? aircraftTypeData.range_KM[index] : aircraftTypeData.range_KM[0];
             newAircraftModel.flyingSpeed = aircraftTypeData.speed_KMH.Length > index ? aircraftTypeData.speed_KMH[index] : aircraftTypeData.speed_KMH[0];
@@ -197,7 +197,7 @@ namespace AirportCEOTweaks
                     newAircraftController.hasAfterburner = true;
                     break;
             } //sets engine type, fuel type, and afterburner
-            Debug.Log("ACEO Tweaks | Log: Aircraft Adder MakeAircraftGameObject Engine Block End");
+            //Debug.Log("ACEO Tweaks | Log: Aircraft Adder MakeAircraftGameObject Engine Block End");
 
             newAircraftController.requiresElevatedAccess = aircraftTypeData.needStairs.Length > index ? aircraftTypeData.needStairs[index] : aircraftTypeData.needStairs[0];
 
@@ -207,7 +207,7 @@ namespace AirportCEOTweaks
             short jetbridgePoints = aircraftTypeData.jetbridgePoints.Length > index ? aircraftTypeData.jetbridgePoints[index] : aircraftTypeData.jetbridgePoints[0];
             newAircraftController.onlyUseOneJetway = jetbridgePoints <=1 ? true : false;
 
-            Debug.Log("ACEO Tweaks | Log: Aircraft Adder Make Aircraft Game Object Bottom");
+            //Debug.Log("ACEO Tweaks | Log: Aircraft Adder Make Aircraft Game Object Bottom");
             return newGameObject;
         }
 

@@ -54,7 +54,7 @@ namespace AirportCEOTweaks
                 expectedArrivingPassengersValueText.text = "(" + cmf.totalNbrOfArrivingPassengers.ToString() + ")";
                 expectedDepartingPassengersValueText.text = "(" + cmf.totalNbrOfDepartingPassengers.ToString() + ")";
 
-                FrqText.text = "Flight Type:";
+                FrqText.text = "Desription:";
 
                 Singleton<ModsController>.Instance.GetExtensions(flight as CommercialFlightModel, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
                 if (ecfm != null)
@@ -144,7 +144,7 @@ namespace AirportCEOTweaks
                 {
                     switch (serviceDesireArray[i])
                     {
-                        case 0: icons[i].GetComponent<Image>().color = Color.clear; continue;
+                        case 0: icons[i].GetComponent<Image>().color = Color.white.Opacity(.15f); continue;
                         case 1: icons[i].GetComponent<Image>().color = Color.red; continue;
                         case 2: icons[i].GetComponent<Image>().color = Color.red; continue;
                         default:

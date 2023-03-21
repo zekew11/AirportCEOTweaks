@@ -27,7 +27,7 @@ namespace AirportCEOTweaks
 
             if (airline == null)
             {
-                Debug.LogError("ACEO Tweaks | ERROR: OriginalDescription airline is null!");
+                //Debug.LogError("ACEO Tweaks | ERROR: OriginalDescription airline is null!");
                 return "ERROR: airline is null";
             }
 

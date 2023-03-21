@@ -60,22 +60,22 @@ namespace AirportCEOTweaks
             int misMatch = (Math.Abs(scaleFactorW - scaleFactorL) * 100).RoundToIntLikeANormalPerson(); //this tells us if we;ve calculated a differnt scale multiplier in x vs y, which is probably wrong.
             if (misMatch >= 10 && forcedScale == 0f)
             {
-                Debug.LogWarning("ACEO Tweaks | Warning: Gameobject " + gameObject.name + " calculated scale factors in length and wingspan mismatch by" + misMatch + "%. This may be due to excessive alpha padding or innacurate wing assignment. Considerusing a forcedReScale.");
+                //Debug.LogWarning("ACEO Tweaks | Warning: Gameobject " + gameObject.name + " calculated scale factors in length and wingspan mismatch by" + misMatch + "%. This may be due to excessive alpha padding or innacurate wing assignment. Considerusing a forcedReScale.");
             }
 
             if (forcedScale != 0f) //do we just ignore all that and get the scale out of the json?
             {
                 scale = forcedScale/.7f;
-                Debug.Log("ACEO Tweaks | Log: Gameobject " + gameObject.name + " forced scale = " + scale);
+                //Debug.Log("ACEO Tweaks | Log: Gameobject " + gameObject.name + " forced scale = " + scale);
             }
             else
             {
                 scale = scaleFactorL;
-                Debug.Log("ACEO Tweaks | Log: Gameobject " + gameObject.name + " calculated scale = " + scale);
+                //Debug.Log("ACEO Tweaks | Log: Gameobject " + gameObject.name + " calculated scale = " + scale);
             }
 
             init = true; //don't go through this again
-            Start(); // do the start action even if I'm inactive for some reason
+            //Start(); // do the start action even if I'm inactive for some reason
         }
         public Bounds GetMyBounds()
         {

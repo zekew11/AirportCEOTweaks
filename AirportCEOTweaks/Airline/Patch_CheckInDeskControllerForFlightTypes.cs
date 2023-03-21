@@ -21,7 +21,7 @@ namespace AirportCEOTweaks
             {
                 __result = false;
             }
-            if (flight.StandIsAssigned && flight.Stand.connectedCargoBayReferenceID == "")
+            if (flight.StandIsAssigned && String.IsNullOrEmpty(flight.Stand.connectedCargoBayReferenceID))
             {
                 __result = false;
             }

@@ -37,17 +37,17 @@ namespace AirportCEOTweaks
 
                 if (Input.GetKeyDown(AirportCEOTweaksConfig.increaseTurnaroundBind))
                 {
-                    turnaroundBiasBuffer += 0.05f;
+                    turnaroundPlayerBiasBufferMins += 15f;
                     UpdateFlightSlot(flightSlotContainerUIs);
                 }
                 if (Input.GetKeyDown(AirportCEOTweaksConfig.decreaseTurnaroundBind))
                 {
-                    turnaroundBiasBuffer -= 0.05f;
+                    turnaroundPlayerBiasBufferMins -= 15f;
                     UpdateFlightSlot(flightSlotContainerUIs);
                 }
                 if (Input.mouseScrollDelta.y != 0)
                 {
-                    turnaroundBiasBuffer += (Input.mouseScrollDelta.y * 0.03f);
+                    turnaroundPlayerBiasBufferMins += (Input.mouseScrollDelta.y * 5);
                     UpdateFlightSlot(flightSlotContainerUIs);
                 }
             }
@@ -228,22 +228,22 @@ namespace AirportCEOTweaks
             return verbs;
         }
 
-        private float turnaroundBias = 1f;
-        public float turnaroundBiasBuffer = 1f;
+        private float turnaroundPlayerBiasMins = 0;
+        public float turnaroundPlayerBiasBufferMins = 0;
         public void TurnaroundBiasFromBuffer()
         {
-            turnaroundBiasBuffer = turnaroundBiasBuffer.Clamp(0.8f, 1.25f);
-            turnaroundBias = turnaroundBiasBuffer;
+            turnaroundPlayerBiasBufferMins = turnaroundPlayerBiasBufferMins.Clamp(-60, 90);
+            turnaroundPlayerBiasMins = turnaroundPlayerBiasBufferMins;
         }
-        public float TurnaroundBias
+        public float TurnaroundPlayerBiasMins
         {
             get
             {
-                return turnaroundBias.Clamp(0.8f, 1.25f);
+                return turnaroundPlayerBiasMins;
             }
             set
             {
-                turnaroundBiasBuffer = value.Clamp(0.8f, 1.25f);
+                turnaroundPlayerBiasBufferMins = value.Clamp(-60, 90).RoundToNearest(5);
             }
         }
         public void GetExtensions(CommercialFlightModel cfm, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam)
@@ -386,6 +386,10 @@ namespace AirportCEOTweaks
 
         public bool IsDomestic(Country countryA, Country countryB = null)
         {
+            if (countryA == null)
+            {
+                countryA = GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport.Country;
+            }
             if (countryB == null)
             {
                 countryB = GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport.Country;
@@ -394,6 +398,10 @@ namespace AirportCEOTweaks
         }
         public bool IsDomestic(Airport airportA, Airport airportB = null)
         {
+            if (airportA == null)
+            {
+                airportA = GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport;
+            }
             if (airportB == null)
             {
                 airportB = GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport;
@@ -402,6 +410,10 @@ namespace AirportCEOTweaks
         }
         public bool IsDomestic(Country[] countriesA, Country[] countriesB = null)
         {
+            if (countriesA == null)
+            {
+                countriesA = new Country[] { GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport.Country };
+            }
             if (countriesB == null)
             {
                 countriesB = new Country[] { GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport.Country };

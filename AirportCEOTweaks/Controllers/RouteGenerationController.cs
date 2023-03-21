@@ -16,7 +16,13 @@ namespace AirportCEOTweaks
 		private Country[] countries;
 		private Continent[] continents;
 
-		Airport playerAirport;
+		Airport PlayerAirport
+        {
+			get
+            {
+				return GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport;
+			}
+        }
 
 		Dictionary<Enums.GenericSize, HashSet<Airport>> airportsBySize;
 		Dictionary<Enums.GenericSize, HashSet<Airport>> airportsByCargoSize;
@@ -43,7 +49,6 @@ namespace AirportCEOTweaks
 			this.continents = continents;
 			//Debug.LogError("ACEO Tweaks | Debug: continents.length = " + continents.Length);
 
-			playerAirport = GameDataController.GetUpdatedPlayerSessionProfileData().playerAirport;
 			MakeDictionarysEct();
 
 			routeContainers = new SortedSet<RouteContainer>();
@@ -73,7 +78,7 @@ namespace AirportCEOTweaks
 			domesticAirports = new HashSet<Airport>();
 			foreach (Airport airport in airports)
 			{
-				if (TravelController.IsDomesticAirport(airport, playerAirport))
+				if (TravelController.IsDomesticAirport(airport, PlayerAirport))
 				{
 					domesticAirports.Add(airport);
 				}
@@ -85,7 +90,7 @@ namespace AirportCEOTweaks
 			{
 				// 1200 nautical miles/60nm/degree = 20 deg
 
-				float latdiff = (float)(playerAirport.latitude - airport.latitude) % 360;
+				float latdiff = (float)(PlayerAirport.latitude - airport.latitude) % 360;
 
 				if (latdiff > 20)
 				{
@@ -93,8 +98,8 @@ namespace AirportCEOTweaks
 				}
 
 				//1200 / 60 >>> 0 = 20>180
-				float longdiff = (float)(playerAirport.longitude - airport.longitude) % 360;
-				float longthresh = (float)(0.00000152 * Math.Pow(playerAirport.latitude, 4) + 20);  // 15 at 0 deg lat; 27 at 45lat; 120 at 90 lat, close enough
+				float longdiff = (float)(PlayerAirport.longitude - airport.longitude) % 360;
+				float longthresh = (float)(0.00000152 * Math.Pow(PlayerAirport.latitude, 4) + 20);  // 15 at 0 deg lat; 27 at 45lat; 120 at 90 lat, close enough
 
 				if (longdiff > longthresh)
 				{
@@ -151,23 +156,26 @@ namespace AirportCEOTweaks
 
 				routeContainers.Add(
 					new RouteContainer(
-						new Route(airport.id, playerAirport.id, (float)Utils.GetDistanceBetweenCoordinates(airport.latitude, airport.longitude, playerAirport.latitude, playerAirport.longitude)
+						new Route(airport.id, PlayerAirport.id, (float)Utils.GetDistanceBetweenCoordinates(airport.latitude, airport.longitude, PlayerAirport.latitude, PlayerAirport.longitude)
 						)));
 			}
 
 			return routeContainers;
 		}
-		public SortedSet<RouteContainer> SelectRouteContainers(float maxRange = 16000, float minRange = 0, bool forceDomestic = false, bool forceOrigin = false, Country[] origin = null)
+		public SortedSet<RouteContainer> SelectRouteContainers(
+			float maxRange = 16000, float minRange = 0,
+			bool forceDomestic = false, bool forceNationalOrigin = false, Country[] origin = null, Country[] forbidden = null,
+			bool forceHUBOriginInternational = false, bool forceHUBOriginAll = false, bool forceHUBRange = false , Airport[] hUBs = null, float[] hUBRanges = null)
 		{
-			forceOrigin = origin == null ? false : forceOrigin;
+			forceNationalOrigin = origin == null ? false : forceNationalOrigin;
 			
 			SortedSet<RouteContainer> returnSet = new SortedSet<RouteContainer>();
 			float min = 0;
-			float max = (float)routeContainers.Count;
+			float max = routeContainers.Count;
 			int rand;
 			RouteContainer item;
 
-			for (int i = 0; (i < 200 && returnSet.Count < 100); i++)
+			for (int i = 0; (i < 500 && returnSet.Count < 200); i++)
 			{
 				rand = (int)Random.Range(min, max);
 				item = routeContainers.ElementAt(rand);
@@ -187,17 +195,40 @@ namespace AirportCEOTweaks
 
 			if (forceDomestic)
 			{
-				returnSet = FilterDomestic(returnSet);
+				returnSet = FilterDomestic(returnSet, origin);
 			}
 
-			if (forceOrigin)
+			if (forceNationalOrigin)
 			{
 				returnSet = FilterByOrigin(returnSet, origin);
 			}
 
+			if (forbidden != null && forbidden.Length>0)
+            {
+				returnSet = FilterByForbidenOrigin(returnSet, forbidden);
+            }
+
+			if (forceHUBOriginAll&& hUBs != null && hUBs.Length>0)
+            {
+				returnSet = FilterByAirportofOrigin(returnSet, hUBs);
+            }
+
+			if (forceHUBOriginInternational && hUBs != null && hUBs.Length > 0)
+            {
+				SortedSet<RouteContainer> domesticSubset = FilterDomestic(returnSet, origin);
+				returnSet.ExceptWith(domesticSubset);
+				returnSet = FilterByAirportofOrigin(returnSet, hUBs);
+				returnSet.UnionWith(domesticSubset);
+			}
+
+			if (forceHUBRange &&  hUBs != null && hUBs.Length > 0 && hUBRanges != null && hUBRanges.Length > 0)
+            {
+				returnSet = FilterByDistanceFromHub(returnSet, hUBs, hUBRanges);
+            }
+
 			return returnSet;
 		}
-		public SortedSet<RouteContainer> NewSelectRoutesByChance(SortedSet<RouteContainer> originalSet, short numToSelect = 1)
+		public SortedSet<RouteContainer> SelectRoutesByChance(SortedSet<RouteContainer> originalSet, short numToSelect = 1)
         {
 			List<RouteContainer> list = new List<RouteContainer>();
 			SortedSet<RouteContainer> returnSet = new SortedSet<RouteContainer>();
@@ -226,60 +257,70 @@ namespace AirportCEOTweaks
 
 			return returnSet;
         }
-		public SortedSet<RouteContainer> SelectRoutesByChance(SortedSet<RouteContainer> originalSet, short numToSelect=1)
+		private SortedSet<RouteContainer> FilterDomestic(SortedSet<RouteContainer> originalSet, Country[] countries)
 		{
-			SortedSet<RouteContainer> returnSet = originalSet;
-			int i = 0;
-			RouteContainer a;
-			RouteContainer b;
-			int sumChance;
-
-			numToSelect=numToSelect.ClampMin<short>(1);
-
-			for (; ; )
+			if(countries == null || countries.Length <= 1)
             {
-				if (returnSet.Count <= numToSelect)
-                {
-					if (returnSet.Count <=0)
-                    {
-						Debug.LogError("ACEO Tweaks | ERROR: SelectRoutesByChance Returned Empty("+ returnSet.Count +") Set! i="+i);
-                    }
-					return returnSet;
-                }
-				if (i + 1 < returnSet.Count)
-				{
-					a = returnSet.ElementAt(i);
-					b = returnSet.ElementAt(i + 1);
-					sumChance = a.Chance + b.Chance;
-					if (Random.Range(0,sumChance) > a.Chance)
-                    {
-						returnSet.Remove(a);
-                    }	
-					else
-                    {	
-						returnSet.Remove(b);
-                    }
-					i++;
-				}
-				else
-                {
-					i = 0;
-                }
-            }
-		}
-		private SortedSet<RouteContainer> FilterDomestic(SortedSet<RouteContainer> originalSet)
-        {
-			return new SortedSet<RouteContainer>(originalSet.Where(route => route.Domestic).ToList());
+				return new SortedSet<RouteContainer>(originalSet.Where
+					(route =>
+					(
+					Singleton<ModsController>.Instance.IsDomestic(route.country)
+					)
+					).ToList());
+			}
+			return new SortedSet<RouteContainer>(originalSet.Where
+				(route =>
+				(
+				Singleton<ModsController>.Instance.IsDomestic(new Country[] { route.country}, countries)
+				&&
+				Singleton<ModsController>.Instance.IsDomestic(new Country[] {PlayerAirport.Country}, countries)
+				)
+				).ToList());
         }
 		private SortedSet<RouteContainer> FilterByOrigin(SortedSet<RouteContainer> originalSet, Country[] origin)
         {
 			return new SortedSet<RouteContainer>(originalSet.Where(route => origin.Contains(route.country)).ToList());
+		}
+		private SortedSet<RouteContainer> FilterByAirportofOrigin(SortedSet<RouteContainer> originalSet, Airport[] originHUB)
+		{
+			if(originHUB == null || originHUB.Length ==0 )
+            {
+				return originalSet;
+            }
+			return new SortedSet<RouteContainer>(originalSet.Where(route => originHUB.Contains(route.Airport)).ToList());
 		}
 		private SortedSet<RouteContainer> FilterByForbidenOrigin(SortedSet<RouteContainer> originalSet, Country[] forbidden)
 		{
 			originalSet.RemoveWhere(route => forbidden.Contains(route.route.ToAirport.Country));
 			originalSet.RemoveWhere(route => forbidden.Contains(route.route.FromAirport.Country));
 			return originalSet;
+		}
+		private SortedSet<RouteContainer> FilterByDistanceFromHub(SortedSet<RouteContainer> originalSet, Airport[] hUBs ,float[] maxDistance)
+		{
+			if(hUBs == null || maxDistance == null || hUBs.Length ==0 || maxDistance.Length <=0)
+            {
+				return originalSet;
+            }
+			
+			return new SortedSet<RouteContainer>(originalSet.Where
+				(route => 
+				
+				InNet(route)
+
+				));
+			bool InNet(RouteContainer route)
+            {
+				int j;
+				for (int i = 0; i<hUBs.Length; i++)
+				{
+					j = maxDistance.Length < i ? 0 : i;
+					if (TravelController.GetRouteDistance(new Route(hUBs[i].id,route.Airport.id,0f))<maxDistance[j])
+                    {
+						return true;
+                    }
+				}
+				return false;
+			}
 		}
 		private SortedSet<RouteContainer> FilterByDistance(SortedSet<RouteContainer> originalSet, float maxDistance, float minDistance)
 		{
@@ -451,7 +492,8 @@ namespace AirportCEOTweaks
 				return distance;
 			}
 		} //plain get accessor
-		public bool Domestic
+
+		public bool VanillaDomestic
 		{
 			get
 			{
@@ -557,7 +599,7 @@ namespace AirportCEOTweaks
 				case Enums.GenericSize.Gigantic : chance=20;break;
 			}
 
-			if (Domestic)
+			if (VanillaDomestic)
             {
 				chance *= 2;
             }

@@ -3,38 +3,53 @@ Airport CEO Tweaks:
 Known Bugs (2.3.0):
 
 * Baggage loading stat decreases due to PAX checking baggage for flights without baggage service.
-* Small cargo aircraft depart prematurly
+* Small cargo aircraft depart prematurely
 * Planner minimum flight gap not enforced on player.
 
 Changelog:
 
 2.3.0
-* Added system for importing new aircrafts
-* Added data structure for new aircraft including placeholders for future funtionality
-* Added data structure for airline behavior modifications including placeholders for future funtionality
-* Added data structure to save/load some additional data per each commmercial flight. Save/load util
-   is credit to humoresque.
-* Replaced the flight types system with a more robust system that, in the
-   future, may be user-definable in json.
-* Reworked turnaround service progress tracking t take advantage of the ability to save and load data
-* Patch to ensure cargo aircraft remain on stand now applies only to cargo aircraft
-* Converted turnaround time modifiers from floats about 1.0f to shorts about 100 in an attempt to curb 
-   turnaround time rounding drift.
-* Refactored and reorganaized much of the code base
+* Added system for importing fully-new aircrafts.
+* Added data structure for new aircraft including placeholders for future functionality.
+	* (New aircraft are available via separate workshop mod)
+* Added an as-of-yet unused system for dynamically rescaling aircraft.
+	* Vanilla aircraft are not all to a uniform scale; this system can correct this
+* Added data structure for airline behavior modifications.
+	* Functionality extends the existing airline.json file
+	* Tag airlines as cargo-only
+	* Tag airlines to operate only in home country(s)
+	* Assign multiple home countries
+	* Assign forbidden countries
+	* Assign a differnt fleet of aircraft based on tweaks install status (usefull for newly added aircraft)
+	* (InDevelopment: assign HUB IATA codes and max ranges from hubs, other hub rules)
+* Added data structure to save/load some additional data per each commercial flight. 
+	* Save/load utility is credit to humoresque
+* Replaced the flight types system with a more robust system.
+	* (in the future may be user-definable in json)
+* Reworked turnaround service progress tracking to take advantage of the ability to save and load data.
+	* Hopefully fixed some bugs with stuck turnarounds and emergency flight turnarounds
+	* Aircraft on small stands should not request services that are unavailable to them
+* Reworked turnaround time user-interaction and airline interaction.
+	* Implements a new aircraft size rule set that will see increasing use in future
+	* Consisitent 5-minute jumps on mouse scroll
+	* Minimum seperation setting is respected
+* Subscribing to more than 50 workshop mods no longer causes mods beyond the 50 oldest to fail to load.
+* Patch to ensure cargo aircraft remain on stand now applies only to cargo aircraft.
+* Re-factored and reorganized much of the code base.
 
 2.2.x
 * Completely rewrote route generation.
 * New route generation supports airline nationality.
 * Resolved flight planning issue causing skipped flights and hanging confirmation button.
 * Implemented basic detection of domestic-only carriers.
-* credit humoresque: Tooltips in flight planner for hold-shift-to-affect-all functionality
+* credit humoresque: Tool-tips in flight planner for hold-shift-to-affect-all functionality
 * credit humoresque: Structure auto-repair threshold now adjustable in F10 settings
 * credit humoresque: ACEO Tweaks version shown below game version
 
 2.1.x
 * Fixed airline satisfaction not changing
 * Revised version numbering. Conversion: 1.2.1 == (1.)2.1 --- This update can be though of as (1.)2.1.1
-* Fixed automatic livery layer unhiding
+* Fixed automatic livery layer un-hiding
 * Added "amazon air" cargo airline flag
 
 1.2.1
