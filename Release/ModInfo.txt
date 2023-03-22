@@ -21,7 +21,7 @@ Changelog:
 	* Assign multiple home countries
 	* Assign forbidden countries
 	* Assign a differnt fleet of aircraft based on tweaks install status (usefull for newly added aircraft)
-	* (InDevelopment, not ready: assign HUB IATA codes and max ranges from hubs, other hub rules)
+	* (InDevelopment: assign HUB IATA codes and max ranges from hubs, other hub rules)
 * Added data structure to save/load some additional data per each commercial flight. 
 	* Save/load utility is credit to humoresque
 * Replaced the flight types system with a more robust system.
@@ -33,7 +33,7 @@ Changelog:
 	* Implements a new aircraft size rule set that will see increasing use in future
 	* Consisitent 5-minute jumps on mouse scroll
 	* Minimum seperation setting is respected
-* Subscribing to more than 50 steam workshop mods no longer causes mods beyond the 50 oldest to fail to load.
+* Subscribing to more than 50 workshop mods no longer causes mods beyond the 50 oldest to fail to load.
 * Patch to ensure cargo aircraft remain on stand now applies only to cargo aircraft.
 * Re-factored and reorganized much of the code base.
 

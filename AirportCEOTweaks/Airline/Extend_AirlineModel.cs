@@ -389,7 +389,7 @@ namespace AirportCEOTweaks
                 Debug.LogWarning("ACEO Tweaks | WARN: Airline " + parent.businessName + "contract canceled due to no valid fleet!");
                 return true;
             }
-            Debug.Log("Passed Error Catch");
+            //Debug.Log("Passed Error Catch");
             // Maybe don't generate a flight if there are lots already...............................................................
 
             //later
@@ -518,7 +518,7 @@ namespace AirportCEOTweaks
 
             if (routeContainer.Count == 0)
             {
-                Debug.Log("SelectByChance gave 0 containers");
+                //Debug.Log("SelectByChance gave 0 containers");
                 return true;
             }
 
