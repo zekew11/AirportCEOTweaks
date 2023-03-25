@@ -21,8 +21,6 @@ namespace AirportCEOTweaks
         [HarmonyPatch("SetFlightPassengerTrafficValues")]
         public static void Postfix(CommercialFlightModel __instance, float __0)
         {
-            if (AirportCEOTweaksConfig.fixes == false && AirportCEOTweaksConfig.cargoSystem == false) { return; }
-
             if (__instance.isAllocated)
             {
                 int inhr = __instance.arrivalTimeDT.Hour;
@@ -80,8 +78,6 @@ namespace AirportCEOTweaks
         [HarmonyPostfix]
         public static void Patch_RemoveExtensionCom(CommercialFlightModel __instance)
         {
-            if (!AirportCEOTweaksConfig.flightTypes)
-            { return; }
             try
             {
                 Singleton<ModsController>.Instance.GetExtensions(__instance, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
@@ -136,8 +132,6 @@ namespace AirportCEOTweaks
         [HarmonyPatch("ShouldActivateFlight")] //Disable auro flight actvation until 2 hours prior to arrival to give room for new flight activation rules
         public static bool Prefix_ShouldActivateFlight(DateTime currentTime, ref bool __result, FlightModel __instance)
         {
-            if (!AirportCEOTweaksConfig.fixes && !AirportCEOTweaksConfig.plannerChanges || !AirportCEOTweaksConfig.flightTypes) { return true; }
-
             __result = __instance.arrivalTimeDT - currentTime < new TimeSpan(2, 0, 0);
             return false;
         }
@@ -148,8 +142,6 @@ namespace AirportCEOTweaks
         {
             try
             {
-                if (!AirportCEOTweaksConfig.fixes && !AirportCEOTweaksConfig.plannerChanges || !AirportCEOTweaksConfig.flightTypes) { return true; }
-
                 __result = FlightModelUtils.TakeoffTime(__instance, out TimeSpan t, 0f, 99f) - currentTime.AddMinutes(-10);
                 return false;
             }

@@ -13,8 +13,6 @@ namespace AirportCEOTweaks
         [HarmonyPatch("LaunchAircraft")]
         public static void Patch_EvaluateNightLightHide(AircraftController __instance)
         {
-            if (AirportCEOTweaksConfig.cargoSystem == false) { return; }
-
             if (__instance.FlightModel == null)
             {
                 return;
@@ -78,10 +76,6 @@ namespace AirportCEOTweaks
         [HarmonyPatch("ChargeFlightIncome")]
         public static bool Patch_FlightIncome(ref AircraftController __instance)
         {
-            if (!AirportCEOTweaksConfig.flightTypes)
-            {
-                return true;
-            }
             if (__instance.FlightModel == null)
             {
                 return false;

@@ -398,11 +398,30 @@ namespace AirportCEOTweaks
                     Debug.LogError("ACEO Tweaks | ERROR: ecfm ParentAirlineExtension == null in refresh services");
                 }
                 
-                turnaroundServices.Add(TurnaroundServices.Catering,    new TurnaroundService(TurnaroundServices.Catering, parent, this, ParentAirlineExtension));
-                turnaroundServices.Add(TurnaroundServices.Cleaning,    new TurnaroundService(TurnaroundServices.Cleaning, parent, this, ParentAirlineExtension));
-                turnaroundServices.Add(TurnaroundServices.Fueling,     new TurnaroundService(TurnaroundServices.Fueling, parent, this, ParentAirlineExtension));
-                turnaroundServices.Add(TurnaroundServices.Baggage,     new TurnaroundService(TurnaroundServices.Baggage, parent, this, ParentAirlineExtension));
-                turnaroundServices.Add(TurnaroundServices.RampService, new TurnaroundService(TurnaroundServices.RampService, parent, this, ParentAirlineExtension));
+                if (!turnaroundServices.ContainsKey(TurnaroundServices.Catering))
+                {
+                    turnaroundServices.Add(TurnaroundServices.Catering, new TurnaroundService(TurnaroundServices.Catering, parent, this, ParentAirlineExtension));
+                }
+
+                if (!turnaroundServices.ContainsKey(TurnaroundServices.Cleaning))
+                {
+                    turnaroundServices.Add(TurnaroundServices.Cleaning, new TurnaroundService(TurnaroundServices.Cleaning, parent, this, ParentAirlineExtension));
+                }
+
+                if (!turnaroundServices.ContainsKey(TurnaroundServices.Fueling))
+                {
+                    turnaroundServices.Add(TurnaroundServices.Fueling, new TurnaroundService(TurnaroundServices.Fueling, parent, this, ParentAirlineExtension));
+                }
+
+                if (!turnaroundServices.ContainsKey(TurnaroundServices.Baggage))
+                {
+                    turnaroundServices.Add(TurnaroundServices.Baggage, new TurnaroundService(TurnaroundServices.Baggage, parent, this, ParentAirlineExtension));
+                }
+
+                if (!turnaroundServices.ContainsKey(TurnaroundServices.RampService))
+                {
+                    turnaroundServices.Add(TurnaroundServices.RampService, new TurnaroundService(TurnaroundServices.RampService, parent, this, ParentAirlineExtension));
+                }
             }
 
 
@@ -498,11 +517,23 @@ namespace AirportCEOTweaks
 
             return data;
         }
+        public bool TryGetAircraftTypeData(out AircraftTypeData singleAircraftTypeData)
+        {
+            if (TryGetAircraftTypeData(out singleAircraftTypeData, out int index))
+            {
+                singleAircraftTypeData = singleAircraftTypeData.SingleAircraftTypeData(singleAircraftTypeData.id[index]);
+                return true;
+            }
+            else
+            {
+                singleAircraftTypeData = default;
+                return false;
+            }
+        }
         public bool TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData, out int index)
         {
             return ParentAirlineExtension.TryGetAircraftData(parent.aircraftTypeString, out aircraftTypeData, out index);
         }
-
         public Tweaks8SizeScale GetDynamicFlightSize()
         {
             if (TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData, out int index))
@@ -948,9 +979,6 @@ namespace AirportCEOTweaks
                 }
                 set
                 {
-                    if (!AirportCEOTweaksConfig.flightTypes)
-                    { return; }
-
                     string stringy = nameString + "Requested";
                     //bool oldValue = (bool)flightModel.GetType().GetField(stringy).GetValue(flightModel);
                     flightModel.GetType().GetField(stringy).SetValue(flightModel, value);
@@ -975,7 +1003,16 @@ namespace AirportCEOTweaks
 
                 if(ecfm.TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData, out int index))
                 {
-                    if (aircraftTypeData.cateringPoints[index] == 0)
+                    int points = 0;
+                    try 
+                    { 
+                    points = aircraftTypeData.cateringPoints.Length < index ? aircraftTypeData.cateringPoints[0] : aircraftTypeData.cateringPoints[index];
+                    }
+                    catch
+                    {
+                        Debug.LogWarning("AirportCEOTweaks | WARN: Aircraft " + flightModel.aircraftTypeString + " had an AircraftTypeData but a lookup failed for catering eval.");
+                    }
+                    if (points == 0)
                     {
                         capable = false;
                         MyDesire = Desire.Refused;
@@ -1026,7 +1063,16 @@ namespace AirportCEOTweaks
 
                 if (ecfm.TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData, out int index))
                 {
-                    if (aircraftTypeData.cleaningPoints[index] == 0)
+                    int points = 0;
+                    try
+                    { 
+                    points = aircraftTypeData.cleaningPoints.Length < index ? aircraftTypeData.cleaningPoints[0] : aircraftTypeData.cleaningPoints[index];
+                    }
+                    catch
+                    {
+                        Debug.LogWarning("AirportCEOTweaks | WARN: Aircraft " + flightModel.aircraftTypeString + " had an AircraftTypeData but a lookup failed for cleaning eval.");
+                    }
+                    if (points == 0)
                     {
                         capable = false;
                         MyDesire = Desire.Refused;
@@ -1122,7 +1168,20 @@ namespace AirportCEOTweaks
                 capable = Singleton<AirportController>.Instance.AirportData.baggageHandlingSystemEnabled;
                 if (ecfm.TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData, out int index))
                 {
-                    if (aircraftTypeData.conveyerPoints[index] == 0 && aircraftTypeData.capacityULDLowerDeck[index] == 0 && aircraftTypeData.capacityULDUpperDeck[index] == 0)
+                    int conveyerPoints=1;
+                    int lowerULD=0;
+                    int upperULD=0;
+                    try
+                    {
+                        conveyerPoints = aircraftTypeData.conveyerPoints.Length < index ? aircraftTypeData.conveyerPoints[0] : aircraftTypeData.conveyerPoints[index];
+                        lowerULD = aircraftTypeData.capacityULDLowerDeck.Length < index ? aircraftTypeData.capacityULDLowerDeck[0] : aircraftTypeData.capacityULDLowerDeck[index];
+                        upperULD = aircraftTypeData.capacityULDUpperDeck.Length < index ? aircraftTypeData.capacityULDUpperDeck[0] : aircraftTypeData.capacityULDUpperDeck[index];
+                    }
+                    catch
+                    {
+                        Debug.LogWarning("AirportCEOTweaks | WARN: Aircraft " + flightModel.aircraftTypeString + " had an AircraftTypeData but a lookup failed for baggage eval.");
+                    }
+                    if (conveyerPoints == 0 && lowerULD == 0 && upperULD == 0)
                     {
                         capable = false;
                         MyDesire = Desire.Refused;

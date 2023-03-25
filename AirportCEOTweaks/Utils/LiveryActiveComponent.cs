@@ -183,14 +183,11 @@ namespace AirportCEOTweaks
                 {
                     case "setpax":    if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
                     case "setrows":   if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
-                    case "setrange":  if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
                     case "setstairs": if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
-                    case "settype":   if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
                     case "settitle":  if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
-                    case "setsize":   if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
 
-                    case "moveabs": Move(gameObjects, originalComponent.transform.localPosition, false); flag = true; break;
-                    case "moverel": Move(gameObjects, originalComponent.transform.localPosition, true); flag = true; break;
+                    case "moveabs": Move(gameObjects, originalComponent.transform.localPosition, false, originalComponent.transform.localEulerAngles.z); flag = true; break;
+                    case "moverel": Move(gameObjects, originalComponent.transform.localPosition, true, originalComponent.transform.localEulerAngles.z); flag = true; break;
                     case "enable": EnableDisable(gameObjects, true); flag = true; break;
                     case "disable": EnableDisable(gameObjects, false); flag = true; break;
                     case "makeshadow": ReplaceShadowSpriteWith(gameObjects); EnableDisable(gameObjects,false); break;
@@ -356,7 +353,7 @@ namespace AirportCEOTweaks
             }
         }
 
-        void Move(HashSet<GameObject> gameObjects, Vector3 position, bool rel)
+        void Move(HashSet<GameObject> gameObjects, Vector3 position, bool rel, float rotation = 0f)
         {
             float scale = Scale();
             foreach (GameObject obj in gameObjects)
@@ -371,6 +368,7 @@ namespace AirportCEOTweaks
                     obj.transform.localPosition = (position*scale);
                 }
                 if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogError("ACEO Tweaks | Livery Debug: moved " + obj.name + " newpos = " + obj.transform.localPosition.ToString() + "(move scaled by " + scale + ")"); }
+                obj.transform.Rotate(Vector3.forward, rotation);
             }
         }
         void EnableDisable(HashSet<GameObject> gameObjects, bool flag)
@@ -475,6 +473,27 @@ namespace AirportCEOTweaks
             }
 
             shadowObject.GetComponent<SpriteRenderer>().sprite = gameObject.GetComponent<SpriteRenderer>().sprite;
+            shadowObject.transform.Rotate(Vector3.forward,gameObject.transform.localEulerAngles.z);
+            shadowObject.transform.localScale = Vector3.Scale(shadowObject.transform.localScale, gameObject.transform.localScale);
+
+
+            ShadowHandler handler = shadowObject.GetComponent<ShadowHandler>();
+
+            if (handler!=null)
+            {
+                handler.referenceTransform = gameObject.transform;
+                handler.cachedReferenceTransformPosition = gameObject.transform.position;
+                handler.cachedReferenceTransformScale = shadowObject.transform.localScale;
+                shadowObject.transform.position = gameObject.transform.position;
+                handler.UpdateShadow();
+            }
+
+            SpriteRenderer oldRender  = gameObject.GetComponent<SpriteRenderer>();
+
+            if (oldRender !=null)
+            {
+                oldRender.forceRenderingOff = true;
+            }
         }
         float Scale()
         {

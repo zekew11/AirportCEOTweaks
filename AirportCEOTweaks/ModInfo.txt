@@ -4,7 +4,6 @@ Known Bugs (2.3.0):
 
 * Baggage loading stat decreases due to PAX checking baggage for flights without baggage service.
 * Small cargo aircraft depart prematurely
-* Planner minimum flight gap not enforced on player.
 
 Changelog:
 

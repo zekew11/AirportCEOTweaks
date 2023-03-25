@@ -27,7 +27,7 @@ namespace AirportCEOTweaks
         public static bool RefreshAsPlanner(FlightModel flight)
         {
             Singleton<ModsController>.Instance.GetExtensions(flight as CommercialFlightModel, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-            if (ecfm != null && AirportCEOTweaksConfig.flightTypes)
+            if (ecfm != null)
             {
                 ecfm.RefreshServices();
             }
@@ -37,7 +37,7 @@ namespace AirportCEOTweaks
         [HarmonyPostfix]
         public static void AddDescriptionPlanner(FlightModel flight, FlightSlotContainerUI __instance)
         {
-            if (flight is CommercialFlightModel && AirportCEOTweaksConfig.flightTypes)
+            if (flight is CommercialFlightModel)
             {
 
                 CommercialFlightModel cmf = flight as CommercialFlightModel;
@@ -68,7 +68,7 @@ namespace AirportCEOTweaks
         public static bool RefreshAsWorld(FlightModel flight)
         {
             Singleton<ModsController>.Instance.GetExtensions(flight as CommercialFlightModel, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-            if (ecfm != null && AirportCEOTweaksConfig.flightTypes)
+            if (ecfm != null)
             {
                 ecfm.RefreshServices();
             }
@@ -78,7 +78,7 @@ namespace AirportCEOTweaks
         [HarmonyPostfix]
         public static void AddDescriptionWorld(FlightModel flight, FlightSlotContainerUI __instance)
         {
-            if (flight is CommercialFlightModel && AirportCEOTweaksConfig.flightTypes)
+            if (flight is CommercialFlightModel)
             {
                 CommercialFlightModel cmf = flight as CommercialFlightModel;
 
@@ -105,7 +105,7 @@ namespace AirportCEOTweaks
         [HarmonyPostfix]
         public static void ColorServiceIcons(ref FlightSlotContainerUI __instance, FlightModel ___flight)
         {
-            if (!(___flight is CommercialFlightModel) || !AirportCEOTweaksConfig.flightTypes) { return; }
+            if (!(___flight is CommercialFlightModel)) { return; }
 
             Transform transform2 = __instance.transform.Find("FlightInfo");
             AirportData airportData = Singleton<AirportController>.Instance.AirportData;

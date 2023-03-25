@@ -11,7 +11,6 @@ namespace AirportCEOTweaks
         [HarmonyPatch("ShouldRequestPushback")]
         public static void Patch_Pushback(StandModel __instance, ref bool __result)
         {
-            if (AirportCEOTweaksConfig.cargoSystem == false) { return; }
 
             if (__instance.CurrentFlight is CommercialFlightModel && __instance.CurrentCommercialFlight.currentTotalNbrOfDepartingPassengers==0)
             {

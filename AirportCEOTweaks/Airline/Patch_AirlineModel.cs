@@ -31,29 +31,12 @@ namespace AirportCEOTweaks
             Singleton<ModsController>.Instance.GetExtensions(__instance, out _);
         }
 
-
-        [HarmonyPatch("GetPaymentPerFlight")]
-        public static void Postfix(AirlineModel __instance, ref float __result)
-        {
-            if (AirportCEOTweaksConfig.cargoSystem == true)
-            {
-                foreach (string flag in AirportCEOTweaksConfig.cargoAirlineFlags)
-                {
-                    if (__instance.businessName.ToLower().Contains(flag.ToLower()))
-                    {
-                        __result *= AirportCEOTweaksConfig.cargoPayMod;
-                        break;
-                    }
-
-                }
-            }
-        }
         [HarmonyPatch("GenerateFlight")]
         [HarmonyPrefix]
         public static bool Prefix(ref bool isEmergency, ref bool isAmbulance, AirlineModel __instance)
         {
 
-            if (isAmbulance || isEmergency || !AirportCEOTweaksConfig.flightTypes)
+            if (isAmbulance || isEmergency)
             {
                 return true;
             }
@@ -77,11 +60,6 @@ namespace AirportCEOTweaks
         [HarmonyPrefix]
         public static bool HackFlightCount(ref AirlineModel __instance)
         {
-            if (!AirportCEOTweaksConfig.flightTypes)
-            {
-                return true;
-            }
-            
             HashSet<string> unAllocatedNbrs = new HashSet<string>();
             __instance.UnAllocatedCount = 0;
             __instance.AllocatedCount = 0;

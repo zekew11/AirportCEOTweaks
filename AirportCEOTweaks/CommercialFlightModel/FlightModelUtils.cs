@@ -8,8 +8,6 @@ namespace AirportCEOTweaks
     {
         public static void IfNoPAX(FlightModel flight) // CargoMod
         {
-            if (AirportCEOTweaksConfig.fixes == false && AirportCEOTweaksConfig.cargoSystem == false) { return; }
-            
             CommercialFlightModel commFlight = flight as CommercialFlightModel;
             if (commFlight.currentTotalNbrOfArrivingPassengers == 0 && commFlight.currentTotalNbrOfDepartingPassengers == 0)
             {

@@ -374,7 +374,6 @@ namespace AirportCEOTweaks
         public bool GenerateFlight(AirlineModel airlineModel, bool isEmergency = false, bool isAmbulance = false)
         {
             //Debug.Log("Generating Flight For " + airlineModel.businessName);
-            if (!AirportCEOTweaksConfig.flightTypes) { return false; }
             if (FleetCount.Length == 0)
             {
                 Debug.LogWarning("ACEO Tweaks | WARN: Generate flight for " + parent.businessName + " failed due to FleetCount.Length==0");
@@ -671,7 +670,7 @@ namespace AirportCEOTweaks
 
                 if (TryGetAircraftData(AircraftType, out AircraftTypeData aircraftTypeData, out int typeDataIndex))
                 {
-                    exitLimit = aircraftTypeData.exitLimit_PAX[typeDataIndex];
+                    exitLimit = aircraftTypeData.exitLimit_PAX.Length < typeDataIndex ? aircraftTypeData.exitLimit_PAX[0] : aircraftTypeData.exitLimit_PAX[typeDataIndex];
                 }
 
                 for (var i = 0; i < 2; i++)
@@ -729,18 +728,18 @@ namespace AirportCEOTweaks
                 case "Crown Airlines": return 4f;
 
                 default: //Debug.LogError("ACEO Tweaks | WARN: Airline Name " + name + " not recognised as vanilla airline!");
-                    return GetModEconomyTiers(name, desc, stars);
+                    return GetModEconomyTiers(name, stars);
             }
         }
-        public float GetModEconomyTiers(string name, string desc, Enums.BusinessClass stars)
+        public float GetModEconomyTiers(string name, Enums.BusinessClass stars)
         {
-            if (AirportCEOTweaksConfig.cargoSystem == true)
-            {
+
                 foreach (string flag in AirportCEOTweaksConfig.cargoAirlineFlags)
                 {
-                    if (name.ToLower().Contains(flag.ToLower()) && AirportCEOTweaksConfig.cargoSystem == true)
+                    if (name.ToLower().Contains(flag.ToLower()))
                     {
                         cargoProportion = 1f;
+                        airlineBusinessData.cargo = true;
 
                         if (stars == Enums.BusinessClass.Exclusive)
                         {
@@ -752,7 +751,7 @@ namespace AirportCEOTweaks
                         }
                     }
                 }
-            }
+
             switch (stars)
             {
                 case Enums.BusinessClass.Cheap:
@@ -823,17 +822,8 @@ namespace AirportCEOTweaks
 
             if (AirportCEOTweaks.aircraftTypeDataDict.TryGetValue(aircraftType, out AircraftTypeData aircraftTypeData))
             {
-                for (int i = 0; i< aircraftTypeData.id.Length; i++)
-                {
-                    int index = 0;
-                    if (aircraftTypeData.id[i] == aircraftType && i<aircraftTypeData.cargo.Length)
-                    {
-                        index = i;
-                        break;
-                    }
-
-                    return aircraftTypeData.cargo[i];
-                }
+                aircraftTypeData = aircraftTypeData.SingleAircraftTypeData(aircraftType);
+                return aircraftTypeData.cargo[0];
             }
 
             return false;
@@ -846,7 +836,7 @@ namespace AirportCEOTweaks
                 for (int i = 0; i < aircraftTypeData.id.Length; i++)
                 {
                     index = 0;
-                    if (aircraftTypeData.id[i] == aircraftType && i < aircraftTypeData.cargo.Length)
+                    if (aircraftTypeData.id[i] == aircraftType)
                     {
                         index = i;
                         break;
@@ -1036,9 +1026,9 @@ namespace AirportCEOTweaks
                     case 4:
                     case 5:
                     case 6: rangecap = .4f; break;
-                    case 7: rangecap = .6f; break;
-                    case 8: rangecap = .8f; break;
-                    default: rangecap = .9f; break;
+                    case 7: rangecap = .7f; break;
+                    case 8: rangecap = .7f; break;
+                    default: rangecap = .8f; break;
                 }
                 
                 int sizeMismatch = (Math.Abs((int)routeThatIsPossible.Airport.paxSize - (int)aircraftSize)); // 0,1,2,3,4...
