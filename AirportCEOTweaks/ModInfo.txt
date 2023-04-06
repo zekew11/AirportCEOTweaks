@@ -1,9 +1,14 @@
 Airport CEO Tweaks:
 
+Need to Know for 2.3.0:
+
+* New aircraft types are available via workshop link here: https://steamcommunity.com/sharedfiles/filedetails/?id=2920123551
+* Mods must incorperate new aircraft in order for them to appear in your save
+
 Known Bugs (2.3.0):
 
-* Baggage loading stat decreases due to PAX checking baggage for flights without baggage service.
-* Small cargo aircraft depart prematurely
+* Some situations that should fail a turnaround service cause it to succeed anyway
+* Cargo aircraft on small stands depart prematurely
 
 Changelog:
 
@@ -20,11 +25,11 @@ Changelog:
 	* Assign multiple home countries
 	* Assign forbidden countries
 	* Assign a differnt fleet of aircraft based on tweaks install status (usefull for newly added aircraft)
-	* (InDevelopment: assign HUB IATA codes and max ranges from hubs, other hub rules)
+	* (In Development: assign HUB IATA codes and max ranges from hubs, other hub rules)
 * Added data structure to save/load some additional data per each commercial flight. 
 	* Save/load utility is credit to humoresque
 * Replaced the flight types system with a more robust system.
-	* (in the future may be user-definable in json)
+	* (in the future may be user/modder-definable in json)
 * Reworked turnaround service progress tracking to take advantage of the ability to save and load data.
 	* Hopefully fixed some bugs with stuck turnarounds and emergency flight turnarounds
 	* Aircraft on small stands should not request services that are unavailable to them
@@ -34,6 +39,7 @@ Changelog:
 	* Minimum seperation setting is respected
 * Subscribing to more than 50 workshop mods no longer causes mods beyond the 50 oldest to fail to load.
 * Patch to ensure cargo aircraft remain on stand now applies only to cargo aircraft.
+* Depriciated some old settings.
 * Re-factored and reorganized much of the code base.
 
 2.2.x

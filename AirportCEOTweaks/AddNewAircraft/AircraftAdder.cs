@@ -214,13 +214,28 @@ namespace AirportCEOTweaks
         private void DoTweaksLiveryBakeIn(GameObject aircraftGameObject, AircraftTypeData aircraftTypeData)
         {
             string filePath = aircraftTypeData.filePath.Replace("\\", "/");
+
             string[] jsonFiles = Directory.GetFiles(filePath, "*_Visual.json");
             string[] PNGfiles = Directory.GetFiles(filePath, "*.png");
+
+            string[] specificJSONFiles = Directory.GetFiles(filePath, aircraftGameObject.name + "*_Visual.json");
+            string[] specificPNGfiles  = Directory.GetFiles(filePath, aircraftGameObject.name + "*.png");
+
             List<GameObject> componentGameObjects = new List<GameObject>();
 
             if (jsonFiles.Length == 0  || PNGfiles.Length == 0)
             {
                 return;
+            }
+
+            if (specificJSONFiles.Length > 0)
+            {
+                jsonFiles[0] = specificJSONFiles[0];
+            }
+
+            if (specificPNGfiles.Length > 0)
+            {
+                PNGfiles[0] = specificPNGfiles[0];
             }
 
             GameObject tweaksContainer = new GameObject("tweaksContainer");

@@ -165,15 +165,13 @@ namespace AirportCEOTweaks
                 case Tweaks8SizeScale.VerySmall: hours = 2.5f; break;
             }
 
-            hours *= flightDatas[1].timeMod[0];
+            hours *= flightDatas[0].timeMod[0];
             rawTurnaroundTime = TimeSpan.FromHours(hours);
             TurnaroundTimeSetRawGetTrue = rawTurnaroundTime;
         }
         public void FinalizeFlightDetails()
         {
-            //RefreshFlightTypes();
             FlightModelUtils.IfNoPAX(parent);
-            //EvaluateServices();
 
             parent.Aircraft.am.CurrentWasteStored = parent.currentTotalNbrOfArrivingPassengers.ClampMin(2) + ((parent.Aircraft.am.MaxPax-parent.currentTotalNbrOfArrivingPassengers)*0.33f).RoundToIntLikeANormalPerson();
 
@@ -592,7 +590,7 @@ namespace AirportCEOTweaks
                 switch(parent.weightClass)
                 {
                     case Enums.ThreeStepScale.Small:
-                        if (parent.totalNbrOfArrivingPassengers < 10)
+                        if (parent.totalNbrOfArrivingPassengers/GameSettingManager.PassengerModifierValue < 10)
                         {
                             return Tweaks8SizeScale.VerySmall;
                         }
@@ -601,7 +599,7 @@ namespace AirportCEOTweaks
                             return Tweaks8SizeScale.Small;
                         }
                     case Enums.ThreeStepScale.Medium:
-                        if (parent.totalNbrOfArrivingPassengers < 200)
+                        if (parent.totalNbrOfArrivingPassengers / GameSettingManager.PassengerModifierValue < 200)
                         {
                             return Tweaks8SizeScale.Medium;
                         }
@@ -610,11 +608,11 @@ namespace AirportCEOTweaks
                             return Tweaks8SizeScale.SuperMedium;
                         }
                     case Enums.ThreeStepScale.Large:
-                        if (parent.totalNbrOfArrivingPassengers < 200)
+                        if (parent.totalNbrOfArrivingPassengers / GameSettingManager.PassengerModifierValue < 200)
                         {
                             return Tweaks8SizeScale.Large;
                         }
-                        if (parent.totalNbrOfArrivingPassengers < 400)
+                        if (parent.totalNbrOfArrivingPassengers / GameSettingManager.PassengerModifierValue < 400)
                         {
                             return Tweaks8SizeScale.VeryLarge;
                         }
@@ -1166,33 +1164,9 @@ namespace AirportCEOTweaks
                 //  2 = demanded, will be displeased if not available
                 int result = 0;
                 capable = Singleton<AirportController>.Instance.AirportData.baggageHandlingSystemEnabled;
-                if (ecfm.TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData, out int index))
-                {
-                    int conveyerPoints=1;
-                    int lowerULD=0;
-                    int upperULD=0;
-                    try
-                    {
-                        conveyerPoints = aircraftTypeData.conveyerPoints.Length < index ? aircraftTypeData.conveyerPoints[0] : aircraftTypeData.conveyerPoints[index];
-                        lowerULD = aircraftTypeData.capacityULDLowerDeck.Length < index ? aircraftTypeData.capacityULDLowerDeck[0] : aircraftTypeData.capacityULDLowerDeck[index];
-                        upperULD = aircraftTypeData.capacityULDUpperDeck.Length < index ? aircraftTypeData.capacityULDUpperDeck[0] : aircraftTypeData.capacityULDUpperDeck[index];
-                    }
-                    catch
-                    {
-                        Debug.LogWarning("AirportCEOTweaks | WARN: Aircraft " + flightModel.aircraftTypeString + " had an AircraftTypeData but a lookup failed for baggage eval.");
-                    }
-                    if (conveyerPoints == 0 && lowerULD == 0 && upperULD == 0)
-                    {
-                        capable = false;
-                        MyDesire = Desire.Refused;
-                        impactAssessed = true;
-                        return -1;
-                    }
-                }
 
                 if (ecfm.aircraftModel.weightClass == Enums.ThreeStepScale.Small && AirportCEOTweaksConfig.smallPlaneBaggageOff)
                 {
-                    capable = false;
                     return -1;
                 }
                 try
@@ -1275,6 +1249,7 @@ namespace AirportCEOTweaks
             }
             public void ServiceRefresh(bool lastPass = false, bool impact = true)
             {
+                _ = Completed;
                 if (impactAssessed)
                 {
                     return;

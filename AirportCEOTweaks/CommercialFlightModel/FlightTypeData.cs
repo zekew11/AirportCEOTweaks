@@ -247,6 +247,10 @@ namespace AirportCEOTweaks
 
                 flightData.ULDLower  = new RequestLevel[] { RequestLevel.Reject, RequestLevel.Reject, RequestLevel.Demand };
                 flightData.ULDUpper  = new RequestLevel[] { RequestLevel.Reject, RequestLevel.Demand, RequestLevel.Demand };
+
+                flightData.paxMod = new float[] { 0f };
+                flightData.payMod = new float[] { .7f, .6f, .5f };
+                flightData.timeMod = new float[] { 1.4f, 1.75f, 1.75f };
             }
 
             return flightData;

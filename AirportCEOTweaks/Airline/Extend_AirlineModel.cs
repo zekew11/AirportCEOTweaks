@@ -21,11 +21,6 @@ namespace AirportCEOTweaks
 
             Singleton<ModsController>.Instance.RegisterThisEAM(this, airline); //This also triggers refresh of AirlineBuisinessData
 
-            //Basic
-
-            starRank = parent?.businessClass ?? Enums.BusinessClass.Small;
-            economyTier = GetEconomyTiers(airline.businessName, airline.businessDescription, airline.businessClass);
-
             //Load AirlineBusinessData
             
             if (Singleton<ModsController>.Instance.airlineBusinessDataDic.TryGetValue(parent.businessName,out AirlineBusinessData data))
@@ -36,6 +31,11 @@ namespace AirportCEOTweaks
             {
                 airlineBusinessData = default(AirlineBusinessData);
             }
+
+            //Basic
+
+            starRank = parent?.businessClass ?? Enums.BusinessClass.Small;
+            economyTier = GetEconomyTiers(airline.businessName, airline.businessDescription, airline.businessClass);
 
             //Nationality
 
@@ -634,8 +634,8 @@ namespace AirportCEOTweaks
                     numberOfFlightsInSerie = seriesLength
                 };
 
-                commercialFlightModel.totalNbrOfArrivingPassengers = seatsin;
-                commercialFlightModel.totalNbrOfDepartingPassengers = seatsout;
+                commercialFlightModel.totalNbrOfArrivingPassengers = (seatsin*GameSettingManager.PassengerModifierValue).RoundToIntLikeANormalPerson();
+                commercialFlightModel.totalNbrOfDepartingPassengers = (seatsout * GameSettingManager.PassengerModifierValue).RoundToIntLikeANormalPerson();
 
                 set.Add(commercialFlightModel);
 
@@ -733,7 +733,6 @@ namespace AirportCEOTweaks
         }
         public float GetModEconomyTiers(string name, Enums.BusinessClass stars)
         {
-
                 foreach (string flag in AirportCEOTweaksConfig.cargoAirlineFlags)
                 {
                     if (name.ToLower().Contains(flag.ToLower()))
