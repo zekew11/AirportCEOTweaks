@@ -37,7 +37,7 @@ namespace AirportCEOTweaks
 
 
             // Path based stuff... Is there a file?
-            string path = savePath + "\\TweaksFlightSaveData.json";
+            string path = Path.Combine(savePath, "TweaksFlightSaveData.json");
             if (!File.Exists(path))
             {
                 SaveLoadUtility.quicklog("The CustomSaveData.json file does not exist. Skipped loading.", false);
