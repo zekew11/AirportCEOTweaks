@@ -6,15 +6,16 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.EventSystems;
 
+
 namespace AirportCEOTweaks
 {
     static class FlightServiceIconHelper
     {
         // These are hard-coded tooltips that don't have a desire level in them
-        public static string indifferedTooltip = "This service is not requested, but will be requested if available";
+        public static string indifferedTooltip =        "This service is not requested, but will be requested if available";
         public static string indifferedSuccessTooltip = "This service was requested and was successfully provided";
-        public static string pendingRequestTooltip = "This service is requested and will be provided during turnaround";
-        public static string errorTooltip = "There was an error with coloring this icon, so see the game log";
+        public static string pendingRequestTooltip =    "This service is requested and will be provided during turnaround";
+        public static string errorTooltip =             "There was an error with coloring this icon; see game log";
             
         // For easier access
         private static Extend_CommercialFlightModel.TurnaroundService.Desire desired = Extend_CommercialFlightModel.TurnaroundService.Desire.Desired;
@@ -28,11 +29,10 @@ namespace AirportCEOTweaks
             icon.color = SingletonNonDestroy<DataPlaceholderColors>.Instance.clear;
             RemoveTooltip(icon.gameObject);
         }
-        
         public static void ColorIconPending(Image icon)
         {
             icon.color = Color.white;
-            ChangeAddTooltip(icon.gameObject, pendingRequestTooltip);
+            //ChangeAddTooltip(icon.gameObject, pendingRequestTooltip);
         }
         public static void ColorIconError(Image icon)
         {
@@ -68,6 +68,73 @@ namespace AirportCEOTweaks
         }
 
         // These are tooltips that change with desire level
+        
+        public static string BuildTooltip(Extend_CommercialFlightModel.TurnaroundService.Desire desireLevel, Extend_CommercialFlightModel.TurnaroundServices thisService ,bool failed = false, bool succeeded = false, bool unavailable = false)
+        {
+
+            string desire;
+            if (desireLevel == Extend_CommercialFlightModel.TurnaroundService.Desire.Indiffernt)
+            {
+                desire = "optional";
+            }
+            else if (desireLevel == Extend_CommercialFlightModel.TurnaroundService.Desire.Demanded)
+            {
+                desire = "required";
+            }
+            else
+            {
+                desire = desireLevel.ToString().ToLower();
+            }
+
+            string service = thisService.ToString();
+
+            if (thisService == Extend_CommercialFlightModel.TurnaroundServices.RampService)
+            {
+                service = "Ground handling";
+            }
+
+            string tense = (succeeded || failed) ? "was" : "is";
+            string postmortem;
+
+            if(failed)
+            {
+                if (unavailable)
+                {
+                    postmortem = "Failed. Airport does not offer this service!";
+                }
+                else
+                {
+                    postmortem = "Failed.";
+                }
+            }
+            else if (succeeded)
+            {
+                postmortem = $"Sucessfully provided {service.ToLower()}.";
+            }
+            else if (unavailable)
+            {
+                if (desireLevel == Extend_CommercialFlightModel.TurnaroundService.Desire.Demanded)
+                {
+                    postmortem = $"Make {service.ToLower()} service available before scheduling to avoid penalty.";
+                    //tense = "";
+                }
+                else if (desireLevel == Extend_CommercialFlightModel.TurnaroundService.Desire.Desired)
+                {
+                    postmortem = $"Make {service.ToLower()} service available before scheduling for full reward.";
+                    //tense = "";
+                }
+                else //indiff or reject
+                {
+                    postmortem = $"Airport does not offer {service.ToLower()} service";
+                }
+            }
+            else
+            {
+                postmortem = "Pending...";
+            }
+
+            return $"{service} {tense} {desire}. {postmortem}";
+        }
         public static string BuildTooltipSucceeded(Extend_CommercialFlightModel.TurnaroundService.Desire desireLevel)
         {
             if (desireLevel == desired || desireLevel == demanded)
@@ -90,7 +157,6 @@ namespace AirportCEOTweaks
             }
             return string.Empty;
         }
-
         public static string BuildTooltipFailed(Extend_CommercialFlightModel.TurnaroundService.Desire desireLevel)
         {
             if (desireLevel == desired || desireLevel == demanded)

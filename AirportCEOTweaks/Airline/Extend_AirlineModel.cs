@@ -462,7 +462,7 @@ namespace AirportCEOTweaks
                 for (int i = 0; i < FleetModels.Length; i++)
                 {
                     typeModelDictionary.TryGetValue(i, out TypeModel workingModel);
-                    if (workingModel == null) { return false; }
+                    if (workingModel == null || workingModel.errorFlag) { return false; }
                     if (workingModel.CanOperateFromPlayerAirportStands(.1f) && workingModel.AvailableByDLC() && workingModel.CanDispatchAdditionalAircraft())
                     {
                         typeModels.Add(workingModel);
@@ -922,21 +922,32 @@ namespace AirportCEOTweaks
             public AircraftType aircraftType;
             public AircraftModel aircraftModel;
             //AircraftTypeData aircraftTypeData;
+            public bool errorFlag = false;
 
-            public int rangeKM;
-            public Enums.GenericSize aircraftSize;
-            int capacityPAX;
+            public int rangeKM=0;
+            public Enums.GenericSize aircraftSize=Enums.GenericSize.Tiny;
+            int capacityPAX=0;
 
             public TypeModel(string aircraftString, int fleetCount)
             {
                 this.aircraftString = aircraftString;
                 this.fleetCount = fleetCount;
                 CustomEnums.TryGetAircraftType(aircraftString, out this.aircraftType);
-                this.aircraftModel = Singleton<AirTrafficController>.Instance.GetAircraftModel(aircraftType.id);
 
-                rangeKM = aircraftModel.rangeKM;
-                aircraftSize = aircraftType.size;
-                capacityPAX = aircraftModel.MaxPax;
+                if (Singleton<AirTrafficController>.Instance.GetAircraftModel(aircraftType.id)==null)
+                {
+                    errorFlag = true;
+                    aircraftModel = null;
+                }
+                else
+                {
+                    aircraftModel = Singleton<AirTrafficController>.Instance.GetAircraftModel(aircraftType.id);
+                    rangeKM = aircraftModel.rangeKM;
+                    aircraftSize = aircraftType.size;
+                    capacityPAX = aircraftModel.MaxPax;
+                }
+
+
             }
 
             public bool AvailableByDLC()

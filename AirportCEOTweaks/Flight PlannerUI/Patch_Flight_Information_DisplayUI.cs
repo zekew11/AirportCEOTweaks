@@ -145,66 +145,65 @@ namespace AirportCEOTweaks
                 //failed
                 if (ecfm.turnaroundServices.GetValueSafe((Extend_CommercialFlightModel.TurnaroundServices)i).Failed)//Failed
                 {
+                    FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltip((Extend_CommercialFlightModel.TurnaroundService.Desire)serviceDesireArray[i], (Extend_CommercialFlightModel.TurnaroundServices)i, true, false, !haveService[i]));
+                    
                     switch (serviceDesireArray[i])
                     {
                         case 0: 
                             iconImage.color = SingletonNonDestroy<DataPlaceholderColors>.Instance.white.Opacity(0.15f);
-                            FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.indifferedTooltip);
+ 
                             continue;
                         case 1: 
                             iconImage.color = Color.red;
-                            FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipFailed(Extend_CommercialFlightModel.TurnaroundService.Desire.Desired));
+                            //FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipFailed(Extend_CommercialFlightModel.TurnaroundService.Desire.Desired));
                             continue;
                         case 2: 
                             iconImage.color = Color.red;
-                            FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipFailed(Extend_CommercialFlightModel.TurnaroundService.Desire.Demanded));
+                            //FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipFailed(Extend_CommercialFlightModel.TurnaroundService.Desire.Demanded));
                             continue;
                         default:
                             FlightServiceIconHelper.ColorIconError(iconImage);
                             Debug.LogWarning("ACEO Tweaks | WARN: turnaround service " + ((Extend_CommercialFlightModel.TurnaroundServices)i).ToString() + " is failed with unexpected desire == " + serviceDesireArray[i].ToString());
                             continue;
                     }
-                } //continues
-                
+                } //continue to next loop
+
                 //succeeded is green
                 if (ecfm.turnaroundServices.GetValueSafe((Extend_CommercialFlightModel.TurnaroundServices)i).Succeeded)//Succeeded
                 {
+                    FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltip((Extend_CommercialFlightModel.TurnaroundService.Desire)serviceDesireArray[i], (Extend_CommercialFlightModel.TurnaroundServices)i, false, true));
                     switch (serviceDesireArray[i])
                     {
                         case 0: 
                             iconImage.color = SingletonNonDestroy<DataPlaceholderColors>.Instance.lightGreen;
-                            FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipSucceeded(Extend_CommercialFlightModel.TurnaroundService.Desire.Indiffernt));
+                            //FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipSucceeded(Extend_CommercialFlightModel.TurnaroundService.Desire.Indiffernt));
                             continue;
                         case 1:                             
                             iconImage.color = SingletonNonDestroy<DataPlaceholderColors>.Instance.lightGreen;
-                            FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipSucceeded(Extend_CommercialFlightModel.TurnaroundService.Desire.Desired));
+                            //FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipSucceeded(Extend_CommercialFlightModel.TurnaroundService.Desire.Desired));
                             continue;
                         case 2: 
                             iconImage.color = SingletonNonDestroy<DataPlaceholderColors>.Instance.lightGreen;
-                            FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipSucceeded(Extend_CommercialFlightModel.TurnaroundService.Desire.Demanded));
+                            //FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipSucceeded(Extend_CommercialFlightModel.TurnaroundService.Desire.Demanded));
                             continue;
                         default:
                             FlightServiceIconHelper.ColorIconError(iconImage);
                             Debug.LogWarning("ACEO Tweaks | WARN: turnaround service " + ((Extend_CommercialFlightModel.TurnaroundServices)i).ToString() + " is succeeded with unexpected desire == " + serviceDesireArray[i].ToString());
                             continue;
                     }
-                } //continues
+                } //continue to next loop
 
-                ////requested, completed, but not failed or succeeded is an error catch
-                //if (ecfm.turnaroundServices.GetValueSafe((Extend_CommercialFlightModel.TurnaroundServices)i).Completed) //Completed
-                //{
-                //    //Debug.LogWarning("ACEO Tweaks | WARN: turnaround service " + ((Extend_CommercialFlightModel.TurnaroundServices)i).ToString() + " is completed but not failed nor succeeded with desire == " + serviceDesireArray[i].ToString());
-                //    //icons[i].GetComponent<Image>().color = Color.grey; continue;
-                //} //continues
-                
                 // now we are not refused, failed, succeeded, or completed, so we must be a pending
+
+                
+                FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltip((Extend_CommercialFlightModel.TurnaroundService.Desire)serviceDesireArray[i], (Extend_CommercialFlightModel.TurnaroundServices)i, false, false, !haveService[i]));
 
                 //switch on desire level
                 switch (serviceDesireArray[i])
                 {
                     case 0:
                         iconImage.color = SingletonNonDestroy<DataPlaceholderColors>.Instance.white.Opacity(0.3f);
-                        FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.indifferedTooltip);
+                        //FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.indifferedTooltip);
                         continue;
                     case 1:
                         if (haveService[i])
@@ -214,7 +213,7 @@ namespace AirportCEOTweaks
                         else
                         {
                             iconImage.color = Color.yellow;
-                            FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipCantBeProvided(Extend_CommercialFlightModel.TurnaroundService.Desire.Desired));
+                            //FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipCantBeProvided(Extend_CommercialFlightModel.TurnaroundService.Desire.Desired));
                         }
                         continue;
                     case 2:
@@ -225,7 +224,7 @@ namespace AirportCEOTweaks
                         else
                         {
                             iconImage.color = SingletonNonDestroy<DataPlaceholderColors>.Instance.orange;
-                            FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipCantBeProvided(Extend_CommercialFlightModel.TurnaroundService.Desire.Demanded));
+                            //FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipCantBeProvided(Extend_CommercialFlightModel.TurnaroundService.Desire.Demanded));
                         }
                         continue;
                     default:
