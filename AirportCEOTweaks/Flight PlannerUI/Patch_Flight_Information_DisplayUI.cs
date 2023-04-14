@@ -4,6 +4,7 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using TMPro;
+using System.IO.Ports;
 
 namespace AirportCEOTweaks
 {
@@ -49,8 +50,8 @@ namespace AirportCEOTweaks
                 TextMeshProUGUI expectedArrivingPassengersValueText = transform2.Find("ExpectedArrivingPassengersValueText").GetComponent<TextMeshProUGUI>();
                 TextMeshProUGUI expectedDepartingPassengersValueText = transform2.Find("ExpectedDepartingPassengersValueText").GetComponent<TextMeshProUGUI>();
 
-                //expectedArrivingPassengersValueText.text =     cmf.currentTotalNbrOfArrivingPassengers.ToString() + " / " + cmf.totalNbrOfArrivingPassengers.ToString() ;
-                //expectedDepartingPassengersValueText.text =   cmf.currentTotalNbrOfDepartingPassengers.ToString() + " / " + cmf.totalNbrOfDepartingPassengers.ToString();
+                //expectedArrivingPassengersValueText.message =     cmf.currentTotalNbrOfArrivingPassengers.ToString() + " / " + cmf.totalNbrOfArrivingPassengers.ToString() ;
+                //expectedDepartingPassengersValueText.message =   cmf.currentTotalNbrOfDepartingPassengers.ToString() + " / " + cmf.totalNbrOfDepartingPassengers.ToString();
                 expectedArrivingPassengersValueText.text = "(" + cmf.totalNbrOfArrivingPassengers.ToString() + ")";
                 expectedDepartingPassengersValueText.text = "(" + cmf.totalNbrOfDepartingPassengers.ToString() + ")";
 
@@ -126,6 +127,8 @@ namespace AirportCEOTweaks
 
             for (int i = 0; i < serviceDesireArray.Length; i++)
             {
+                Image iconImage = icons[i].GetComponent<Image>();
+
                 //not requested
                 if (!ecfm.turnaroundServices.GetValueSafe((Extend_CommercialFlightModel.TurnaroundServices)i).Requested)//Requested
                 {
@@ -134,7 +137,7 @@ namespace AirportCEOTweaks
                     {
                         case -1:
                         case 0:
-                            icons[i].GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.clear;
+                            FlightServiceIconHelper.ColorIconClear(iconImage);
                             continue;
                     }
                 } // does not neccesarily continue
@@ -144,11 +147,20 @@ namespace AirportCEOTweaks
                 {
                     switch (serviceDesireArray[i])
                     {
-                        case 0: icons[i].GetComponent<Image>().color = Color.white.Opacity(.15f); continue;
-                        case 1: icons[i].GetComponent<Image>().color = Color.red; continue;
-                        case 2: icons[i].GetComponent<Image>().color = Color.red; continue;
+                        case 0: 
+                            iconImage.color = SingletonNonDestroy<DataPlaceholderColors>.Instance.white.Opacity(0.15f);
+                            FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.indifferedTooltip);
+                            continue;
+                        case 1: 
+                            iconImage.color = Color.red;
+                            FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipFailed(Extend_CommercialFlightModel.TurnaroundService.Desire.Desired));
+                            continue;
+                        case 2: 
+                            iconImage.color = Color.red;
+                            FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipFailed(Extend_CommercialFlightModel.TurnaroundService.Desire.Demanded));
+                            continue;
                         default:
-                            icons[i].GetComponent<Image>().color = Color.blue;
+                            FlightServiceIconHelper.ColorIconError(iconImage);
                             Debug.LogWarning("ACEO Tweaks | WARN: turnaround service " + ((Extend_CommercialFlightModel.TurnaroundServices)i).ToString() + " is failed with unexpected desire == " + serviceDesireArray[i].ToString());
                             continue;
                     }
@@ -159,11 +171,20 @@ namespace AirportCEOTweaks
                 {
                     switch (serviceDesireArray[i])
                     {
-                        case 0: icons[i].GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.lightGreen; continue;
-                        case 1: icons[i].GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.lightGreen; continue;
-                        case 2: icons[i].GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.lightGreen; continue;
+                        case 0: 
+                            iconImage.color = SingletonNonDestroy<DataPlaceholderColors>.Instance.lightGreen;
+                            FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipSucceeded(Extend_CommercialFlightModel.TurnaroundService.Desire.Indiffernt));
+                            continue;
+                        case 1:                             
+                            iconImage.color = SingletonNonDestroy<DataPlaceholderColors>.Instance.lightGreen;
+                            FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipSucceeded(Extend_CommercialFlightModel.TurnaroundService.Desire.Desired));
+                            continue;
+                        case 2: 
+                            iconImage.color = SingletonNonDestroy<DataPlaceholderColors>.Instance.lightGreen;
+                            FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipSucceeded(Extend_CommercialFlightModel.TurnaroundService.Desire.Demanded));
+                            continue;
                         default:
-                            icons[i].GetComponent<Image>().color = Color.blue;
+                            FlightServiceIconHelper.ColorIconError(iconImage);
                             Debug.LogWarning("ACEO Tweaks | WARN: turnaround service " + ((Extend_CommercialFlightModel.TurnaroundServices)i).ToString() + " is succeeded with unexpected desire == " + serviceDesireArray[i].ToString());
                             continue;
                     }
@@ -182,37 +203,41 @@ namespace AirportCEOTweaks
                 switch (serviceDesireArray[i])
                 {
                     case 0:
-                        icons[i].GetComponent<Image>().color = Color.white.Opacity(.3f);
+                        iconImage.color = SingletonNonDestroy<DataPlaceholderColors>.Instance.white.Opacity(0.3f);
+                        FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.indifferedTooltip);
                         continue;
                     case 1:
                         if (haveService[i])
                         {
-                            icons[i].GetComponent<Image>().color = Color.white;
+                            FlightServiceIconHelper.ColorIconPending(iconImage);
                         }
                         else
                         {
-                            icons[i].GetComponent<Image>().color = Color.yellow;
+                            iconImage.color = Color.yellow;
+                            FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipCantBeProvided(Extend_CommercialFlightModel.TurnaroundService.Desire.Desired));
                         }
                         continue;
                     case 2:
                         if (haveService[i])
                         {
-                            icons[i].GetComponent<Image>().color = Color.white;
+                            FlightServiceIconHelper.ColorIconPending(iconImage);
                         }
                         else
                         {
-                            icons[i].GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.orange;
+                            iconImage.color = SingletonNonDestroy<DataPlaceholderColors>.Instance.orange;
+                            FlightServiceIconHelper.ChangeAddTooltip(iconImage.gameObject, FlightServiceIconHelper.BuildTooltipCantBeProvided(Extend_CommercialFlightModel.TurnaroundService.Desire.Demanded));
                         }
                         continue;
                     default:
+                        FlightServiceIconHelper.ColorIconError(iconImage);
                         Debug.LogWarning("ACEO Tweaks | WARN: turnaround service " + ((Extend_CommercialFlightModel.TurnaroundServices)i).ToString() + " is by deduction a pending request with unexpected desire == " + serviceDesireArray[i].ToString());
-                        icons[i].GetComponent<Image>().color = Color.blue; continue;
+                        continue;
                 }
                 
             }
 
-            transform2.Find("PushbackIcon").GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.clear;
-            transform2.Find("DeicingIcon").GetComponent<Image>().color = SingletonNonDestroy<DataPlaceholderColors>.Instance.clear;
+            FlightServiceIconHelper.ColorIconClear(transform2.Find("PushbackIcon").GetComponent<Image>());
+            FlightServiceIconHelper.ColorIconClear(transform2.Find("DeicingIcon").GetComponent<Image>());
         }
 
     }
