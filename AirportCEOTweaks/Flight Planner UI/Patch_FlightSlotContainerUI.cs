@@ -285,10 +285,26 @@ namespace AirportCEOTweaks
             }
             else
             {
+                extension.SyncFlightModel();
                 extension.PreConfigure();
             }
         }
+        [HarmonyPatch("Reset")]
+        [HarmonyPrefix]
+        public static bool RefreshPanelExtension(ref FlightSlotContainerUI __instance)
+        {
+            if (!__instance.gameObject.TryGetComponent(out Extend_FlightSlotContainerUI extension))
+            {
+                extension = __instance.gameObject.AddComponent<Extend_FlightSlotContainerUI>();
+                extension.ConstructMe(__instance, __instance.flight);
+            }
+            else
+            {
+                extension.PreConfigure();
+            }
 
+            return true;
+        }
     }
     public static class Statics_FlightSlotContainerUI
     {

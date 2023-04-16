@@ -2,6 +2,8 @@
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using System;
+using System.Linq;
 
 namespace AirportCEOTweaks
 {
@@ -33,7 +35,9 @@ namespace AirportCEOTweaks
         private RectTransform reoccuringGroup;
         private TextMeshProUGUI aircraftTypeText;
         private CommercialFlightModel commercialFlightModel;
-        AircraftModel aircraft;
+        private Extend_CommercialFlightModel extend_CommercialFlightModel;
+        private Extend_AirlineModel extend_AirlineModel;
+        AircraftModel aircraftModel;
 
         public void ConstructMe(FlightSlotContainerUI flightSlotContainer, CommercialFlightModel commercialFlightModel)
         {
@@ -75,7 +79,7 @@ namespace AirportCEOTweaks
             typeText.name = "typeText";
             aircraftTypeText = typeText.GetComponent<TextMeshProUGUI>();
 
-            aircraft = Singleton<AirTrafficController>.Instance.GetAircraftModel(commercialFlightModel.aircraftTypeString);
+            SyncFlightModel();
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -118,6 +122,7 @@ namespace AirportCEOTweaks
             paymentPerFlight.rectTransform.anchorMax = new Vector2(.5f, 0);
             paymentPerFlight.rectTransform.ForceUpdateRectTransforms();
             paymentPerFlight.rectTransform.anchoredPosition = new Vector2(0, 8);
+            paymentPerFlight.alignment = TextAlignmentOptions.CenterGeoAligned;
 
             //recouring
 
@@ -141,10 +146,23 @@ namespace AirportCEOTweaks
             flightSizeImage.rectTransform.ForceUpdateRectTransforms();
             flightSizeImage.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 30);
             flightSizeImage.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 30);
+            flightSizeImage.gameObject.GetComponent<HoverToolTip>().headerToDisplay = $"{commercialFlightModel.weightClass.ToString()}; {extend_CommercialFlightModel.GetDynamicFlightSize().ToString()}";
+            flightSizeImage.gameObject.GetComponent<HoverToolTip>().textToDisplay = $"The {aircraftModel.modelNbr} operating this flight requires {commercialFlightModel.weightClass} infustructure. " +
+                                                                                    $"More specifically, this is a {extend_CommercialFlightModel.GetDynamicFlightSize().ToString()} flight.\n\n" +
+                                                                                    $"Possible Sizes:\n\n" +
+                                                                                        $"{Tweaks8SizeScale.VerySmall}     - eg C182 \n" +
+                                                                                    $"{Tweaks8SizeScale.Small}             - eg ATR42\n\n" +
+                                                                                        $"{Tweaks8SizeScale.SubMedium}     - eg Q400 \n" +
+                                                                                     $"{Tweaks8SizeScale.Medium}           - eg A320 \n" +
+                                                                                          $"{Tweaks8SizeScale.SuperMedium} - eg B757 \n\n" +
+                                                                                    $"{Tweaks8SizeScale.Large}             - eg B767 \n" +
+                                                                                        $"{Tweaks8SizeScale.VeryLarge}     - eg A330 \n" +
+                                                                                    $"{Tweaks8SizeScale.Jumbo}             - eg B747 \n\n" +
+                                                                                    $"(Implimenting the 8-size-scale is WIP)";
             
             
             //new thing for aircraft type
-            aircraftTypeText.text = aircraft.aircraftType;
+            aircraftTypeText.text = aircraftModel.aircraftType;
             aircraftTypeText.color = darkBgTextColor;
             aircraftTypeText.overflowMode = TextOverflowModes.Ellipsis;
             aircraftTypeText.alignment = TextAlignmentOptions.CenterGeoAligned;
@@ -155,7 +173,7 @@ namespace AirportCEOTweaks
             aircraftTypeText.rectTransform.ForceUpdateRectTransforms();
             aircraftTypeText.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (rightEdge.localPosition.x - aircraftTypeText.rectTransform.localPosition.x) * 1.9f);
             //aircraftTypeText.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Right,1,60);
-            aircraftTypeText.GetComponent<HoverToolTip>().headerToDisplay = $"{aircraft.manufacturer} {aircraft.modelNbr}";
+            aircraftTypeText.GetComponent<HoverToolTip>().headerToDisplay = $"{aircraftModel.manufacturer} {aircraftModel.modelNbr}";
             aircraftTypeText.GetComponent<HoverToolTip>().textToDisplay = AircraftTooltip();
         }
         public void ConfigureMinimized()
@@ -166,14 +184,53 @@ namespace AirportCEOTweaks
         {
             
         }
+
+        public void SyncFlightModel()
+        {
+            this.commercialFlightModel = flightSlotContainer.flight;
+            aircraftModel = Singleton<AirTrafficController>.Instance.GetAircraftModel(commercialFlightModel.aircraftTypeString);
+            Singleton<ModsController>.Instance.GetExtensions(commercialFlightModel, out extend_CommercialFlightModel, out extend_AirlineModel);
+        }
         public string AircraftTooltip()
         {
-            
 
-            return 
-                   $"PAX Capacity: {aircraft.MaxPax}\n" +
-                   $"Fuel Capacity: {aircraft.fuelTankCapacityLiters} liters\n" +
-                   $"Operating Range: {aircraft.rangeKM} km\n";
+            if (extend_CommercialFlightModel.TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData))
+            {
+                int num = aircraftTypeData.numEngines;
+                string engineCount = num == 1 ? "Single" : num == 2 ? "Twin" : num == 3 ? "Tri" : num == 4 ? "Quad" : num.ToString();
+                string engineType = aircraftTypeData.engineType[0].Split('_').Last();
+
+                string config = aircraftTypeData.vIP[0]   ? $"VIP layout; {aircraftModel.MaxPax} PAX capacity\n" :
+                                aircraftTypeData.combi[0] ? $"Combi layout; {aircraftModel.MaxPax} PAX & {aircraftTypeData.capacityBulkCargo_KG} kg cargo capacity\n" :
+                                aircraftTypeData.cargo[0] ? $"Freighter; {aircraftTypeData.capacityBulkCargo_KG} kg cargo capacity\n" :
+                                                            $"PAX Capacity: {aircraftModel.MaxPax}\n";
+
+
+                return
+                       $"{(aircraftTypeData.sonicBoom[0] ? "Supersonic " : "Propulsion: ")}{engineCount}-{engineType}\n" +
+                       $"{aircraftTypeData.numBuilt[0]} built {aircraftTypeData.yearIntroduced[0]}-{(aircraftTypeData.yearLastProduced[0] >= 2023 ? "Present" : aircraftTypeData.yearLastProduced[0].ToString())}\n" +
+                       config +
+                       $"Operating Range: {((float)aircraftModel.rangeKM).RoundToNearest(50)} km\n" +
+                       $"Min Runway: {((float)aircraftTypeData.takeoffDistance_M[0]).RoundToNearest(25)} meters\n" +
+                       $"MTOW: {((float)aircraftTypeData.maxTOW_KG[0]).RoundToNearest(100)} kg\n" +
+                       $"Fuel Capacity: {aircraftModel.fuelTankCapacityLiters.RoundToNearest(10)} liters\n" +
+                       $"Fuel Type : {aircraftModel.FuelType}\n\n" +
+                       $"{(!aircraftTypeData.needStairs[0] ? "Built-in stairs\n" : "")}" +
+                       $"{(!aircraftTypeData.needPaved[0] ? "Unpaved-capable\n" : "")}" +
+                       $"{(aircraftTypeData.loud[0] ? "Heavy noise pollution\n" : "")}" +
+                       $"{(aircraftTypeData.quiet[0] ? "Low noise pollution\n" : "")}";
+            }
+            else
+            {
+                return
+
+                       $"PAX Capacity: {aircraftModel.MaxPax}\n" +
+                       $"Operating Range: {((float)aircraftModel.rangeKM).RoundToNearest(50)} km\n" +
+                       $"Fuel Capacity: {aircraftModel.fuelTankCapacityLiters.RoundToNearest(10)} liters\n" +
+                       $"Fuel Type : {aircraftModel.FuelType}\n\n" +
+                       $"(This Aircraft Not Yet Extended By Tweaks)";
+            }
+                   
 
         }
     }
