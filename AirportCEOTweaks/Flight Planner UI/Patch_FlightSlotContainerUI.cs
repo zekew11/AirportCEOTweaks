@@ -276,7 +276,17 @@ namespace AirportCEOTweaks
             Singleton<ModsController>.Instance.GetExtensions(__instance.flight, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
             
             float val = eam.PaymentPerFlight(ecfm, __instance.flight.Airline.GetPaymentPerFlight(__instance.flight.weightClass)) * ecfm.GetPaymentPercentAndReportRating(false);
-            ___paymentPerFlight.text = Utils.GetCurrencyFormat(val, "C0"); 
+            ___paymentPerFlight.text = Utils.GetCurrencyFormat(val, "C0");
+
+            if (!__instance.gameObject.TryGetComponent(out Extend_FlightSlotContainerUI extension))
+            {
+                extension = __instance.gameObject.AddComponent<Extend_FlightSlotContainerUI>();
+                extension.ConstructMe(__instance, __instance.flight);
+            }
+            else
+            {
+                extension.PreConfigure();
+            }
         }
 
     }

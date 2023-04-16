@@ -232,8 +232,8 @@ namespace AirportCEOTweaks
         public float turnaroundPlayerBiasBufferMins = 0;
         public void TurnaroundBiasFromBuffer()
         {
-            turnaroundPlayerBiasBufferMins = turnaroundPlayerBiasBufferMins.Clamp(-60, 90);
-            turnaroundPlayerBiasMins = turnaroundPlayerBiasBufferMins;
+            //turnaroundPlayerBiasBufferMins = turnaroundPlayerBiasBufferMins.Clamp(-60, 90);
+            TurnaroundPlayerBiasMins = turnaroundPlayerBiasBufferMins;
         }
         public float TurnaroundPlayerBiasMins
         {
@@ -243,7 +243,8 @@ namespace AirportCEOTweaks
             }
             set
             {
-                turnaroundPlayerBiasBufferMins = value.Clamp(-60, 90).RoundToNearest(5);
+                turnaroundPlayerBiasMins       = value.Clamp(-90, 240).RoundToNearest(5);
+                //turnaroundPlayerBiasBufferMins = value.Clamp(-90, 240).RoundToNearest(5);
             }
         }
         public void GetExtensions(CommercialFlightModel cfm, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam)

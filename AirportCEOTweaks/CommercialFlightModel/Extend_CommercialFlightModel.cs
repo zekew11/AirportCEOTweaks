@@ -135,7 +135,7 @@ namespace AirportCEOTweaks
         }
         public void DetermineTurnaroundTime()
         {
-            DetermineUnmodifiedTurnaroundTime(out TimeSpan timeSpan);
+            DetermineUnmodifiedTurnaroundTime(out _);
         }
         public void DetermineUnmodifiedTurnaroundTime(out TimeSpan rawTurnaroundTime, bool resetBias = false)
         {

@@ -65,10 +65,7 @@ namespace AirportCEOTweaks
                 coloredIconHover.message = "";
                 return;
             }
-        }
-
-        // These are tooltips that change with desire level
-        
+        }       
         public static string BuildTooltip(Extend_CommercialFlightModel.TurnaroundService.Desire desireLevel, Extend_CommercialFlightModel.TurnaroundServices thisService ,bool failed = false, bool succeeded = false, bool unavailable = false)
         {
 
@@ -134,37 +131,6 @@ namespace AirportCEOTweaks
             }
 
             return $"{service} {tense} {desire}. {postmortem}";
-        }
-        public static string BuildTooltipSucceeded(Extend_CommercialFlightModel.TurnaroundService.Desire desireLevel)
-        {
-            if (desireLevel == desired || desireLevel == demanded)
-            {
-                return $"This service was {desireLevel.ToString().ToLower()} and was successfully provided";
-            }
-
-            if (desireLevel == indiffernt)
-            {
-                return indifferedSuccessTooltip;
-            }
-
-            return string.Empty;
-        }
-        public static string BuildTooltipCantBeProvided(Extend_CommercialFlightModel.TurnaroundService.Desire desireLevel)
-        {
-            if (desireLevel == desired || desireLevel == demanded)
-            {
-                return $"This serive is {desireLevel.ToString().ToLower()}, but not able to be provided";
-            }
-            return string.Empty;
-        }
-        public static string BuildTooltipFailed(Extend_CommercialFlightModel.TurnaroundService.Desire desireLevel)
-        {
-            if (desireLevel == desired || desireLevel == demanded)
-            { 
-                return $"This serive is {desireLevel.ToString().ToLower()}, and can't be provided by your airport";
-            }
-
-            return string.Empty;
         }
     }
 
