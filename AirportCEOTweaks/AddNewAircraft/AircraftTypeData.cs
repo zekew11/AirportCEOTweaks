@@ -151,13 +151,6 @@ namespace AirportCEOTweaks
 				}
 			}
 		}
-		public string Id
-        {
-            get
-            {
-				return id[0];
-            }
-        }
 
 		public string filePath;
 
@@ -215,6 +208,98 @@ namespace AirportCEOTweaks
 
 		public bool[] loud;
 		public bool[] quiet;
+
+		public string Id
+		{
+			get
+			{
+				return id[0];
+			}
+		}
+		public string DisplayName             { get { return displayName?[0]; } }
+		public string ICAOCode				  { get { return  iCAOCode?[0]; }}
+		public string Manufacturer			  { get { return  manufacturer?		[0]; }}
+											  				 					
+		public short NumBuilt				  { get { return numBuilt				[0]; }}
+		public short YearIntroduced			  { get { return yearIntroduced			[0]; }}
+		public short YearLastProduced		  { get { return yearLastProduced		[0]; }}
+		public short YearRetired			  { get { return yearRetired			[0]; }}
+														 					
+		public short Capacity_PAX			  { get { return capacity_PAX			[0]; }}
+		public short ExitLimit_PAX			  { get { return exitLimit_PAX			[0]; }}
+		public short SeatsAbreast			  { get { return seatsAbreast			[0]; }}
+		public short CapacityULDLowerDeck	  { get { return capacityULDLowerDeck	[0]; }}
+		public short CapacityULDUpperDeck	  { get { return capacityULDUpperDeck	[0]; }}
+		public short CapacityBulkCargo_KG	  { get { return capacityBulkCargo_KG	[0]; }}
+
+
+		public short  Range_KM				   { get { return 	range_KM			[0]; }}
+		public short  Speed_KMH				   { get { return 	speed_KMH			[0]; }}
+		public short  Etops_Minutes			   { get { return 	etops_Minutes		[0]; }}
+		public int    FuelCapacity_L		   { get { return 	fuelCapacity_L	[0]; }}
+		public string EngineType			   { get { return 	engineType?		[0]; }}
+		public short  TakeoffDistance_M		   { get { return 	takeoffDistance_M	[0]; }}
+		public int    MaxTOW_KG				   { get { return 	maxTOW_KG			[0]; }}
+																				
+		public bool   NeedStairs			   { get { return 	needStairs		[0]; }}
+		public bool   NeedPushback			   { get { return 	needPushback		[0]; }}
+		public bool   NeedPaved				   { get { return 	needPaved			[0]; }}
+		public bool   NeedHeavyPaved		   { get { return 	needHeavyPaved	[0]; }}
+		public bool   CanGetPushback		   { get { return 	canGetPushback	[0]; }}
+																				
+		public short  JetbridgePoints		   { get { return 	jetbridgePoints	[0]; }}
+		public short  ConveyerPoints		   { get { return 	conveyerPoints	[0]; }}
+		public short  CleaningPoints		   { get { return 	cleaningPoints	[0]; }}
+		public short  CateringPoints		   { get { return 	cateringPoints	[0]; }}
+
+		public bool   SonicBoom				   { get { return 	sonicBoom			[0]; }}
+		public bool   VIP					   { get { return 	vIP				[0]; }}
+		public bool   Combi					   { get { return 	combi				[0]; }}
+		public bool   Cargo					   { get { return 	cargo				[0]; }}
+		public bool   Loud					   { get { return 	loud				[0]; }}
+		public bool   Quiet					   { get { return 	quiet				[0]; }}
 	}
 
+	public static class AircraftTypeDataUtilities
+    {
+		public static AircraftTypeData AircraftTypeDataCondensed(string aircraftType)
+        {
+			if (AirportCEOTweaks.aircraftTypeDataDict.TryGetValue(aircraftType, out AircraftTypeData aircraftTypeData))
+			{
+			}
+			else
+			{
+				aircraftTypeData = default;
+			}
+			return aircraftTypeData.SingleAircraftTypeData(aircraftType);
+
+			int[] thing = new int[5];
+
+			thing.GetAtIndexOrZero(6);
+		}
+		public static AircraftTypeData GetAircraftTypeData(this AircraftModel aircraft)
+        {
+			return AircraftTypeDataCondensed(aircraft.aircraftType);
+        }
+		public static AircraftTypeData GetAircraftTypeData (this FlightModel FlightModel)
+        {
+			return AircraftTypeDataCondensed(FlightModel.aircraftTypeString);
+        }
+		public static T GetAtIndexOrZero<T>(this T[] array,int index)
+        {
+
+			if (array.Length>index)
+            {
+				return (T)array.GetValue(index);
+            }
+			else if (array.Length>0)
+            {
+				return (T)array.GetValue(0);
+			}
+			else
+            {
+				return default;
+            }
+        }
+    }
 }

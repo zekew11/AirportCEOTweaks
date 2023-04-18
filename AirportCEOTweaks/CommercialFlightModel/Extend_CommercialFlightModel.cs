@@ -517,6 +517,14 @@ namespace AirportCEOTweaks
         }
         public bool TryGetAircraftTypeData(out AircraftTypeData singleAircraftTypeData)
         {
+            singleAircraftTypeData = parent.GetAircraftTypeData();
+            if (singleAircraftTypeData.Id == null || singleAircraftTypeData.Id==default)
+            {
+                return false;
+            }
+            return true;
+
+
             if (TryGetAircraftTypeData(out singleAircraftTypeData, out int index))
             {
                 singleAircraftTypeData = singleAircraftTypeData.SingleAircraftTypeData(singleAircraftTypeData.id[index]);
@@ -534,7 +542,7 @@ namespace AirportCEOTweaks
         }
         public Tweaks8SizeScale GetDynamicFlightSize()
         {
-            if (TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData, out int index))
+            if (TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData))
             {
                 float wingspan = aircraftTypeData.wingSpan_M;
                 float length = aircraftTypeData.length_M;
@@ -999,12 +1007,12 @@ namespace AirportCEOTweaks
 
                 capable = Singleton<AirportController>.Instance.AirportData.cateringServiceEnabled;
 
-                if(ecfm.TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData, out int index))
+                if(ecfm.TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData))
                 {
                     int points = 0;
                     try 
                     { 
-                    points = aircraftTypeData.cateringPoints.Length < index ? aircraftTypeData.cateringPoints[0] : aircraftTypeData.cateringPoints[index];
+                    points = aircraftTypeData.CateringPoints;
                     }
                     catch
                     {
@@ -1059,12 +1067,12 @@ namespace AirportCEOTweaks
                 int result = 0;
                 capable = Singleton<AirportController>.Instance.AirportData.aircraftCabinCleaningServiceEnabled;
 
-                if (ecfm.TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData, out int index))
+                if (ecfm.TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData))
                 {
                     int points = 0;
                     try
-                    { 
-                    points = aircraftTypeData.cleaningPoints.Length < index ? aircraftTypeData.cleaningPoints[0] : aircraftTypeData.cleaningPoints[index];
+                    {
+                        points = aircraftTypeData.CleaningPoints;
                     }
                     catch
                     {
@@ -1326,6 +1334,17 @@ namespace AirportCEOTweaks
             RampService,
             Baggage,
             Jetbridge
+        }
+    
+    
+    }
+
+    public static class CommercialFlightModelExtensionAccessor
+    {
+        public static Extend_CommercialFlightModel GetExtend_CommercialFlightModel (this CommercialFlightModel cfm)
+        {
+            Singleton<ModsController>.Instance.GetExtensions(cfm, out Extend_CommercialFlightModel ecfm, out _);
+            return ecfm;
         }
     }
 }

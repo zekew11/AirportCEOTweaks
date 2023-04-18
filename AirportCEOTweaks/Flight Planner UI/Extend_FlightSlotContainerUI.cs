@@ -4,10 +4,11 @@ using TMPro;
 using UnityEngine.EventSystems;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace AirportCEOTweaks
 {
-    public class Extend_FlightSlotContainerUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IEventSystemHandler
+    public class Extend_FlightSlotContainerUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IEventSystemHandler, IPointerClickHandler
     {
         private FlightSlotContainerUI flightSlotContainer;
         private RectTransform rectTransform;
@@ -38,6 +39,7 @@ namespace AirportCEOTweaks
         private Extend_CommercialFlightModel extend_CommercialFlightModel;
         private Extend_AirlineModel extend_AirlineModel;
         AircraftModel aircraftModel;
+        
 
         public void ConstructMe(FlightSlotContainerUI flightSlotContainer, CommercialFlightModel commercialFlightModel)
         {
@@ -232,6 +234,47 @@ namespace AirportCEOTweaks
             }
                    
 
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (eventData.button == PointerEventData.InputButton.Right && commercialFlightModel.isAllocated == false)
+            {
+                if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.RightShift) || Input.GetKeyDown(KeyCode.LeftShift))
+                {
+                    CancelMany();
+                }
+                else
+                {
+                    DialogPanel.Instance.ShowQuestionPanel(new Action<bool>(this.CancelMany), "Reject this flight sequence?\n\n(hold shift while clicking to skip this promt)", true, false);
+                }
+            }
+        }
+
+        public void CancelMany(bool doThis=true)
+        {
+            if (!doThis) { return; }
+
+            List<CommercialFlightModel> allFlights = commercialFlightModel.Airline.flightListObjects;
+            HashSet<CommercialFlightModel> flightsToChange = new HashSet<CommercialFlightModel>();
+            flightsToChange.Add(commercialFlightModel);
+
+            foreach (CommercialFlightModel f in allFlights)
+            {
+                if ((f.departureFlightNbr == commercialFlightModel.departureFlightNbr))
+                {
+                    flightsToChange.Add(f);
+                }
+            }
+            foreach (CommercialFlightModel f in flightsToChange)
+            {
+                if (f != null)
+                {
+                    f.CancelFlight(false);
+                }
+            }
+
+            FlightPlannerPanelUI.Instance.RefreshPlanner();
         }
     }
 }

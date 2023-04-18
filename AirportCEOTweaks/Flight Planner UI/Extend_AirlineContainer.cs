@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace AirportCEOTweaks
 {
-    public class Extend_AirlineContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IEventSystemHandler
+    public class Extend_AirlineContainer : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IEventSystemHandler, IPointerClickHandler
     {
         public AirlineContainerUI AirlineContainerUI { get; private set; }
         public Transform InfoTransform { get; private set; }
@@ -131,6 +131,14 @@ namespace AirportCEOTweaks
             if (logoTransform.gameObject != null && logoTransform.gameObject.TryGetComponent<RectTransform>(out RectTransform logoRectTransform))
             {
                 logoRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 50);
+            }
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if(eventData.button==PointerEventData.InputButton.Right)
+            {
+
             }
         }
     }
