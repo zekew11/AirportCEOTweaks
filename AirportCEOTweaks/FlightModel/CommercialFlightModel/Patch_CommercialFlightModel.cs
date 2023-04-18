@@ -142,7 +142,7 @@ namespace AirportCEOTweaks
         {
             try
             {
-                __result = FlightModelUtils.TakeoffTime(__instance, out TimeSpan t, 0f, 99f) - currentTime.AddMinutes(-10);
+                __result = FlightModelExtensionMethods.TakeoffDateTime(__instance, out TimeSpan t, 0f, 99f) - currentTime.AddMinutes(-10);
                 return false;
             }
             catch

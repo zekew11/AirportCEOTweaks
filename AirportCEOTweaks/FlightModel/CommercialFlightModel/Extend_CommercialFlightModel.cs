@@ -171,7 +171,7 @@ namespace AirportCEOTweaks
         }
         public void FinalizeFlightDetails()
         {
-            FlightModelUtils.IfNoPAX(parent);
+            FlightModelExtensionMethods.IfNoPAXResetAsCargo(parent);
 
             parent.Aircraft.am.CurrentWasteStored = parent.currentTotalNbrOfArrivingPassengers.ClampMin(2) + ((parent.Aircraft.am.MaxPax-parent.currentTotalNbrOfArrivingPassengers)*0.33f).RoundToIntLikeANormalPerson();
 
@@ -330,7 +330,7 @@ namespace AirportCEOTweaks
             {
                 TimeSpan flightTime;
                 
-                FlightModelUtils.TakeoffTime(parent, out flightTime, 2f, 10f);
+                FlightModelExtensionMethods.TakeoffDateTime(parent, out flightTime, 2f, 10f);
                 
                 if (flightTime.TotalMinutes < 165)
                 {

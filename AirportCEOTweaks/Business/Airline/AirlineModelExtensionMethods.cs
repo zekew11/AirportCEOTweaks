@@ -1,6 +1,6 @@
 ﻿namespace AirportCEOTweaks
 {
-    public static class AirlineModelExtensionAccessor
+    public static class AirlineModelExtensionMethods
     {
         public static Extend_AirlineModel GetExtend_AirlineModel(this AirlineModel airlineModel)
         {

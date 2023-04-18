@@ -6,7 +6,7 @@ using HarmonyLib;
 namespace AirportCEOTweaks
 {
 	[HarmonyPatch(typeof(AirTrafficController))]
-	static class Patch_AddNewPrefabs
+	static class Patch_AirTrafficControllerToAddNewPrefabs
 	{
 		[HarmonyPostfix]
 		[HarmonyPatch("Awake")]

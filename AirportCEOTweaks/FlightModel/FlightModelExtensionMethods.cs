@@ -4,9 +4,9 @@ using System;
 
 namespace AirportCEOTweaks
 {
-    public static class FlightModelUtils
+    public static class FlightModelExtensionMethods
     {
-        public static void IfNoPAX(FlightModel flight) // CargoMod
+        public static void IfNoPAXResetAsCargo(this FlightModel flight) // CargoMod
         {
             CommercialFlightModel commFlight = flight as CommercialFlightModel;
             if (commFlight.currentTotalNbrOfArrivingPassengers == 0 && commFlight.currentTotalNbrOfDepartingPassengers == 0)
@@ -43,7 +43,7 @@ namespace AirportCEOTweaks
             }
         }
 
-        public static DateTime TakeoffTime(FlightModel flight, out TimeSpan flightTime, float minHours=5f, float maxHours=12f)
+        public static DateTime TakeoffDateTime(this FlightModel flight, out TimeSpan flightTime, float minFlightLengthHours=5f, float maxFlightLengthHours=12f)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace AirportCEOTweaks
                     distance = 1000;
                 }
 
-                double hours = Utils.Clamp((distance / speed) + .75, minHours, maxHours);
+                double hours = Utils.Clamp((distance / speed) + .75, minFlightLengthHours, maxFlightLengthHours);
 
                 flightTime = TimeSpan.FromHours(hours);
 
@@ -89,7 +89,7 @@ namespace AirportCEOTweaks
             catch
             {
                 Debug.LogError("ACEO Tweaks | ERROR: TakeoffTime Catch!");
-                flightTime = new TimeSpan(minHours.RoundToIntLikeANormalPerson(),0,0);
+                flightTime = new TimeSpan(minFlightLengthHours.RoundToIntLikeANormalPerson(),0,0);
                 DateTime cTime = Singleton<TimeController>.Instance.GetCurrentContinuousTime();
                 //Debug.LogError("Flight Time = " + flightTime.ToString());
                 //Debug.LogError("ArrivalTime = "+ flight.arrivalTimeDT.ToString());

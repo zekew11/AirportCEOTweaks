@@ -9,7 +9,7 @@ using UnityEngine;
 namespace AirportCEOTweaks
 {
     [HarmonyPatch(typeof(LiveryController))]
-    static class Patch_LiveryController
+    static class Patch_LiveryControllerToSupportNewAircraft
     {
         [HarmonyPrefix]
         [HarmonyPatch("AddLivery")]

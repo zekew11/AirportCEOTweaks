@@ -11,7 +11,7 @@ using UModFramework.API;
 namespace AirportCEOTweaks
 {
 	[HarmonyPatch(typeof(ModManager))]
-	static class Patch_ModManager
+	static class Patch_ModManagerToLoadNewAircraft
 	{
 		[HarmonyPostfix]
 		[HarmonyPatch("QueueMods")]

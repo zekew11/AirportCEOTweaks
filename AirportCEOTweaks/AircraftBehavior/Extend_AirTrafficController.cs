@@ -30,7 +30,7 @@ namespace AirportCEOTweaks
 						hours = (f.arrivalTimeDT - cTime).Hours;
 
 						if (hours > 24 || (hours > 8 && !flag)) { continue; }
-                        if (FlightModelUtils.TakeoffTime(f, out TimeSpan fT,3f,24f) < cTime)
+                        if (FlightModelExtensionMethods.TakeoffDateTime(f, out TimeSpan fT,3f,24f) < cTime)
 						{
 							f.isActivated = true;
 							f.ActivateFlight();
