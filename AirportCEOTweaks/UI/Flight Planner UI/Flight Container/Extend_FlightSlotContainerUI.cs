@@ -131,6 +131,8 @@ namespace AirportCEOTweaks
             reoccuringGroup.anchoredPosition = new Vector2(32, -60);
             reoccuringGroup.GetComponentInChildren<Image>().color = darkBgTextColor;
             reoccuringGroup.GetComponentInChildren<TextMeshProUGUI>().color = darkBgTextColor;
+            reoccuringGroup.GetComponent<HoverToolTip>().headerToDisplay = "Flight Repetitions";
+            reoccuringGroup.GetComponent<HoverToolTip>().textToDisplay = commercialFlightModel.numberOfFlightsInSerie > 3 ? "Because there are three or more repetitions, this flight may renew." : "Because there are less than three repetitions, this flight will not renew.";
 
             //international
 
@@ -173,7 +175,7 @@ namespace AirportCEOTweaks
             aircraftTypeText.rectTransform.ForceUpdateRectTransforms();
             aircraftTypeText.rectTransform.anchoredPosition = new Vector2(0, 8);
             aircraftTypeText.rectTransform.ForceUpdateRectTransforms();
-            aircraftTypeText.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (rightEdge.localPosition.x - aircraftTypeText.rectTransform.localPosition.x) * 1.9f);
+            aircraftTypeText.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 65);
             //aircraftTypeText.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Right,1,60);
             aircraftTypeText.GetComponent<HoverToolTip>().headerToDisplay = $"{aircraftModel.manufacturer} {aircraftModel.modelNbr}";
             aircraftTypeText.GetComponent<HoverToolTip>().textToDisplay = AircraftTooltip();
@@ -240,7 +242,7 @@ namespace AirportCEOTweaks
         {
             if (eventData.button == PointerEventData.InputButton.Right && commercialFlightModel.isAllocated == false)
             {
-                if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.RightShift) || Input.GetKeyDown(KeyCode.LeftShift))
+                if (Input.GetKey(KeyCode.KeypadEnter) || Input.GetKey(KeyCode.RightShift) || Input.GetKey(KeyCode.LeftShift))
                 {
                     CancelMany();
                 }

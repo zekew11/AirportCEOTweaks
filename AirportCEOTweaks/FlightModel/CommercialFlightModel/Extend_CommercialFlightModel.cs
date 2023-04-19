@@ -517,29 +517,36 @@ namespace AirportCEOTweaks
         }
         public bool TryGetAircraftTypeData(out AircraftTypeData singleAircraftTypeData)
         {
+            if (parent == null)
+            {
+                singleAircraftTypeData = default;
+                return false;
+            }
+
             singleAircraftTypeData = parent.GetAircraftTypeData();
-            if (singleAircraftTypeData.Id == null || singleAircraftTypeData.Id==default)
+
+            if (singleAircraftTypeData.id == null || singleAircraftTypeData.id.Length == 0 || singleAircraftTypeData.id[0] == null || singleAircraftTypeData.id[0] == string.Empty)
             {
                 return false;
             }
             return true;
 
 
-            if (TryGetAircraftTypeData(out singleAircraftTypeData, out int index))
-            {
-                singleAircraftTypeData = singleAircraftTypeData.SingleAircraftTypeData(singleAircraftTypeData.id[index]);
-                return true;
-            }
-            else
-            {
-                singleAircraftTypeData = default;
-                return false;
-            }
+            //if (TryGetAircraftTypeData(out singleAircraftTypeData, out int index))
+            //{
+            //    singleAircraftTypeData = singleAircraftTypeData.SingleAircraftTypeData(singleAircraftTypeData.id[index]);
+            //    return true;
+            //}
+            //else
+            //{
+            //    singleAircraftTypeData = default;
+            //    return false;
+            //}
         }
-        public bool TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData, out int index)
-        {
-            return ParentAirlineExtension.TryGetAircraftData(parent.aircraftTypeString, out aircraftTypeData, out index);
-        }
+        //public bool TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData, out int index)
+        //{
+        //    return ParentAirlineExtension.TryGetAircraftData(parent.aircraftTypeString, out aircraftTypeData, out index);
+        //}
         public Tweaks8SizeScale GetDynamicFlightSize()
         {
             if (TryGetAircraftTypeData(out AircraftTypeData aircraftTypeData))

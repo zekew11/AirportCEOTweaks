@@ -36,7 +36,7 @@ namespace AirportCEOTweaks
         }
         [HarmonyPatch("SetDisplayAsFlightPlanner")]
         [HarmonyPostfix]
-        public static void AddDescriptionPlanner(FlightModel flight, FlightSlotContainerUI __instance)
+        public static void AddDescriptionPlanner(FlightModel flight, FlightInformationDisplayUI __instance)
         {
             if (flight is CommercialFlightModel)
             {
@@ -55,7 +55,7 @@ namespace AirportCEOTweaks
                 expectedArrivingPassengersValueText.text = "(" + cmf.totalNbrOfArrivingPassengers.ToString() + ")";
                 expectedDepartingPassengersValueText.text = "(" + cmf.totalNbrOfDepartingPassengers.ToString() + ")";
 
-                FrqText.text = "Desription:";
+                FrqText.text = "Flight Type: ";
 
                 Singleton<ModsController>.Instance.GetExtensions(flight as CommercialFlightModel, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
                 if (ecfm != null)
@@ -77,7 +77,7 @@ namespace AirportCEOTweaks
         }
         [HarmonyPatch("SetDisplayAsFlightInWorld")]
         [HarmonyPostfix]
-        public static void AddDescriptionWorld(FlightModel flight, FlightSlotContainerUI __instance)
+        public static void AddDescriptionWorld(FlightModel flight, FlightInformationDisplayUI __instance)
         {
             if (flight is CommercialFlightModel)
             {
@@ -104,7 +104,7 @@ namespace AirportCEOTweaks
         }
         [HarmonyPatch("SetOrderedTurnaroundServicesIcon")]
         [HarmonyPostfix]
-        public static void ColorServiceIcons(ref FlightSlotContainerUI __instance, FlightModel ___flight)
+        public static void ColorServiceIcons(ref FlightInformationDisplayUI __instance, FlightModel ___flight)
         {
             if (!(___flight is CommercialFlightModel)) { return; }
 

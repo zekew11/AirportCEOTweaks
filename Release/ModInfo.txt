@@ -1,16 +1,30 @@
 Airport CEO Tweaks:
 
-Need to Know for 2.3.0:
+Need to Know for 2.3.1:
 
 * New aircraft types are available via workshop link here: https://steamcommunity.com/sharedfiles/filedetails/?id=2920123551
 * Mods must incorperate new aircraft in order for them to appear in your save
 
-Known Bugs (2.3.0):
+Known Bugs (2.3.1):
 
 * Some situations that should fail a turnaround service cause it to succeed anyway
 * Cargo aircraft on small stands depart prematurely
 
 Changelog:
+
+2.3.1
+* More refactoring.
+* Back-end functionality to allow multiple new aircraft types to pull from the same sprite sheet.
+* Planner UI:
+    * Airline Containers:
+	    * Are slim until hovered over
+		* Are sorted: more flights => higher
+		    * This sort respects/responds to size filters
+	* Flight Containers:
+	    * Are sorted: long flights => higher
+		* Are reworked to provide easier to read info
+		* List the aircraft type
+		* Have more informative tooltips
 
 2.3.0
 * Added system for importing fully-new aircrafts.

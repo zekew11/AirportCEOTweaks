@@ -19,6 +19,10 @@ namespace AirportCEOTweaks
 		}
 		public AircraftTypeData SingleAircraftTypeData(string id)
 		{
+			if (id == null || id.Length==0 || this.id == null || this.id.Length == 0)
+            {
+				return new AircraftTypeData();
+            }
 			//Debug.Log("SingleAircraftTypeData: ");
 			int tryIndex = 0;
 
@@ -269,13 +273,9 @@ namespace AirportCEOTweaks
 			}
 			else
 			{
-				aircraftTypeData = default;
+				return new AircraftTypeData();
 			}
 			return aircraftTypeData.SingleAircraftTypeData(aircraftType);
-
-			int[] thing = new int[5];
-
-			thing.GetAtIndexOrZero(6);
 		}
 		public static AircraftTypeData GetAircraftTypeData(this AircraftModel aircraft)
         {

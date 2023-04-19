@@ -190,7 +190,7 @@ namespace AirportCEOTweaks
 
             //Debug.Log("ACEO Tweaks | Debug: Airline " + eam.parent.businessName + " logo path = " + eam.parent.logoPath);
             return string.Empty;
-            return string.Concat(eam.parent.businessName, stringy);
+            //return string.Concat(eam.parent.businessName, stringy);
         }
     }
 }

@@ -508,7 +508,7 @@ namespace AirportCEOTweaks
                 //Debug.LogWarning("ACEO Tweaks | Warn: Livery Active Component couldn't find aircraft scale manager");
             }
             return 1f;
-            return scale;
+            //return scale;
         }
     }
 }

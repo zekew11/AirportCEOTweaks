@@ -39,49 +39,30 @@ namespace AirportCEOTweaks
             
             ///Info Cards
 
-            if (infoTransform.TryGetComponent(out VerticalLayoutGroup verticalLayoutGroup))
-            {
-                UnityEngine.Object.DestroyImmediate(verticalLayoutGroup);
-            }
-            if (!infoTransform.TryGetComponent(out HorizontalLayoutGroup horizontalLayoutGroup))
-            {
-                horizontalLayoutGroup = infoTransform.gameObject.AddComponent<HorizontalLayoutGroup>();
-            }
             if (!infoTransform.TryGetComponent(out RectTransform infoRectTransform))
             {
                 Debug.LogError("ACEO Tweaks | ERROR: A airline container had unexpected lack of rectangle");
                 return;
             }
 
-            horizontalLayoutGroup.childControlWidth = true;
+            infoTransform.TryGetComponent(out VerticalLayoutGroup layoutGroup);
+
+            layoutGroup.childControlWidth = true;
             //infoRectTransform.localPosition = new Vector3(-17f, 5f, 0f);
-            infoRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 150);
+            infoRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 60);
             infoRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 25);
 
 
-            foreach (Transform child in infoTransform.GetComponentsInChildren<Transform>())
+            for (int i = 0; i<infoTransform.childCount; i++)
             {
-                float alpha = 0f;
+                Transform child = infoTransform.GetChild(i);
 
-
-                if (child.name == "AllocationRatio")
+                if (child.name == "AllocationRatio" || child.parent.name == "AllocationRatio")
                 {
-                    alpha = .667f;
-                }
-                if (child.parent.name == "AllocationRatio")
-                {
-                    alpha = 1f;
+                    continue;
                 }
 
-                if (child.TryGetComponent(out Image image))
-                {
-                    image.color = new Color(image.color.r, image.color.g, image.color.b, alpha);
-                }
-                if (child.TryGetComponent(out TextMeshProUGUI text))
-                {
-                    text.color = new Color(text.color.r, text.color.g, text.color.b, alpha);
-                }
-               
+                child.AttemptEnableDisableGameObject(false);
             }
 
 
@@ -103,26 +84,26 @@ namespace AirportCEOTweaks
 
         public static void ConfigureMaximized(AirlineContainerUI airlineContainerUI, Transform infoTransform, Transform logoTransform)
         {
-            foreach (Transform child in infoTransform.GetComponentsInChildren<Transform>())
+
+            if (!infoTransform.TryGetComponent(out RectTransform infoRectTransform))
             {
-                float alpha = 1f;
+                Debug.LogError("ACEO Tweaks | ERROR: A airline container had unexpected lack of rectangles");
+                return;
+            }
+            infoRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 60);
+            infoRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 60);
 
-                if (child.TryGetComponent(out Image image))
-                {
-                    image.color = new Color(image.color.r, image.color.g, image.color.b, alpha);
-                }
-                if (child.TryGetComponent(out TextMeshProUGUI text))
-                {
-                    text.color = new Color(text.color.r, text.color.g, text.color.b, alpha);
-                }
-
+            for (int i = 0; i < infoTransform.childCount; i++)
+            {
+                Transform child = infoTransform.GetChild(i);
+                child.AttemptEnableDisableGameObject(true);
             }
 
             ///Layout Element Perfered Height on AirlineContainer obj
 
             if (airlineContainerUI.gameObject.TryGetComponent(out LayoutElement layout))
             {
-                layout.preferredHeight = 50;
+                layout.preferredHeight = 60;
             }
 
             /// Airline Logo Size

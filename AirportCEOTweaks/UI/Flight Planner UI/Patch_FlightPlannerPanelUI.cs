@@ -27,6 +27,7 @@ namespace AirportCEOTweaks
                                         , List<AirlineContainerUI> ___currentlyDisplayedAirlineSlots
 
                                         , TextMeshProUGUI ___allocationHelpText
+                                        , Image ___transparentOverlay
                                         )
         {
             if (!__instance.gameObject.TryGetComponent<Extend_FlightPlannerPanelUI>(out Extend_FlightPlannerPanelUI extension))
@@ -46,6 +47,7 @@ namespace AirportCEOTweaks
                                        , ___currentlyDisplayedAirlineSlots
 
                                        , ___allocationHelpText
+                                       , ___transparentOverlay
                     );
             }
 
@@ -93,10 +95,26 @@ namespace AirportCEOTweaks
         }
 
         [HarmonyPatch("FilterLargeAircraft")]
+        [HarmonyPostfix]
+        public static void RefreshAfterLgFilter(FlightPlannerPanelUI __instance)
+        {
+            __instance.RefreshPlanner();
+        }
         [HarmonyPatch("FilterMediumAircraft")]
+        [HarmonyPostfix]
+        public static void RefreshAfterMdFilter(FlightPlannerPanelUI __instance)
+        {
+            __instance.RefreshPlanner();
+        }
         [HarmonyPatch("FilterSmallAircraft")]
         [HarmonyPostfix]
-        public static void RefreshAfterFilter(FlightPlannerPanelUI __instance)
+        public static void RefreshAfterSmFilter(FlightPlannerPanelUI __instance)
+        {
+            __instance.RefreshPlanner();
+        }
+        [HarmonyPatch("EnableDisablePanel")]
+        [HarmonyPostfix]
+        public static void RefreshAfterEnable(FlightPlannerPanelUI __instance)
         {
             __instance.RefreshPlanner();
         }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using Michsky.UI.ModernUIPack;
 using System.Linq;
+using UnityEngine.UI;
 
 namespace AirportCEOTweaks
 {
@@ -24,6 +25,7 @@ namespace AirportCEOTweaks
         private List<AirlineContainerUI> currentlyDisplayedAirlineSlots;
 
         private TextMeshProUGUI allocationHelpText;
+        private Image transparentOverlay;
 
         public void ConstructMe(FlightPlannerPanelUI panelUI
                                , PoolHandler<FlightSlotContainerUI> flightSlotPool
@@ -39,6 +41,7 @@ namespace AirportCEOTweaks
                                , List<AirlineContainerUI> currentlyDisplayedAirlineSlots
 
                                , TextMeshProUGUI allocationHelpText
+                               , Image transparentOverlay
                                )
         {
             flightPlannerPanelUI = panelUI;
@@ -56,6 +59,7 @@ namespace AirportCEOTweaks
             this.currentlyDisplayedAirlineSlots = currentlyDisplayedAirlineSlots;
 
             this.allocationHelpText = allocationHelpText;
+            this.transparentOverlay = transparentOverlay;
         }
         public void HideUnallocatedFlight(FlightSlotContainerUI flightSlot)
         {
@@ -69,6 +73,7 @@ namespace AirportCEOTweaks
         }
         public void GenerateAirlineContainersInAllocationDisplayList()
         {
+            this.transparentOverlay.enabled = false;
             int count = this.currentlyDisplayedAirlineSlots.Count;
             for (int i = 0; i < count; i++)
             {
@@ -86,10 +91,14 @@ namespace AirportCEOTweaks
             if (largeAircraftFilter.isOn) { allowedSizes.Add(Enums.ThreeStepScale.Large); }
 
             List<AirlineModel> list = (from a in SingletonNonDestroy<BusinessController>.Instance.GetArrayOfActiveBusinessesByType<AirlineModel>()
+                                       where   (from b in a.flightListObjects
+                                                where allowedSizes.Contains(b.weightClass) && b.isAllocated == false
+                                                select b).Count() > 0
                                        orderby (from b in a.flightListObjects
                                                 where allowedSizes.Contains(b.weightClass) && b.isAllocated == false
-                                                select b).Count() descending
+                                                select b).Count() descending , a.businessName
                                        select a).ToList<AirlineModel>();
+
             int num = 0;
             for (int i = 0; i < list.Count; i++)
             {
@@ -132,41 +141,56 @@ namespace AirportCEOTweaks
         }
         public void GenerateFlightContainersInAllocationDisplayList(AirlineModel airline)
         {
+            flightPlannerPanelUI.ReturnFlightsFromAllocationDisplayToPool();
 
-            int count1 = this.currentlyDisplayedUnallocatedFlightSlots.Count;
-            for (int i = 0; i < count1; i++)
-            {
-                this.currentlyDisplayedUnallocatedFlightSlots[i].transform.SetParent(this.unAllocatedFlightSlotPool.GetParent());
-                this.unAllocatedFlightSlotPool.ReturnPoolObject(this.currentlyDisplayedUnallocatedFlightSlots[i]);
-            }
-            this.currentlyDisplayedUnallocatedFlightSlots.Clear();
+            //int count1 = this.currentlyDisplayedUnallocatedFlightSlots.Count;
+            //for (int i = 0; i < count1; i++)
+            //{
+            //    this.currentlyDisplayedUnallocatedFlightSlots[i].transform.SetParent(this.unAllocatedFlightSlotPool.GetParent());
+            //    this.unAllocatedFlightSlotPool.ReturnPoolObject(this.currentlyDisplayedUnallocatedFlightSlots[i]);
+            //}
+            //this.currentlyDisplayedUnallocatedFlightSlots.Clear();
 
             ///
             ///
             ///
 
-            HashSet<string> hashSet = new HashSet<string>();
+            HashSet<string> flightNbrHashSet = new HashSet<string>();
             List<CommercialFlightModel> flightListObjects = (from a in airline.flightListObjects
-                                                             orderby a.weightClass descending, a.arrivalRoute.routeDistance descending
+                                                             orderby a.weightClass descending, a.arrivalRoute.routeDistance descending, a.departureFlightNbr
                                                              select a)
                                                              .ToList<CommercialFlightModel>();
             int count2 = flightListObjects.Count;
-            int num = 0;
-            for (int i = 0; i < count2; i++)
+            int numberSlotsAdded = 0;
+            for(int i = 0; i < count2; i++)
             {
                 CommercialFlightModel commercialFlightModel = flightListObjects[i];
+                
                 FlightSlotContainerUI flightSlotContainerUI;
-                if (!commercialFlightModel.isAllocated && !commercialFlightModel.isCompleted && !hashSet.Contains(commercialFlightModel.departureFlightNbr) && (commercialFlightModel.weightClass != Enums.ThreeStepScale.Small || smallAircraftFilter.isOn) && (commercialFlightModel.weightClass != Enums.ThreeStepScale.Medium || mediumAircraftFilter.isOn) && (commercialFlightModel.weightClass != Enums.ThreeStepScale.Large || largeAircraftFilter.isOn) && this.unAllocatedFlightSlotPool.TryGetPoolObject(true, out flightSlotContainerUI))
+                
+                if (
+                    !commercialFlightModel.isAllocated &&
+                    !commercialFlightModel.isCompleted && 
+                    !flightNbrHashSet.Contains(commercialFlightModel.departureFlightNbr) && 
+                    (commercialFlightModel.weightClass != Enums.ThreeStepScale.Small || smallAircraftFilter.isOn) && 
+                    (commercialFlightModel.weightClass != Enums.ThreeStepScale.Medium || mediumAircraftFilter.isOn) && 
+                    (commercialFlightModel.weightClass != Enums.ThreeStepScale.Large || largeAircraftFilter.isOn) && 
+                    unAllocatedFlightSlotPool.TryGetPoolObject(true, out flightSlotContainerUI)
+                   )
+               
                 {
                     flightSlotContainerUI.SetContainerValues(commercialFlightModel, "");
                     flightSlotContainerUI.transform.SetParent(this.unAllocatedFlightSlotPool.GetParent());
-                    hashSet.Add(commercialFlightModel.departureFlightNbr);
+                    flightSlotContainerUI.transform.SetSiblingIndex(numberSlotsAdded);
+                    flightNbrHashSet.Add(commercialFlightModel.departureFlightNbr);
                     this.currentlyDisplayedUnallocatedFlightSlots.Add(flightSlotContainerUI);
-                    num++;
+                    numberSlotsAdded++;
                 }
+
             }
-            this.allocationHelpText.transform.parent.gameObject.AttemptEnableDisableGameObject(num == 0);
-            if (num == 0)
+
+            this.allocationHelpText.transform.parent.gameObject.AttemptEnableDisableGameObject(numberSlotsAdded == 0);
+            if (numberSlotsAdded == 0)
             {
                 this.allocationHelpText.text = LocalizationManager.GetLocalizedValue("FlightPlannerPanelUI.cs.key.45");
             }
