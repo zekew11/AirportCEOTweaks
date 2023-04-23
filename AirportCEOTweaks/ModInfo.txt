@@ -2,7 +2,7 @@ Airport CEO Tweaks:
 
 Need to Know for 2.3.1:
 
-* New aircraft types are available via workshop link here: https://steamcommunity.com/sharedfiles/filedetails/?id=2920123551
+* New aircraft types are available via workshop link here: https://bit.ly/aceoplanes
 * Mods must incorperate new aircraft in order for them to appear in your save
 
 Known Bugs (2.3.1):
@@ -17,14 +17,13 @@ Changelog:
 * Back-end functionality to allow multiple new aircraft types to pull from the same sprite sheet.
 * Flight Info Panel:
     * Now has hover-over tool-tips for the various service icons. 
-        * *Credit @humoresque*; this was the first real UI code in the project, and was my jumping off point for everything I did since then.
+        * Credit @humoresque; this was the first real UI code in the project, and was my jumping off point for everything I did since then.
 * Planner UI:
     * Airline Containers:
 	    * Are slim until hovered over
 		* Are sorted: more flights => higher
 		    * This sort respects/responds to size filters
 		    * Do not appear if no flights matching the current filters exist
-		        * *In full release this will only apply when at least one filter is actually on so that recently signed / otherwise lacking-flights airlines still show up*
 	* Flight Containers:
 	    * Are sorted: longer flights => higher
 		* Are reworked to provide easier to read info
@@ -32,6 +31,8 @@ Changelog:
 		* Have more informative tooltips
 		* Can be scheduled longer/shorter than previously possible
 		* Can be canceled/rejected before being planned by right-click
+* Fixes when aircraft pack adds aircraft with more than 2 engines
+* Hopefully fixes unintended hard dependency on the aircraft pack
 
 2.3.0
 * Added system for importing fully-new aircrafts.

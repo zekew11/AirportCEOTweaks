@@ -89,15 +89,26 @@ namespace AirportCEOTweaks
             if (smallAircraftFilter.isOn) { allowedSizes.Add(Enums.ThreeStepScale.Small); }
             if (mediumAircraftFilter.isOn) { allowedSizes.Add(Enums.ThreeStepScale.Medium); }
             if (largeAircraftFilter.isOn) { allowedSizes.Add(Enums.ThreeStepScale.Large); }
-
-            List<AirlineModel> list = (from a in SingletonNonDestroy<BusinessController>.Instance.GetArrayOfActiveBusinessesByType<AirlineModel>()
-                                       where   (from b in a.flightListObjects
-                                                where allowedSizes.Contains(b.weightClass) && b.isAllocated == false
-                                                select b).Count() > 0
-                                       orderby (from b in a.flightListObjects
-                                                where allowedSizes.Contains(b.weightClass) && b.isAllocated == false
-                                                select b).Count() descending , a.businessName
-                                       select a).ToList<AirlineModel>();
+            List<AirlineModel> list;
+            if (allowedSizes.Count == 3)
+            {
+                list = (from a in SingletonNonDestroy<BusinessController>.Instance.GetArrayOfActiveBusinessesByType<AirlineModel>()
+                        orderby (from b in a.flightListObjects
+                                 where b.isAllocated == false
+                                 select b).Count() descending, a.businessName
+                        select a).ToList<AirlineModel>();
+            }
+            else
+            {
+                list = (from a in SingletonNonDestroy<BusinessController>.Instance.GetArrayOfActiveBusinessesByType<AirlineModel>()
+                        where (from b in a.flightListObjects
+                               where allowedSizes.Contains(b.weightClass) && b.isAllocated == false
+                               select b).Count() > 0
+                        orderby (from b in a.flightListObjects
+                                 where allowedSizes.Contains(b.weightClass) && b.isAllocated == false
+                                 select b).Count() descending, a.businessName
+                        select a).ToList<AirlineModel>();
+            }
 
             int num = 0;
             for (int i = 0; i < list.Count; i++)
