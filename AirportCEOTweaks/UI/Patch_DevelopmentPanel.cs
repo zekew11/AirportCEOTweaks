@@ -7,6 +7,7 @@ using UnityEngine;
 using HarmonyLib;
 using UnityEngine.UI;
 using UModFramework.API;
+using System.IO;
 
 namespace AirportCEOTweaks
 {
@@ -48,7 +49,7 @@ namespace AirportCEOTweaks
                 DialogPanel.Instance.ShowQuestionPanelCustomOptions(new Action<bool>(CancelFlights.TaskOnClick), "Cancel all unallocated flights, or ALL current flights?\n(Abort using the x-button)", "Unallocated", "ALL", true, false);
             });
 
-            Button drawLiveryOrigins = GameObject.Instantiate<GameObject>(cancelFlightsButton.gameObject,group.transform).GetComponent<Button>();
+            Button drawLiveryOrigins = GameObject.Instantiate<GameObject>(cancelFlightsButton.gameObject, group.transform).GetComponent<Button>();
             drawLiveryOrigins.transform.Find("Text").gameObject.GetComponent<Text>().text = "DrawLiveryOrigins";
             //drawLiveryOrigins.transform.localPosition = drawLiveryOrigins.transform.localPosition.SetY(drawLiveryOrigins.transform.localPosition.y + 20);
 
@@ -56,8 +57,16 @@ namespace AirportCEOTweaks
             drawLiveryOrigins.onClick.AddListener(delegate ()
             {
                 DrawOrigins.LiveryOrigins();
-            }
-            );
+            });
+
+            Button openGameLogDirectroy = GameObject.Instantiate<GameObject>(drawLiveryOrigins.gameObject, group.transform).GetComponent<Button>();
+            openGameLogDirectroy.transform.Find("Text").gameObject.GetComponent<Text>().text = "Open Game Log Directory";
+
+            openGameLogDirectroy.onClick.RemoveAllListeners();
+            openGameLogDirectroy.onClick.AddListener(delegate ()
+            {
+                FileExplorerHelper.OpenGameLogWithMessage(new Action<string>(Debug.LogError));
+            });
         }
     }
 
@@ -111,6 +120,72 @@ namespace AirportCEOTweaks
                     renderer.sortingOrder = 100;
                 }
             }
+        }
+    }
+    public static class FileExplorerHelper
+    {
+        // This code was written by Humoresque
+        private static readonly string gameMessage = "Upon pressing \"OK\", file explorer will be opened. From there, click and drag \"Player.log\" into Discord or a file hosting service to upload it.";
+        private static Action<string> currentLogger;
+
+        public static void OpenGameLogWithMessage(in Action<string> logger)
+        {
+            if (logger == null)
+            {
+                return;
+            }
+
+            currentLogger = logger;
+            currentLogger("[Mod Nuetral] Starting to open game log with message!");
+
+            DialogPanel.Instance.ShowMessagePanel(new Action(OpenGameLogWithMessage), gameMessage, false);
+        }
+
+        /// <summary>
+        /// Opens the folder where the game's log file is.
+        /// </summary>
+        /// <param name="logger">This will be used to log errors and a start message. Cannot be null></param>
+        public static void OpenGameLog(in Action<string> logger)
+        {
+            if (logger == null)
+            {
+                return;
+            }
+
+            currentLogger = logger;
+            currentLogger("[Mod Nuetral] Starting to open game log!");
+
+            try
+            {
+                OpenFileInExplorer(Application.persistentDataPath, currentLogger);
+            }
+            catch (Exception ex)
+            {
+                currentLogger($"[Mod Error] Failed to open game log with error \"{ex.Message}\"");
+            }
+        }
+
+        private static void OpenGameLogWithMessage()
+        {
+            OpenFileInExplorer(Application.persistentDataPath, currentLogger);
+        }
+
+        private static void OpenFileInExplorer(in string path, in Action<string> logger)
+        {
+            if (logger == null)
+            {
+                return;
+            }
+
+            if (!Directory.Exists(path))
+            {
+                logger("[Mod Error] Path to open File Explorer to in is not a directory!");
+                return;
+            }
+
+            path.TrimEnd(new char[] { '\\', '/' }); // For no trailing slashes
+
+            Application.OpenURL($"file:///{path}");
         }
     }
 }
