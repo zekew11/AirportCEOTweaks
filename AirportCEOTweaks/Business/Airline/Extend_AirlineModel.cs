@@ -780,9 +780,13 @@ namespace AirportCEOTweaks
                 }
             }
 
-            if (index==-1 || airlineBusinessData.overrideServiceLevelByAircraftType == null)
+            if (index==-1)
             {
-                Debug.LogWarning("ACEO Tweaks | WARN: index == -1 ("+index+") catch for " + parent.businessName);
+                Debug.LogWarning("ACEO Tweaks | WARN: couldn't find tweaks fleet member called " + aircraftType +" (position "+index+") for " + parent.businessName);
+                goto DefaultReturn;
+            }
+            if (airlineBusinessData.overrideServiceLevelByAircraftType == null)
+            {
                 goto DefaultReturn;
             }
 

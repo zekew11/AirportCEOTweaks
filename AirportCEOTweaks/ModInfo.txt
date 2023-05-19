@@ -1,16 +1,23 @@
 Airport CEO Tweaks:
 
-Need to Know for 2.3.1:
+Need to Know for 2.3.x:
 
 * New aircraft types are available via workshop link here: https://bit.ly/aceoplanes
 * Mods must incorperate new aircraft in order for them to appear in your save
+* You must cancel and resign airline contracts for the fleets to update
 
-Known Bugs (2.3.1):
+Known Bugs (2.3.2):
 
 * Some situations that should fail a turnaround service cause it to succeed anyway
+* Game loading sometimes freezes at the very beginning. Restarting clears the issue.
 * Cargo aircraft on small stands depart prematurely
 
 Changelog:
+
+2.3.2
+* Removed incorrectly implimented aircraft rescale code
+	* Aircraft pack updated with forced rescales for most relevant aircraft
+* Credit @humoresque; added button in the F10 menu to open the log file location
 
 2.3.1
 * More refactoring. 
