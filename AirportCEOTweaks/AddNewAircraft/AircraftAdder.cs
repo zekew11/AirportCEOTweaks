@@ -39,7 +39,6 @@ namespace AirportCEOTweaks
                     scale.forcedScale = aircraftTypeData.forcedReScale;
                     scale.wingspan = aircraftTypeData.wingSpan_M;
                     scale.length = aircraftTypeData.length_M;
-                    scale.shadowfix = aircraftTypeData.shadowFix;
                     scale.Init();
 
                     aircraftGameObjectsSet.Add(aircraftGameObject);
