@@ -34,13 +34,13 @@
       <SpecificVersion>false</SpecificVersion>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\mscorlib.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration">
       <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\System.Configuration.dll</HintPath>
@@ -63,7 +63,7 @@
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Unity.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>$(GamePath)$(ManagedFolder)UnityEngine.dll</HintPath>
