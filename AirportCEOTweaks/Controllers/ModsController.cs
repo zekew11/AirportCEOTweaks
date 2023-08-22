@@ -326,7 +326,6 @@ namespace AirportCEOTweaks
         {
             string filetext;
 
-
             foreach (string path in AirportCEOTweaks.airlinePaths)
             {
                 string[] files = Directory.GetFiles(path);

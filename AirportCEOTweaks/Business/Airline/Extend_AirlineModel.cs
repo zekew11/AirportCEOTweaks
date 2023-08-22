@@ -50,17 +50,13 @@ namespace AirportCEOTweaks
             HashSet<string> codeList = new HashSet<string>();
             List<Country> countryList = new List<Country>();
 
-
             if (airlineBusinessData.arrayHomeCountryCodes != null && airlineBusinessData.arrayHomeCountryCodes.Length>0)
             {
-                //Debug.Log("codeList pre union: " + codeList);
                 codeList.UnionWith(airlineBusinessData.arrayHomeCountryCodes);
-                //Debug.Log("codeList post union: " + codeList);
             }
             codeList.Add(countryCode);
-            //Debug.Log("added " + countryCode + " to code list == " + codeList.ToString());
             countries = CountryRetriever(codeList.ToArray());
-            //Debug.Log("countries came back size of " + countries.Length);
+
 
             codeList.Clear();
             if (airlineBusinessData.arrayForbiddenCountryCodes != null && airlineBusinessData.arrayForbiddenCountryCodes.Length>0)
@@ -75,6 +71,7 @@ namespace AirportCEOTweaks
             //    codeList.UnionWith(airlineBusinessData.arrayHubIATAs);
             //}
             //hUBs = AirportRetriver(codeList.ToArray(), airlineBusinessData.arrayRangesFromHubs_KM);
+
             hUBs = null;
             //Describer
 
@@ -319,17 +316,19 @@ namespace AirportCEOTweaks
 
             if (airlineBusinessData.tweaksFleet==null)
             {
+                Debug.Log("ACEO Tweaks | Debug - Airline " + parent.businessName + " tweaksFleet is null");
                 goto CreateFleetCount;
             }
-
             if (airlineBusinessData.tweaksFleet.Length > 0)
             {
-                parent.aircraftFleetModels = airlineBusinessData.tweaksFleet;
+                FleetModels = airlineBusinessData.tweaksFleet;
                 tweaksFleet = true;
+                Debug.Log("ACEO Tweaks | Debug - Airline " + parent.businessName + " tweaksFleet length > 0");
             }
             else
             {
                 airlineBusinessData.tweaksFleet = parent.aircraftFleetModels;
+                Debug.Log("ACEO Tweaks | Debug - Airline " + parent.businessName + " tweaksFleet length <= 0");
             }
 
             if(airlineBusinessData.tweaksFleetCount == null)
@@ -355,7 +354,6 @@ namespace AirportCEOTweaks
                 for (int i = 0; i < parent.fleetCount.Length; i++)
                 {
                     FleetCount[i] = 2 * ((int)parent.businessClass);
-                    //Debug.LogError("Airline " + parent.businessName + " has " + FleetCount[i] + " aircraft of type "+ FleetModels[i]);
                 }
 
                 airlineBusinessData.tweaksFleetCount = parent.fleetCount;
@@ -364,7 +362,6 @@ namespace AirportCEOTweaks
             {
                 typeModelDictionary.Add(i, new TypeModel(FleetModels[i], FleetCount[i]));
             }
-            // Make sure we're in the business list
 
             if (FleetModels.Length>0)
             {
