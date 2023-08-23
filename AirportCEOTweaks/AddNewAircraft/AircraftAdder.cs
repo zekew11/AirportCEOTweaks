@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Newtonsoft;
 using System.Reflection;
+using PerformanceCEO;
+
 
 
 namespace AirportCEOTweaks
@@ -212,6 +214,13 @@ namespace AirportCEOTweaks
 
         private void DoTweaksLiveryBakeIn(GameObject aircraftGameObject, AircraftTypeData aircraftTypeData)
         {
+            GameObject perfCEOGameObject = GameObject.Find("PerformanceCEOActive");
+
+            if (perfCEOGameObject != null)
+            {
+                PerformanceCEO.RAMReducer.RAMReducerManager.TweaksAircraftCall = true;
+            }
+
             string filePath = aircraftTypeData.filePath.Replace("\\", "/");
 
             string[] jsonFiles = Directory.GetFiles(filePath, "*_Visual.json");
@@ -298,6 +307,10 @@ namespace AirportCEOTweaks
                 lac.DoLiveryComponentActions(obj);
             }
 
+            if (perfCEOGameObject != null)
+            {
+                PerformanceCEO.RAMReducer.RAMReducerManager.TweaksAircraftCall = false;
+            }
 
         }
         

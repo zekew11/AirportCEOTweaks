@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace AirportCEOTweaks
 {
-    class AirportCEOTweaks
+    class AirportCEOTweaks : MonoBehaviour
     {
         public static List<string> aircraftPaths = new List<string>();
         public static List<string> airlinePaths = new List<string>();
@@ -27,9 +27,14 @@ namespace AirportCEOTweaks
         }
         static void Awake()
         {
+            Log("ACEO Tweaks v" + UMFMod.GetModVersion().ToString(), true);
+
+            GameObject child = Instantiate(new GameObject());
+            child.transform.SetParent(null);
+            child.name = "ACEOTweaksActive";
         }
 
-		[UMFHarmony(61)] //Set this to the number of harmony patches in your mod.
+        [UMFHarmony(61)] //Set this to the number of harmony patches in your mod.
         public static void Start()
 		{
 			Log("AirportCEOTweaks v" + UMFMod.GetModVersion().ToString(), true);

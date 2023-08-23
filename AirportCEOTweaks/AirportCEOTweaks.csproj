@@ -381,6 +381,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\PerformanceCEO\PerformanceCEO\PerformanceCEO\PerformanceCEO.csproj" />
+  </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="&quot;$(GamePath)uModFramework\Tools\UMF.ModPacker.exe&quot; -packmod $(AssemblyName) &quot;$(TargetDir)&quot;&#xD;&#xA;" />
   </Target>

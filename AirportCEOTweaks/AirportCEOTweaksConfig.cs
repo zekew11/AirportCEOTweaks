@@ -46,10 +46,10 @@ namespace AirportCEOTweaks
                     }
 
                     cfg.Write("SupportsHotLoading", new UMFConfigBool(false)); //Uncomment if your mod can't be loaded once the game has started.
-                    cfg.Write("ModDependencies", new UMFConfigStringArray(new string[] { "" })); //A comma separated list of mod/library names that this mod requires to function. Format: SomeMod:1.50,SomeLibrary:0.60
+                    cfg.Write("ModDependencies", new UMFConfigStringArray(new string[] { "PerformanceCEO:1.0" })); //A comma separated list of mod/library names that this mod requires to function. Format: SomeMod:1.50,SomeLibrary:0.60
                     cfg.Read("LoadPriority", new UMFConfigString("Normal"));
                     cfg.Write("MinVersion", new UMFConfigString("0.53.5"));
-                    cfg.Write("MaxVersion", new UMFConfigString("0.54.99999.99999")); //This will prevent the mod from being loaded after the next major UMF release
+                    //cfg.Write("MaxVersion", new UMFConfigString("0.54.99999.99999")); //This will prevent the mod from being loaded after the next major UMF release
                     cfg.Write("UpdateURL", new UMFConfigString("https://umodframework.com/updatemod?id=33"));
                     cfg.Write("ConfigVersion", new UMFConfigString(configVersion));
 

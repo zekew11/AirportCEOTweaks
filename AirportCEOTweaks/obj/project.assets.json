@@ -1,11 +1,30 @@
 {
   "version": 3,
   "targets": {
-    ".NETFramework,Version=v4.6.2": {}
+    ".NETFramework,Version=v4.6.2": {
+      "PerformanceCEO/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.6.2",
+        "compile": {
+          "bin/placeholder/PerformanceCEO.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/PerformanceCEO.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "PerformanceCEO/1.0.0": {
+      "type": "project",
+      "path": "../../PerformanceCEO/PerformanceCEO/PerformanceCEO/PerformanceCEO.csproj",
+      "msbuildProject": "../../PerformanceCEO/PerformanceCEO/PerformanceCEO/PerformanceCEO.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    ".NETFramework,Version=v4.6.2": []
+    ".NETFramework,Version=v4.6.2": [
+      "PerformanceCEO >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\Ezekiel\\.nuget\\packages\\": {},
@@ -41,7 +60,11 @@
       "frameworks": {
         "net462": {
           "targetAlias": "net462",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\PerformanceCEO\\PerformanceCEO\\PerformanceCEO\\PerformanceCEO.csproj": {
+              "projectPath": "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\PerformanceCEO\\PerformanceCEO\\PerformanceCEO\\PerformanceCEO.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

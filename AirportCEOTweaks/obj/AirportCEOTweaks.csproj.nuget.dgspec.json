@@ -33,6 +33,55 @@
         "frameworks": {
           "net462": {
             "targetAlias": "net462",
+            "projectReferences": {
+              "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\PerformanceCEO\\PerformanceCEO\\PerformanceCEO\\PerformanceCEO.csproj": {
+                "projectPath": "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\PerformanceCEO\\PerformanceCEO\\PerformanceCEO\\PerformanceCEO.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net462": {
+          "targetAlias": "net462",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.413\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\PerformanceCEO\\PerformanceCEO\\PerformanceCEO\\PerformanceCEO.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\PerformanceCEO\\PerformanceCEO\\PerformanceCEO\\PerformanceCEO.csproj",
+        "projectName": "PerformanceCEO",
+        "projectPath": "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\PerformanceCEO\\PerformanceCEO\\PerformanceCEO\\PerformanceCEO.csproj",
+        "packagesPath": "C:\\Users\\Ezekiel\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\PerformanceCEO\\PerformanceCEO\\PerformanceCEO\\obj\\",
+        "projectStyle": "PackageReference",
+        "crossTargeting": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Ezekiel\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net462"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net462": {
+            "targetAlias": "net462",
             "projectReferences": {}
           }
         },
