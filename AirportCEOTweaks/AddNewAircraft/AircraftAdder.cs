@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Newtonsoft;
 using System.Reflection;
-using PerformanceCEO;
+using Tweaks_PerformanceCEO;
 
 
 
@@ -216,10 +216,7 @@ namespace AirportCEOTweaks
         {
             GameObject perfCEOGameObject = GameObject.Find("PerformanceCEOActive");
 
-            if (perfCEOGameObject != null)
-            {
-                PerformanceCEO.RAMReducer.RAMReducerManager.TweaksAircraftCall = true;
-            }
+            Tweaks_PerformanceCEO.RAMReducer.Tweaks_RAMReducerManager.TweaksAircraftCall = true;
 
             string filePath = aircraftTypeData.filePath.Replace("\\", "/");
 
@@ -307,10 +304,9 @@ namespace AirportCEOTweaks
                 lac.DoLiveryComponentActions(obj);
             }
 
-            if (perfCEOGameObject != null)
-            {
-                PerformanceCEO.RAMReducer.RAMReducerManager.TweaksAircraftCall = false;
-            }
+
+            Tweaks_PerformanceCEO.RAMReducer.Tweaks_RAMReducerManager.TweaksAircraftCall = false;
+            
 
         }
         

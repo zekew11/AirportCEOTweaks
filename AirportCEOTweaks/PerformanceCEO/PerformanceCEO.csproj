@@ -6,15 +6,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{45e6f880-cb6b-49e7-92bd-a47fb09670db}</ProjectGuid>
+    <ProjectGuid>{5b921419-b6f7-43f4-bdfe-0f3463d37f97}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AirportCEOTweaks</RootNamespace>
-    <AssemblyName>AirportCEOTweaks</AssemblyName>
+    <RootNamespace>PerformanceCEO</RootNamespace>
+    <AssemblyName>PerformanceCEO</AssemblyName>
     <TargetFrameworks>net462</TargetFrameworks>
     <FileAlignment>512</FileAlignment>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	<Deterministic>false</Deterministic>
     <Configurations>Release</Configurations>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -27,52 +26,19 @@
     <WarningLevel>4</WarningLevel>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net462|AnyCPU'">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(GamePath)$(ManagedFolder)Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
       <SpecificVersion>false</SpecificVersion>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="mscorlib">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\mscorlib.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Newtonsoft.Json.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="System.Configuration">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\System.Configuration.dll</HintPath>
-	  <Private>false</Private>
-    </Reference>
-    <Reference Include="System.EnterpriseServices">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\System.EnterpriseServices.dll</HintPath>
-	  <Private>false</Private>
-    </Reference>
-    <Reference Include="System.Security">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\System.Security.dll</HintPath>
-		<Private>false</Private>
-    </Reference>
-    <Reference Include="System.Transactions">
-      <HintPath>..\..\..\..\..\Airport CEO_Data\Managed\System.Transactions.dll</HintPath>
-		<Private>false</Private>
-    </Reference>
     <Reference Include="uModFramework">
       <HintPath>$(GamePath)$(ManagedFolder)uModFramework.dll</HintPath>
       <Private>False</Private>
       <SpecificVersion>false</SpecificVersion>
-    </Reference>
-    <Reference Include="Unity.Mathematics">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Unity.Mathematics.dll</HintPath>
-		<Private>false</Private>
-    </Reference>
-    <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Airport CEO\Airport CEO_Data\Managed\Unity.TextMeshPro.dll</HintPath>
-		<Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>$(GamePath)$(ManagedFolder)UnityEngine.dll</HintPath>
@@ -391,14 +357,6 @@
     </Content>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="&quot;$(GamePath)uModFramework\Tools\UMF.ModPacker.exe&quot; -packmod $(AssemblyName) &quot;$(TargetDir)&quot;&#xD;&#xA;" />
+    <Exec Command="&quot;$(GamePath)uModFramework\Tools\UMF.ModPacker.exe&quot; -packmod $(AssemblyName) &quot;$(TargetDir)&quot;" />
   </Target>
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="&quot;$(DevEnvDir)TextTransform.exe&quot; -a !!BuildConfiguration!$(Configuration) &quot;$(ProjectDir)Properties\AssemblyInfo.tt&quot;" />
-  </Target>
-  <ItemGroup>
-    <Reference Update="System">
-      <Private>false</Private>
-    </Reference>
-  </ItemGroup>
 </Project>
