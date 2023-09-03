@@ -145,6 +145,7 @@ namespace AirportCEOTweaks
         public Dictionary<Airport,float> hUBs;
         private SortedDictionary<int, TypeModel> typeModelDictionary;
         public AirlineBusinessData airlineBusinessData;
+        private string[] fleetModels;
 
         // Properties ------------------------------------------------------------------------------------------------------
 
@@ -152,11 +153,17 @@ namespace AirportCEOTweaks
         {
             get
             {
-                return parent.aircraftFleetModels;
+                if (fleetModels == null)
+                {
+                    fleetModels = parent.aircraftFleetModels;
+                }
+
+                return fleetModels;
             }
             set
             {
                 parent.aircraftFleetModels = value;
+                fleetModels = value;
             }
         }
         public int[] FleetCount

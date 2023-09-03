@@ -28,7 +28,9 @@ namespace AirportCEOTweaks
             {
                 return;
             }
-            Singleton<ModsController>.Instance.GetExtensions(__instance, out _);
+            Singleton<ModsController>.Instance.GetExtensions(__instance, out Extend_AirlineModel eam);
+
+            __instance.aircraftFleetModels = eam.FleetModels;
         }
 
         [HarmonyPatch("GenerateFlight")]
