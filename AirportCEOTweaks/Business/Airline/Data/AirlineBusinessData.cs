@@ -9,6 +9,7 @@ namespace AirportCEOTweaks
 	public struct AirlineBusinessData
 	{
 		public string name;                                // Picks up the name field from the vanilla file for validation purposes.
+		public bool isOverwites;                           // If true we look for matching [name] and add or overwrite these fields there. Allows updating 3rd part mods. Inhibits normal airline loading.
 
 		public string shortName;                           // Optional: Will eventually be used in certain GUI elements. Eg. "Such&Such Airlines - Retro Liveries" becomes "Such&Such Airlines"
 		public string[] tweaksFleet;//                       // Optional: Overwrites "fleet" when tweaks is installed.
@@ -40,8 +41,9 @@ namespace AirportCEOTweaks
 		public string[] commonBrand;                       // Optional: [Not to be Implimeneted in 2.3.0] Define other airlines that share a public brand with this operator, enables sharing stands and lounges.
 														   //                                             Dummy airlines can be created with no aircraft to stand in for alliances.
 		public string[] siblingCompanys;                   // Optional: [Not to be Implimeneted in 2.3.0] Define other airlines that share managment. Allows reputation impacts to effect partners.
-		public string[] mergeMeIntoCompanys;               // Optional: [Not to be Implimeneted in 2.3.0] Define an airline (or airlines? probably not but I'll still let you) that this airline is entirly a part of.
+		public string[] parentCompanys;                    // Optional: [Not to be Implimeneted in 2.3.0] Define an airline (or airlines? probably not but I'll still let you) that this airline is entirly a part of.
 														   //                                             Places all flights, contracts, negotiations, ect under the parent, to the point that player shouldn't be able to tell there's a distrinction
 														   //                                             (unless you signal it, eg with a different logo/flight color)
+		public bool discardIfOrphan;                       // Optional: [Not to be Implimeneted in 2.3.0] Set true to hide the airline if no parentCompanies are found to exist.
 	}
 }

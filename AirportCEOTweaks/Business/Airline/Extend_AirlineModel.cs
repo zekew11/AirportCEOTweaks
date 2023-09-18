@@ -146,6 +146,9 @@ namespace AirportCEOTweaks
         private SortedDictionary<int, TypeModel> typeModelDictionary;
         public AirlineBusinessData airlineBusinessData;
         private string[] fleetModels;
+        private List<AirlineModel> brandOrAlliance;
+        private List<AirlineModel> siblings;
+        private List<AirlineModel> parents;
 
         // Properties ------------------------------------------------------------------------------------------------------
 
