@@ -23,3 +23,5 @@ AirportCEOTweaks/obj/Release/AirportCEOTweaks.dll
 AirportCEOTweaks/obj/Release/AirportCEOTweaks.csproj.FileListAbsolute.txt
 *.cache
 .vs/AirportCEOTweaks/v16/.suo
+*.editorconfig
+*.cache
