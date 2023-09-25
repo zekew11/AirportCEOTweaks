@@ -362,7 +362,31 @@ namespace AirportCEOTweaks
                         continue;
                     }
 
-                    airlineBusinessDataDic.Add(data.name, data);
+                    if (airlineBusinessDataDic.ContainsKey(data.name))
+                    {
+                        //merge them
+                        AirlineBusinessData overwitingData;
+
+                        if (data.isOverwites)
+                        {
+                            overwitingData = data;
+                        }
+                        else if (airlineBusinessDataDic[data.name].isOverwites)
+                        {
+                            overwitingData = airlineBusinessDataDic[data.name];
+                        }
+                        else
+                        {
+                            Debug.LogWarning("ACEO Tweaks | WARN: Airline name " + data.name + " has multiple Airline Buisness Datas but none marked as overwrites.");
+                            continue;
+                        }
+                        overwitingData.isOverwites = false;
+                        airlineBusinessDataDic[data.name] = overwitingData;
+                    }
+                    else
+                    {
+                        airlineBusinessDataDic.Add(data.name, data);
+                    }
                     break;
                 }
             }
