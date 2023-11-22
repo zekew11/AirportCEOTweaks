@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Events;
-using Newtonsoft;
-using Newtonsoft.Json;
-using TMPro;
-using System.Reflection;
-using UModFramework.API;
 
 
 
@@ -362,26 +353,33 @@ namespace AirportCEOTweaks
                         continue;
                     }
 
-                    if (airlineBusinessDataDic.ContainsKey(data.name))
+                    if (data.overwriteName != null && airlineBusinessDataDic.ContainsKey(data.overwriteName))
                     {
                         //merge them
-                        AirlineBusinessData overwitingData;
+                        Debug.LogError("ACEO Tweaks | Debug: Overwriting " + data.overwriteName + " with " + data.name);
+                        
+                        AirlineBusinessData overwrittenData = airlineBusinessDataDic[data.overwriteName];
 
-                        if (data.isOverwites)
-                        {
-                            overwitingData = data;
-                        }
-                        else if (airlineBusinessDataDic[data.name].isOverwites)
-                        {
-                            overwitingData = airlineBusinessDataDic[data.name];
-                        }
-                        else
-                        {
-                            Debug.LogWarning("ACEO Tweaks | WARN: Airline name " + data.name + " has multiple Airline Buisness Datas but none marked as overwrites.");
-                            continue;
-                        }
-                        overwitingData.isOverwites = false;
-                        airlineBusinessDataDic[data.name] = overwitingData;
+                        overwrittenData.shortName = data.shortName.Length > 0 ? data.shortName : overwrittenData.shortName;                        // Optional: Will eventually be used in certain GUI elements. Eg. "Such&Such Airlines - Retro Liveries" becomes "Such&Such Airlines"
+
+                        overwrittenData.description = data.description.Length > 0 ? data.description : overwrittenData.description;                  // Optional: Used if overwriting
+                        overwrittenData.CEOName = data.CEOName.Length > 0 ? data.CEOName : overwrittenData.CEOName;               // Optional: Used if overwriting
+                        overwrittenData.flightPrefix = data.flightPrefix.Length > 0 ? data.flightPrefix : overwrittenData.flightPrefix;                       // Optional: Used if overwriting
+                        overwrittenData.businessClass = data.businessClass;
+
+                        overwrittenData.tweaksFleet = data.tweaksFleet.Length > 0 ? data.tweaksFleet : overwrittenData.tweaksFleet;                       // Optional: Overwrites "fleet" when tweaks is installed.
+                        overwrittenData.tweaksFleetCount = data.tweaksFleetCount.Length > 0 ? data.tweaksFleetCount : overwrittenData.tweaksFleetCount;                     // Optional: Overwirtes "fleetCount" when teaks is installed. Future features will expect this to be a count of aircraft, not a ratio.
+                        overwrittenData.arrayHomeCountryCodes = data.arrayHomeCountryCodes.Length > 0 ? data.arrayHomeCountryCodes : overwrittenData.arrayHomeCountryCodes;
+                        overwrittenData.arrayForbiddenCountryCodes = data.arrayForbiddenCountryCodes.Length > 0 ? data.arrayForbiddenCountryCodes : overwrittenData.arrayForbiddenCountryCodes;		   // Optional: Extends the "nationality" system by forbidding any flights to or from the listed countries.
+                        overwrittenData.arrayHubIATAs = data.arrayHubIATAs.Length > 0 ? data.arrayHubIATAs : overwrittenData.arrayHubIATAs;					   // Optional: Can be used with other settings to refine airline routing.
+                        overwrittenData.arrayRangesFromHubs_KM = data.arrayRangesFromHubs_KM.Length > 0 ? data.arrayRangesFromHubs_KM : overwrittenData.arrayRangesFromHubs_KM;               // Optional: Used with "arrayHubIATAs" to define maximum distances from each hub that the airline may operate to.
+
+                        overwrittenData.internationalMustOriginateAtHub = data.internationalMustOriginateAtHub;	   // Optional: Used with "arrayHubIATAs" to force international flights (those that require passport check) to originate at a listed hub IATA.
+                        overwrittenData.allMustOriginateAtHub = data.allMustOriginateAtHub;				   // Optional: Used with "arrayHubIATAs" to force all flights to have at least one endpoint at a listed "hub".
+                        overwrittenData.remainWithinHomeCodes = data.remainWithinHomeCodes;                 // Optional: If true, airline cannot operate routes which have any endpoint outside of the Home Country(s) (either from "countryCode" or "arrayHomeCountryCodes")
+                        overwrittenData.cargo = data.cargo;                                 // Optional: If true, airline only operates cargo service.
+
+                        airlineBusinessDataDic[data.overwriteName] = overwrittenData;
                     }
                     else
                     {

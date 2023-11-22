@@ -173,7 +173,7 @@ namespace AirportCEOTweaks
         {
             FlightModelExtensionMethods.IfNoPAXResetAsCargo(parent);
 
-            parent.Aircraft.am.CurrentWasteStored = parent.currentTotalNbrOfArrivingPassengers.ClampMin(2) + ((parent.Aircraft.am.MaxPax-parent.currentTotalNbrOfArrivingPassengers)*0.33f).RoundToIntLikeANormalPerson();
+            parent.Aircraft.am.CurrentWasteStored = parent.currentTotalNbrOfArrivingPassengers.ClampMin(2) + ((parent.Aircraft.am.MaxPax-parent.currentTotalNbrOfArrivingPassengers)*0.33f*0.5f).RoundToIntLikeANormalPerson();
 
             RefreshServices();
         }
@@ -350,7 +350,7 @@ namespace AirportCEOTweaks
                 }
                 else
                 {
-                    timeword = "Mid-Range";
+                    timeword = "Mid-Duration";
                 }
             }
             if (size)

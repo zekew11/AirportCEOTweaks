@@ -485,7 +485,7 @@ namespace AirportCEOTweaks
                 handler.cachedReferenceTransformPosition = gameObject.transform.position;
                 handler.cachedReferenceTransformScale = shadowObject.transform.localScale;
                 shadowObject.transform.position = gameObject.transform.position;
-                handler.UpdateShadow();
+                //handler.UpdateShadow();
             }
 
             SpriteRenderer oldRender  = gameObject.GetComponent<SpriteRenderer>();

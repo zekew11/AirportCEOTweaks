@@ -52,7 +52,7 @@ namespace AirportCEOTweaks
 			MakeDictionarysEct();
 
 			routeContainers = new SortedSet<RouteContainer>();
-			routeContainers.UnionWith(GenerateSomeRouteContainers(100));
+			routeContainers.UnionWith(GenerateSomeRouteContainers(600));
 			StartCoroutines();
 		}
 		private void MakeDictionarysEct()
@@ -163,6 +163,7 @@ namespace AirportCEOTweaks
 			return routeContainers;
 		}
 		public SortedSet<RouteContainer> SelectRouteContainers(
+			ref HashSet<RouteContainer> preExistingContainers,
 			float maxRange = 16000, float minRange = 0,
 			bool forceDomestic = false, bool forceNationalOrigin = false, Country[] origin = null, Country[] forbidden = null,
 			bool forceHUBOriginInternational = false, bool forceHUBOriginAll = false, bool forceHUBRange = false , Airport[] hUBs = null, float[] hUBRanges = null)
@@ -170,12 +171,32 @@ namespace AirportCEOTweaks
 			forceNationalOrigin = origin == null ? false : forceNationalOrigin;
 			
 			SortedSet<RouteContainer> returnSet = new SortedSet<RouteContainer>();
+			HashSet<RouteContainer> returnHashSet = new HashSet<RouteContainer>();
+			HashSet<RouteContainer> removeSet = new HashSet<RouteContainer>();
+
+			
 			float min = 0;
 			float max = routeContainers.Count;
 			int rand;
+			int routesToAdd = 20;
 			RouteContainer item;
 
-			for (int i = 0; (i < 500 && returnSet.Count < 200); i++)
+			returnHashSet.UnionWith(preExistingContainers);
+			
+			foreach (RouteContainer container in returnHashSet)
+            {
+				if (container.Distance > maxRange)
+				{ 
+					removeSet.Add(container); 
+				}
+				else if (container.Distance < minRange)
+                {
+					removeSet.Add(container);
+                }
+            }
+			returnHashSet.ExceptWith(removeSet);
+
+			for (int i = 0; (i < 100); i++)
 			{
 				rand = (int)Random.Range(min, max);
 				item = routeContainers.ElementAt(rand);
@@ -189,9 +210,17 @@ namespace AirportCEOTweaks
 				}
 				else
 				{
-					returnSet.Add(item);
+					if(returnHashSet.Add(item))
+                    {
+						routesToAdd--;
+
+						if(routesToAdd <= 0)
+						{ break; }
+                    }
 				}
 			}
+
+			returnSet.UnionWith(returnHashSet);
 
 			if (forceDomestic)
 			{
@@ -226,15 +255,18 @@ namespace AirportCEOTweaks
 				returnSet = FilterByDistanceFromHub(returnSet, hUBs, hUBRanges);
             }
 
+			preExistingContainers.UnionWith(returnSet);
 			return returnSet;
 		}
-		public SortedSet<RouteContainer> SelectRoutesByChance(SortedSet<RouteContainer> originalSet, short numToSelect = 1)
+		public SortedSet<RouteContainer> SelectRoutesByProbability(SortedSet<RouteContainer> originalSet, short numToSelect = 1)
         {
+			if (numToSelect <= 0) { numToSelect = 1; }
+
 			List<RouteContainer> list = new List<RouteContainer>();
 			SortedSet<RouteContainer> returnSet = new SortedSet<RouteContainer>();
 			
 
-			if (originalSet.Count == 0)
+			if (originalSet.Count <= numToSelect)
             {
 				return originalSet;
             }
@@ -257,6 +289,35 @@ namespace AirportCEOTweaks
 
 			return returnSet;
         }
+		public SortedSet<RouteContainer> SelectRoutesByRandom(SortedSet<RouteContainer> originalSet, short numToSelect = 1)
+        {
+			if (numToSelect <= 0) { numToSelect = 1; }
+
+			List<RouteContainer> list = new List<RouteContainer>();
+			SortedSet<RouteContainer> returnSet = new SortedSet<RouteContainer>();
+
+
+			if (originalSet.Count <= numToSelect)
+			{
+				return originalSet;
+			}
+
+
+			int setSize = originalSet.Count;
+
+			list.AddRange(originalSet);
+
+			for (int i = 0; i < numToSelect; i++)
+			{
+				int selection = Random.Range(0, setSize);
+				setSize -= 1;
+
+				try { returnSet.Add(list.ElementAt(selection)); }
+				catch { Debug.LogError("ACEO Tweaks | ERROR: list.count = " + list.Count + ", selection = " + selection); };
+			}
+
+			return returnSet;
+		}
 		private SortedSet<RouteContainer> FilterDomestic(SortedSet<RouteContainer> originalSet, Country[] countries)
 		{
 			if(countries == null || countries.Length <= 1)
@@ -401,8 +462,8 @@ namespace AirportCEOTweaks
 				short numToGen = ((short)((airports.Length - routeContainers.Count) / (200))).Clamp<short>(1,20);
 				if (numToGen < 4)
                 {
-					numToGen = 4;
-					yield return new WaitForSeconds(10f);
+					numToGen = 5;
+					yield return new WaitForSeconds(1f);
 				}
 
 				//Debug.LogError("ACEO Tweaks | Debug: iteration " + i + " of GenerateRoutes; requested " + numToGen + " routes. Have " + routeContainers.Count+".");

@@ -14,6 +14,7 @@ namespace AirportCEOTweaks
 
         private PoolHandler<FlightSlotContainerUI> flightSlotPool;
         private PoolHandler<FlightSlotContainerUI> unAllocatedFlightSlotPool;
+        private Transform unAllocatedFlightSlotPoolParent;
         private PoolHandler<AirlineContainerUI> airlineSlotPool;
 
         private SwitchManager smallAircraftFilter; //public in parent for some reason
@@ -48,6 +49,7 @@ namespace AirportCEOTweaks
 
             this.flightSlotPool = flightSlotPool;
             this.unAllocatedFlightSlotPool = unAllocatedFlightSlotPool;
+            this.unAllocatedFlightSlotPoolParent = unAllocatedFlightSlotPool.GetParent();
             this.airlineSlotPool = airlineSlotPool;
 
             this.smallAircraftFilter = smallAircraftFilter;
@@ -147,6 +149,10 @@ namespace AirportCEOTweaks
                 {
                     airlineContainerUI.transform.SetAsLastSibling();
                 }
+                else
+                {
+                    airlineContainerUI.transform.SetAsFirstSibling();
+                }
                 this.currentlyDisplayedAirlineSlots.Add(airlineContainerUI);
             }
         }
@@ -168,7 +174,7 @@ namespace AirportCEOTweaks
 
             HashSet<string> flightNbrHashSet = new HashSet<string>();
             List<CommercialFlightModel> flightListObjects = (from a in airline.flightListObjects
-                                                             orderby a.weightClass descending, a.arrivalRoute.routeDistance descending, a.departureFlightNbr
+                                                             orderby a.arrivalRoute.routeDistance descending, a.departureFlightNbr
                                                              select a)
                                                              .ToList<CommercialFlightModel>();
             int count2 = flightListObjects.Count;
@@ -191,7 +197,7 @@ namespace AirportCEOTweaks
                
                 {
                     flightSlotContainerUI.SetContainerValues(commercialFlightModel, "");
-                    flightSlotContainerUI.transform.SetParent(this.unAllocatedFlightSlotPool.GetParent());
+                    flightSlotContainerUI.transform.SetParent(this.unAllocatedFlightSlotPoolParent);
                     flightSlotContainerUI.transform.SetSiblingIndex(numberSlotsAdded);
                     flightNbrHashSet.Add(commercialFlightModel.departureFlightNbr);
                     this.currentlyDisplayedUnallocatedFlightSlots.Add(flightSlotContainerUI);

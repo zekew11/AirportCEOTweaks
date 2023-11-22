@@ -9,9 +9,15 @@ namespace AirportCEOTweaks
 	public struct AirlineBusinessData
 	{
 		public string name;                                // Picks up the name field from the vanilla file for validation purposes.
-		public bool isOverwites;                           // If true we look for matching [name] and overwrite these fields there. Allows updating 3rd party mods.
+		public string overwriteName;                       // If given true we look for matching [name] and overwrite these fields there. Allows updating 3rd party mods.
 
 		public string shortName;                           // Optional: Will eventually be used in certain GUI elements. Eg. "Such&Such Airlines - Retro Liveries" becomes "Such&Such Airlines"
+		
+		public string description;						   // Optional: Used if overwriting
+		public string CEOName;							   // Optional: Used if overwriting
+		public string flightPrefix;                        // Optional: Used if overwriting
+		public int businessClass;                          // Optional: Used if overwriting
+
 		public string[] tweaksFleet;//                       // Optional: Overwrites "fleet" when tweaks is installed.
 		public int[] tweaksFleetCount;//                     // Optional: Overwirtes "fleetCount" when teaks is installed. Future features will expect this to be a count of aircraft, not a ratio.
 		public string[] arrayHomeCountryCodes;//             // Optional: Like countryCode but can accept multiple. Adds to countryCode if defined.

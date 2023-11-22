@@ -148,6 +148,18 @@ namespace AirportCEOTweaks
             catch
             { return true; }
         }
+        [HarmonyPostfix]
+        [HarmonyPatch("SetFromSerializer")]
+        public static void Postfix_SetFromSerializer(FlightModel __instance)
+        {
+            
+            if (__instance.isAllocated == false)
+            {
+                __instance.CancelFlight(true);
+            }
+
+            
+        }
 
     }
 }

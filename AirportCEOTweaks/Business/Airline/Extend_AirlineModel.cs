@@ -14,120 +14,7 @@ namespace AirportCEOTweaks
 
         public Extend_AirlineModel(AirlineModel airline)
         {
-            if (airline == null) { return; }
-            if (Singleton<ModsController>.Instance==null) { return; }
-
-            parent = airline;
-
-            Singleton<ModsController>.Instance.RegisterThisEAM(this, airline); //This also triggers refresh of AirlineBuisinessData
-
-            //Load AirlineBusinessData
-            
-            if (Singleton<ModsController>.Instance.airlineBusinessDataDic.TryGetValue(parent.businessName,out AirlineBusinessData data))
-            {
-                airlineBusinessData = data;
-            }
-            else
-            {
-                airlineBusinessData = default(AirlineBusinessData);
-            }
-
-            //Basic
-
-            starRank = parent?.businessClass ?? Enums.BusinessClass.Small;
-            economyTier = GetEconomyTiers(airline.businessName, airline.businessDescription, airline.businessClass);
-
-            //Nationality
-
-            countryCode = Singleton<BusinessController>.Instance?.GetAirline(airline.businessName)?.countryCode ?? "";
-
-            if (!AirportCEOTweaksConfig.airlineNationality)
-            {
-                countries = null;
-                goto describer;
-            }
-
-            HashSet<string> codeList = new HashSet<string>();
-            List<Country> countryList = new List<Country>();
-
-            if (airlineBusinessData.arrayHomeCountryCodes != null && airlineBusinessData.arrayHomeCountryCodes.Length>0)
-            {
-                codeList.UnionWith(airlineBusinessData.arrayHomeCountryCodes);
-            }
-            codeList.Add(countryCode);
-            countries = CountryRetriever(codeList.ToArray());
-
-
-            codeList.Clear();
-            if (airlineBusinessData.arrayForbiddenCountryCodes != null && airlineBusinessData.arrayForbiddenCountryCodes.Length>0)
-            {
-                codeList.UnionWith(airlineBusinessData.arrayForbiddenCountryCodes);
-            }
-            forbidCountries = CountryRetriever(codeList.ToArray());
-
-            //codeList.Clear();
-            //if (airlineBusinessData.arrayHubIATAs != null && airlineBusinessData.arrayRangesFromHubs_KM != null && airlineBusinessData.arrayHubIATAs.Length>0 && airlineBusinessData.arrayRangesFromHubs_KM.Length>0)
-            //{
-            //    codeList.UnionWith(airlineBusinessData.arrayHubIATAs);
-            //}
-            //hUBs = AirportRetriver(codeList.ToArray(), airlineBusinessData.arrayRangesFromHubs_KM);
-
-            hUBs = null;
-            //Describer
-
-            describer:
-
-            Airline_Descriptions describer = new Airline_Descriptions();
-            parent.businessDescription = describer?.Replace_Description(parent) ?? "";
-
-
-            MakeTypeModelDictionary();
-            //maxrange
-            if (FleetModels != null && FleetModels.Length > 0)
-            {
-                foreach (string aircraftModelString in FleetModels)
-                {
-                    try
-                    {
-                        int range = Singleton<AirTrafficController>.Instance?.GetAircraftGameObject(aircraftModelString)?.GetComponent<AircraftController>()?.am?.rangeKM ?? 0;
-                        maxRange = Math.Max(range, maxRange);
-                    }
-                    catch
-                    {
-                        continue;
-                    }
-                }
-            }
-            else
-            {
-                parent.CancelContract();
-                Debug.LogWarning("ACEO Tweaks | WARN: Airline " + airline.businessName + "contract canceled due to no valid fleet!");
-            }
-
-            //list flights
-
-            myFlights = new HashSet<Extend_CommercialFlightModel>();
-            if (parent.flightListObjects.Count > 0)
-            {
-                foreach (CommercialFlightModel cfm in parent.flightListObjects)
-                {
-                    Singleton<ModsController>.Instance.GetExtensions(cfm, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-                    if (eam == null) { return; }
-                    if (eam != this)
-                    {
-                        Debug.LogWarning("ACEO Tweaks | WARN: extend airline model constructor assigned other eam to own flights");
-                    }
-                    
-                    if (ecfm == null)
-                    {
-                        return;
-                    }
-                    myFlights.Add(ecfm);
-                    ecfm.RefreshServices();
-                }
-            }
-
-            
+            Init(airline);            
         }
 
 
@@ -139,6 +26,7 @@ namespace AirportCEOTweaks
         public HashSet<Extend_CommercialFlightModel> myFlights;
         public float cargoProportion = 0f;
         public float maxRange = 0f;
+        public float minRange = float.MaxValue;
         private string countryCode;
         public Country[] countries;
         public Country[] forbidCountries;
@@ -149,6 +37,7 @@ namespace AirportCEOTweaks
         private List<AirlineModel> brandOrAlliance;
         private List<AirlineModel> siblings;
         private List<AirlineModel> parents;
+        private HashSet<RouteContainer> cachedRoutes;
 
         // Properties ------------------------------------------------------------------------------------------------------
 
@@ -212,6 +101,135 @@ namespace AirportCEOTweaks
         }
         // Methods ---------------------------------------------------------------------------------------------------------
 
+        public void UpdateAirlineData(AirlineBusinessData newData)
+        {
+            airlineBusinessData = newData;
+            
+            parent.businessDescription = newData.description.Length > 0 ? newData.description : parent.businessDescription;
+            parent.businessContactName = newData.CEOName.Length > 0 ? newData.CEOName : parent.businessContactName;
+            parent.airlineFlightNbr = newData.flightPrefix.Length > 0 ? newData.flightPrefix : parent.airlineFlightNbr;
+            parent.businessClass = (Enums.BusinessClass)newData.businessClass;
+
+            Init(parent);
+        }
+        private void Init(AirlineModel airline)
+        {
+            if (airline == null) { return; }
+            if (Singleton<ModsController>.Instance == null) { return; }
+
+            parent = airline;
+
+            Singleton<ModsController>.Instance.RegisterThisEAM(this, airline); //This also triggers refresh of AirlineBuisinessData
+
+            //Load AirlineBusinessData
+
+            if (Singleton<ModsController>.Instance.airlineBusinessDataDic.TryGetValue(parent.businessName, out AirlineBusinessData data))
+            {
+                airlineBusinessData = data;
+            }
+            else
+            {
+                airlineBusinessData = default(AirlineBusinessData);
+            }
+
+            //Basic
+
+            starRank = parent?.businessClass ?? Enums.BusinessClass.Small;
+            economyTier = GetEconomyTiers(airline.businessName, airline.businessDescription, airline.businessClass);
+
+            //Nationality
+
+            countryCode = Singleton<BusinessController>.Instance?.GetAirline(airline.businessName)?.countryCode ?? "";
+
+            if (!AirportCEOTweaksConfig.airlineNationality)
+            {
+                countries = null;
+                goto describer;
+            }
+
+            HashSet<string> codeList = new HashSet<string>();
+            List<Country> countryList = new List<Country>();
+
+            if (airlineBusinessData.arrayHomeCountryCodes != null && airlineBusinessData.arrayHomeCountryCodes.Length > 0)
+            {
+                codeList.UnionWith(airlineBusinessData.arrayHomeCountryCodes);
+            }
+            codeList.Add(countryCode);
+            countries = CountryRetriever(codeList.ToArray());
+
+
+            codeList.Clear();
+            if (airlineBusinessData.arrayForbiddenCountryCodes != null && airlineBusinessData.arrayForbiddenCountryCodes.Length > 0)
+            {
+                codeList.UnionWith(airlineBusinessData.arrayForbiddenCountryCodes);
+            }
+            forbidCountries = CountryRetriever(codeList.ToArray());
+
+            //codeList.Clear();
+            //if (airlineBusinessData.arrayHubIATAs != null && airlineBusinessData.arrayRangesFromHubs_KM != null && airlineBusinessData.arrayHubIATAs.Length>0 && airlineBusinessData.arrayRangesFromHubs_KM.Length>0)
+            //{
+            //    codeList.UnionWith(airlineBusinessData.arrayHubIATAs);
+            //}
+            //hUBs = AirportRetriver(codeList.ToArray(), airlineBusinessData.arrayRangesFromHubs_KM);
+
+            hUBs = null;
+            //Describer
+
+            describer:
+
+            Airline_Descriptions describer = new Airline_Descriptions();
+            parent.businessDescription = describer?.Replace_Description(parent) ?? "";
+
+
+            MakeTypeModelDictionary();
+            //maxrange
+            if (FleetModels != null && FleetModels.Length > 0)
+            {
+                foreach (string aircraftModelString in FleetModels)
+                {
+                    try
+                    {
+                        int range = Singleton<AirTrafficController>.Instance?.GetAircraftGameObject(aircraftModelString)?.GetComponent<AircraftController>()?.am?.rangeKM ?? 0;
+                        maxRange = Math.Max(range, maxRange);
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+            }
+            else
+            {
+                parent.CancelContract();
+                Debug.LogWarning("ACEO Tweaks | WARN: Airline " + airline.businessName + "contract canceled due to no valid fleet!");
+            }
+
+            //list flights
+
+            cachedRoutes = new HashSet<RouteContainer>();
+            myFlights = new HashSet<Extend_CommercialFlightModel>();
+            if (parent.flightListObjects.Count > 0)
+            {
+                foreach (CommercialFlightModel cfm in parent.flightListObjects)
+                {
+                    Singleton<ModsController>.Instance.GetExtensions(cfm, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
+                    if (eam == null) { return; }
+                    if (eam != this)
+                    {
+                        Debug.LogWarning("ACEO Tweaks | WARN: extend airline model constructor assigned other eam to own flights");
+                    }
+
+                    if (ecfm == null)
+                    {
+                        return;
+                    }
+                    myFlights.Add(ecfm);
+                    ecfm.RefreshServices();
+                    RouteContainer container = new RouteContainer(ecfm.parent.arrivalRoute);
+                    cachedRoutes.Add(container);
+                }
+            }
+        }
         private Dictionary<Airport, float> AirportRetriver(string[] codes, int[] ranges)
         {
             if (String.IsNullOrEmpty(codes[0]) || true)
@@ -395,6 +413,7 @@ namespace AirportCEOTweaks
                 Debug.LogWarning("ACEO Tweaks | WARN: Airline " + parent.businessName + "contract canceled due to no valid fleet!");
                 return true;
             }
+            
             //Debug.Log("Passed Error Catch");
             // Maybe don't generate a flight if there are lots already...............................................................
 
@@ -462,7 +481,7 @@ namespace AirportCEOTweaks
             }
 
             HashSet<TypeModel> typeModels = new HashSet<TypeModel>();
-            
+
             //Declaring inline function
             bool CalcMinMaxRange() //true iff success
             {
@@ -470,7 +489,7 @@ namespace AirportCEOTweaks
                 {
                     typeModelDictionary.TryGetValue(i, out TypeModel workingModel);
                     if (workingModel == null || workingModel.errorFlag) { return false; }
-                    if (workingModel.CanOperateFromPlayerAirportStands(.1f) && workingModel.AvailableByDLC() && workingModel.CanDispatchAdditionalAircraft())
+                    if (workingModel.CanOperateFromPlayerAirportStands(0f) && workingModel.AvailableByDLC() && workingModel.CanDispatchAdditionalAircraft())
                     {
                         typeModels.Add(workingModel);
                         maxRange = workingModel.rangeKM > maxRange ? workingModel.rangeKM : maxRange;
@@ -478,14 +497,14 @@ namespace AirportCEOTweaks
                     }
                 }
                 minRange /= 4; //factor of 4 repeated in dice rolls for desired range
-                minRange = minRange.Clamp(20f, 100f);
-                if (minRange > maxRange) { Debug.LogError("ACEO Tweaks | ERROR: min range > max range ("+minRange+")>("+maxRange+")"); return false; }
-                
+                minRange = minRange.Clamp(20f, 1000f);
+                if (minRange > maxRange) { Debug.LogError("ACEO Tweaks | ERROR: min range > max range (" + minRange + ")>(" + maxRange + ")"); return false; }
+
                 return true;
             }
 
             if (!CalcMinMaxRange()) { Debug.LogWarning("ACEO Tweaks | WARN: Generate flight for " + parent.businessName + " failed due to failure to caluclate min/max airline range"); return true; }
-            desiredRange = (Math.Abs(Random.Range(-maxRange, maxRange+minRange*4)+Random.Range(-maxRange, maxRange+minRange*4)+Random.Range(-maxRange, maxRange+minRange*4)) /3).Clamp(200f, maxRange*.95f);
+            desiredRange = (Math.Abs(Random.Range(-maxRange, maxRange + minRange * 4) + Random.Range(-maxRange, maxRange + minRange * 4) + Random.Range(-maxRange, maxRange + minRange * 4)) / 3).Clamp(200f, maxRange * .95f);
             //Debug.Log("Desired range = " + desiredRange);
 
             // Route gen ............................................................................................................
@@ -507,28 +526,57 @@ namespace AirportCEOTweaks
                 }
             }
 
+
             //Debug.Log("About to select route containers");
+            jump_back_to_try_routegen_again:
 
             routeContainers = routeGC.SelectRouteContainers(
-                (desiredRange*1.1f).ClampMax(maxRange), (desiredRange / 1.5f).ClampMin(minRange), 
+                ref cachedRoutes,
+                (desiredRange * 1.5f).ClampMax(maxRange), (desiredRange / 1.5f).ClampMin(minRange),
                 forceDomestic, forceOrigin, countries,
                 forbidCountries,
-                airlineBusinessData.internationalMustOriginateAtHub,airlineBusinessData.allMustOriginateAtHub, false,
-                hubs.ToArray(),ranges.ToArray()
+                airlineBusinessData.internationalMustOriginateAtHub, airlineBusinessData.allMustOriginateAtHub, false,
+                hubs.ToArray(), ranges.ToArray()
                 );
 
-            //Debug.Log("Selected " + routeContainers.Count + " route containers");
+            //Debug.Log("Airline " + parent.businessName + " Selected " + routeContainers.Count + " route containers");
+
+            routeContainers = routeGC.SelectRoutesByRandom(routeContainers, (short)(routeContainers.Count / 4));
+            routeContainers = routeGC.SelectRoutesByProbability(routeContainers, (short)(routeContainers.Count / 2));
+            routeContainers = routeGC.SelectRoutesByRandom(routeContainers, 1);
+
             
             SortedSet<RouteContainer> routeContainer = new SortedSet<RouteContainer>();
-            routeContainer = routeGC.SelectRoutesByChance(routeContainers);
+            routeContainer = routeGC.SelectRoutesByRandom(routeContainers);
 
             if (routeContainer.Count == 0)
             {
-                //Debug.Log("SelectByChance gave 0 containers");
-                return true;
+                Debug.Log("Airline " + parent.businessName + " SelectByChance gave 0 containers");
+                return false;
+            }
+
+            foreach (CommercialFlightModel flight in parent.flightListObjects)
+            {
+                if (flight.arrivalRoute.FromAirport.id == routeContainer.ElementAt(0).route.FromAirport.id)
+                {
+                    if (Random.Range(0f,1f)>0.25)
+                    {
+                        if(Random.Range(0f, 1f) > 0.5)
+                        {
+                            //Debug.Log("Airline " + parent.businessName + " Passed on route gen due to duplicate");
+                            return false;
+                        }
+
+                        //Debug.Log("Airline " + parent.businessName + " Retrying on route gen due to duplicate");
+                        routeContainers.Clear();
+                        routeContainers.UnionWith(cachedRoutes);
+                        goto jump_back_to_try_routegen_again;
+                    }
+                }
             }
 
             RouteContainer container = routeContainer.ElementAt(0);
+            
             Route route = new Route(container.route);
             Route route2;
 
@@ -609,7 +657,7 @@ namespace AirportCEOTweaks
 
             // Instantiate the flights ..............................................................................................
             int seriesLength = GetSeriesLength(inboundFlightData);
-            //Debug.Log("Instantiating at length == "+ seriesLength);
+            //Debug.Log("Airline " + parent.businessName + " Instantiating flight at length == " + seriesLength);
             InstantiateFlightSeries(selectedAircraftType.id, seriesLength, route, route2, inboundFlightData, outboundFlightData);
             //Debug.Log("GenerateFlightEND");
             return true;
@@ -965,9 +1013,9 @@ namespace AirportCEOTweaks
             {
                 return (!AirTrafficController.IsSupersonic(aircraftString) || DLCManager.OwnsSupersonicDLC) && (!AirTrafficController.IsVintage(aircraftString) || DLCManager.OwnsVintageDLC) && (!AirTrafficController.IsEastern(aircraftString) || DLCManager.OwnsBeastsOfTheEastDLC);
             }
-            public bool CanOperateFromOtherAirportSize(Enums.GenericSize airportSize)
+            public bool CanOperateFromOtherAirportSize(Enums.GenericSize airportSize, Enums.GenericSize cargoSize)
             {
-                if ((int)aircraftSize > (int)airportSize+3 || (int)aircraftSize < (int)airportSize - 1)
+                if ((int)aircraftSize > Math.Max((int)airportSize+4,(int)cargoSize+2) || (int)aircraftSize < Math.Min((int)airportSize - 1,(int)cargoSize-2))
                 {
                     return false;
                 }
@@ -1022,7 +1070,7 @@ namespace AirportCEOTweaks
                 if (debug)
                 {
                     if (!AvailableByDLC()) { Debug.Log("ACEO Tweaks | Info: " + aircraftString + " not available by DLC"); }
-                    if (!CanOperateFromOtherAirportSize(route.Airport.paxSize)) { Debug.Log("ACEO Tweaks | Info: " + aircraftString + " cannot operate from " + route.Airport.airportName + " ["+ route.Airport.airportIATACode + "]"); }
+                    if (!CanOperateFromOtherAirportSize(route.Airport.paxSize, route.Airport.cargoSize)) { Debug.Log("ACEO Tweaks | Info: " + aircraftString + " cannot operate from " + route.Airport.airportName + " ["+ route.Airport.airportIATACode + "]"); }
                     if (!CanFlyDistance(route.Distance.RoundToIntLikeANormalPerson())) { Debug.Log("ACEO Tweaks | Info: " + aircraftString + " cannot fly distance " + route.Distance + "km (do you have refueling available?)"); }
                     if (!CanDispatchAdditionalAircraft()) { }
                     if (!CanOperateFromPlayerAirportStands(0)) { Debug.Log("ACEO Tweaks | Info: " + aircraftString + " cannot operate from player stand sizes"); }
@@ -1030,14 +1078,16 @@ namespace AirportCEOTweaks
                 
                 return
                     AvailableByDLC() &&
-                    CanOperateFromOtherAirportSize(route.Airport.paxSize) &&
+                    CanOperateFromOtherAirportSize(route.Airport.paxSize , route.Airport.cargoSize) &&
                     CanFlyDistance(route.Distance.RoundToIntLikeANormalPerson()) &&
                     CanDispatchAdditionalAircraft() &&
                     CanOperateFromPlayerAirportStands(chanceToOfferRegaurdless);
             }
-            public float SuitabilityForRoute(RouteContainer routeThatIsPossible)
+            public float SuitabilityForRoute(RouteContainer routeThatIsPossible, bool forceCargo = false)
             {
                 float rangecap = 1f;
+                bool cargo = aircraftModel.maxPax == 0 ? true : forceCargo;
+                int size = cargo ? (int)routeThatIsPossible.Airport.cargoSize : (int)routeThatIsPossible.Airport.paxSize;
 
                 switch(aircraftModel.seatRows)
                 {
@@ -1051,11 +1101,14 @@ namespace AirportCEOTweaks
                     case 8: rangecap = .7f; break;
                     default: rangecap = .8f; break;
                 }
+
+                if (cargo) rangecap = 0.5f;
                 
-                int sizeMismatch = (Math.Abs((int)routeThatIsPossible.Airport.paxSize - (int)aircraftSize)); // 0,1,2,3,4...
+                int sizeMismatch = (Math.Abs(size - (int)aircraftSize)); // 0,1,2,3,4...
                 sizeMismatch = sizeMismatch == 0 ? 1 : sizeMismatch;                                         // 1,1,2,3,4...
 
-                float rangeUtilization = (routeThatIsPossible.Distance/rangeKM).Clamp(0f,rangecap); //utilizing range is good, where possible shorter range aircraft should be used for shorter routes.
+                float rangeUtilization = ((routeThatIsPossible.Distance/rangeKM).Clamp(0f,rangecap))/rangecap; //utilizing range is good, where possible shorter range aircraft should be used for shorter routes.
+                
 
                 float suitability = (rangeUtilization*100) / sizeMismatch;
                 suitability = (float)(suitability * fleetCount);

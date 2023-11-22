@@ -14,6 +14,7 @@ namespace AirportCEOTweaks
         [HarmonyPatch("StartNewGame")]
         public static void Prefix(SaveLoadGameDataController __instance)
         {
+            return;
             AirportCEOTweaks.Log("initial test");
             StandCreator.CreateStandMedium();
         }
