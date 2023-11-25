@@ -54,12 +54,12 @@ namespace AirportCEOTweaks
                 }
                 catch
                 {
-                    Debug.LogError("ACEO Tweaks | ERROR: TakeoffTime could not get aircraft speed!");
+                    Debug.LogError("ACEO Tweaks | ERROR: TakeoffTime could not get aircraft speed for aircraft " + flight.aircraftTypeString);
                     speed = 750;
                 }
                 if(speed < 100)
                 {
-                    Debug.LogError("ACEO Tweaks | ERROR: TakeoffTime got too low aircrarft speed!");
+                    Debug.LogError("ACEO Tweaks | ERROR: TakeoffTime got too low aircrarft speed (" + speed +" KM/H) for aircraft "+flight.aircraftTypeString);
                     speed = 750;
                 }
                 float distance;

@@ -125,7 +125,14 @@ namespace AirportCEOTweaks
             {
                 this.LoadAirlineIntoContaier(null);
             }
-            this.allocationHelpText.transform.parent.gameObject.AttemptEnableDisableGameObject(num == 0);
+            try
+            {
+                this.allocationHelpText.transform.parent.gameObject.AttemptEnableDisableGameObject(num == 0);
+            }
+            catch
+            {
+                Debug.LogWarning("ACEO Tweaks | WARN: Try/catch catch for allocationHelpText.transform.parent");
+            }
             if (num == 0)
             {
                 this.allocationHelpText.text = LocalizationManager.GetLocalizedValue("FlightPlannerPanelUI.cs.key.42");

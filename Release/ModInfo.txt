@@ -6,16 +6,19 @@ Need to Know for 2.3.x:
 * Mods must incorperate new aircraft in order for them to appear in your save
 * You must cancel and resign airline contracts for the fleets to update
 
-Known Bugs (2.3.5):
+Known Issues (2.3.6):
 
 * Game loading sometimes freezes at the very beginning. Restarting clears the issue.
-* Game loading hangs on "Loading Game World". New aircraft are being loaded but an indication is not implimented.
+* Game loading hangs on "Loading Game World". New aircraft are being loaded but an indication of this progress is not implimented. Wait.
 * Cargo aircraft on small stands depart prematurely.
 * Some situations that should fail a turnaround service cause it to succeed anyway. (Is this still true?)
+* Reloading the game without quitting to desktop may break the fleets of tweaks airlines.
+* Helicopter stands are not correctly colored in the flight planner.
+
 
 Changelog:
 
-2.3.6
+2.3.6 - Expirimental new route generation! Feedback requested!
 * Fixed the flight planner bug?
 * Aircraft selection for routes now accounts for cargo and non cargo aircraft seperatly
 * Aircraft airport restrictions made more permissive
@@ -24,7 +27,7 @@ Changelog:
 * Modified route generation settings to encourage respecting unballanced feet compositions
 * Rescaled ground vehicles to better match aircraft scale
 * Halved passenger waste generation to help with waste processing bottlenecks
-* Unallocated flights are automatically cleared on loading a save; this is susspected to help with flight planner crashes
+* Unallocated flights are automatically cleared on loading a save; this is suspected to help with flight planner crashes
 
 2.3.5
 * ACEO 1.1 compatability
