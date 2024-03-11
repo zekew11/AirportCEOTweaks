@@ -6,7 +6,7 @@ Need to Know for 2.3.x:
 * Mods must incorperate new aircraft in order for them to appear in your save
 * You must cancel and resign airline contracts for the fleets to update
 
-Known Issues (2.3.6):
+Known Issues (2.3.7):
 
 * Game loading sometimes freezes at the very beginning. Restarting clears the issue.
 * Game loading hangs on "Loading Game World". New aircraft are being loaded but an indication of this progress is not implimented. Wait.
@@ -17,6 +17,9 @@ Known Issues (2.3.6):
 
 
 Changelog:
+
+2.3.7 EP
+* Disabled flight planner changes by default and made then apply to more places to stop CTD when opening the flight planner
 
 2.3.6 - Expirimental new route generation! Feedback requested!
 * Fixed the flight planner bug?

@@ -1,3 +1,5 @@
 is_global = true
 build_property.RootNamespace = AirportCEOTweaks
-build_property.ProjectDir = C:\Users\Ezekiel\Documents\ACEOTweaks\AirportCEOTweaks\AirportCEOTweaks\
+build_property.ProjectDir = C:\My Stuff\Airport CEO Modding\UMF Development Environment\Tweaks Collab\AirportCEOTweaks\AirportCEOTweaks\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 

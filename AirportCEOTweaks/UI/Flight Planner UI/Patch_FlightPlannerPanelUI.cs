@@ -30,6 +30,11 @@ namespace AirportCEOTweaks
                                         , Image ___transparentOverlay
                                         )
         {
+            if (!AirportCEOTweaksConfig.plannerUIModifications)
+            {
+                return;
+            }
+
             if (!__instance.gameObject.TryGetComponent<Extend_FlightPlannerPanelUI>(out Extend_FlightPlannerPanelUI extension))
             {
                 extension = __instance.gameObject.AddComponent<Extend_FlightPlannerPanelUI>();
@@ -61,6 +66,11 @@ namespace AirportCEOTweaks
         [HarmonyPostfix]
         public static void SortAirlines(FlightPlannerPanelUI __instance)
         {
+            if (!AirportCEOTweaksConfig.plannerUIModifications)
+            {
+                return;
+            }
+
             if (!__instance.gameObject.TryGetComponent<Extend_FlightPlannerPanelUI>(out Extend_FlightPlannerPanelUI extension))
             {
                 Debug.LogWarning("ACEO Tweaks | Warning: Expected flight planner extension... attempting to add one...");
@@ -80,6 +90,11 @@ namespace AirportCEOTweaks
         [HarmonyPostfix]
         public static void SortFlights(FlightPlannerPanelUI __instance, AirlineModel airline)
         {
+            if (!AirportCEOTweaksConfig.plannerUIModifications)
+            {
+                return;
+            }
+
             if (!__instance.gameObject.TryGetComponent<Extend_FlightPlannerPanelUI>(out Extend_FlightPlannerPanelUI extension))
             {
                 Debug.LogWarning("ACEO Tweaks | Warning: Expected flight planner extension... attempting to add one...");
@@ -98,24 +113,44 @@ namespace AirportCEOTweaks
         [HarmonyPostfix]
         public static void RefreshAfterLgFilter(FlightPlannerPanelUI __instance)
         {
+            if (!AirportCEOTweaksConfig.plannerUIModifications)
+            {
+                return;
+            }
+
             __instance.RefreshPlanner();
         }
         [HarmonyPatch("FilterMediumAircraft")]
         [HarmonyPostfix]
         public static void RefreshAfterMdFilter(FlightPlannerPanelUI __instance)
         {
+            if (!AirportCEOTweaksConfig.plannerUIModifications)
+            {
+                return;
+            }
+
             __instance.RefreshPlanner();
         }
         [HarmonyPatch("FilterSmallAircraft")]
         [HarmonyPostfix]
         public static void RefreshAfterSmFilter(FlightPlannerPanelUI __instance)
         {
+            if (!AirportCEOTweaksConfig.plannerUIModifications)
+            {
+                return;
+            }
+
             __instance.RefreshPlanner();
         }
         [HarmonyPatch("EnableDisablePanel")]
         [HarmonyPostfix]
         public static void RefreshAfterEnable(FlightPlannerPanelUI __instance)
         {
+            if (!AirportCEOTweaksConfig.plannerUIModifications)
+            {
+                return;
+            }
+
             __instance.RefreshPlanner();
         }
     }

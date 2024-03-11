@@ -1,0 +1,141 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\My Stuff\\Airport CEO Modding\\UMF Development Environment\\Tweaks Collab\\AirportCEOTweaks\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{45E6F880-CB6B-49E7-92BD-A47FB09670DB}|AirportCEOTweaks\\AirportCEOTweaks.csproj|c:\\my stuff\\airport ceo modding\\umf development environment\\tweaks collab\\airportceotweaks\\airportceotweaks\\ui\\flight planner ui\\airline container\\patch_airlinecontainerui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{45E6F880-CB6B-49E7-92BD-A47FB09670DB}|AirportCEOTweaks\\AirportCEOTweaks.csproj|solutionrelative:airportceotweaks\\ui\\flight planner ui\\airline container\\patch_airlinecontainerui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45E6F880-CB6B-49E7-92BD-A47FB09670DB}|AirportCEOTweaks\\AirportCEOTweaks.csproj|c:\\my stuff\\airport ceo modding\\umf development environment\\tweaks collab\\airportceotweaks\\airportceotweaks\\ui\\flight planner ui\\patch_flightplannerpanelui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{45E6F880-CB6B-49E7-92BD-A47FB09670DB}|AirportCEOTweaks\\AirportCEOTweaks.csproj|solutionrelative:airportceotweaks\\ui\\flight planner ui\\patch_flightplannerpanelui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45E6F880-CB6B-49E7-92BD-A47FB09670DB}|AirportCEOTweaks\\AirportCEOTweaks.csproj|c:\\my stuff\\airport ceo modding\\umf development environment\\tweaks collab\\airportceotweaks\\airportceotweaks\\ui\\flight info card\\patch_flight_information_displayui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{45E6F880-CB6B-49E7-92BD-A47FB09670DB}|AirportCEOTweaks\\AirportCEOTweaks.csproj|solutionrelative:airportceotweaks\\ui\\flight info card\\patch_flight_information_displayui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45E6F880-CB6B-49E7-92BD-A47FB09670DB}|AirportCEOTweaks\\AirportCEOTweaks.csproj|c:\\my stuff\\airport ceo modding\\umf development environment\\tweaks collab\\airportceotweaks\\airportceotweaks\\ui\\flight planner ui\\flight container\\patch_flightslotcontainerui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{45E6F880-CB6B-49E7-92BD-A47FB09670DB}|AirportCEOTweaks\\AirportCEOTweaks.csproj|solutionrelative:airportceotweaks\\ui\\flight planner ui\\flight container\\patch_flightslotcontainerui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45E6F880-CB6B-49E7-92BD-A47FB09670DB}|AirportCEOTweaks\\AirportCEOTweaks.csproj|c:\\my stuff\\airport ceo modding\\umf development environment\\tweaks collab\\airportceotweaks\\airportceotweaks\\airportceotweaksconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{45E6F880-CB6B-49E7-92BD-A47FB09670DB}|AirportCEOTweaks\\AirportCEOTweaks.csproj|solutionrelative:airportceotweaks\\airportceotweaksconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 1,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedHeight": 300,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Patch_AirlineContainerUI.cs",
+              "DocumentMoniker": "C:\\My Stuff\\Airport CEO Modding\\UMF Development Environment\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\UI\\Flight Planner UI\\Airline Container\\Patch_AirlineContainerUI.cs",
+              "RelativeDocumentMoniker": "AirportCEOTweaks\\UI\\Flight Planner UI\\Airline Container\\Patch_AirlineContainerUI.cs",
+              "ToolTip": "C:\\My Stuff\\Airport CEO Modding\\UMF Development Environment\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\UI\\Flight Planner UI\\Airline Container\\Patch_AirlineContainerUI.cs",
+              "RelativeToolTip": "AirportCEOTweaks\\UI\\Flight Planner UI\\Airline Container\\Patch_AirlineContainerUI.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAApAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-11T01:53:33.444Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Patch_FlightPlannerPanelUI.cs",
+              "DocumentMoniker": "C:\\My Stuff\\Airport CEO Modding\\UMF Development Environment\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\UI\\Flight Planner UI\\Patch_FlightPlannerPanelUI.cs",
+              "RelativeDocumentMoniker": "AirportCEOTweaks\\UI\\Flight Planner UI\\Patch_FlightPlannerPanelUI.cs",
+              "ToolTip": "C:\\My Stuff\\Airport CEO Modding\\UMF Development Environment\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\UI\\Flight Planner UI\\Patch_FlightPlannerPanelUI.cs",
+              "RelativeToolTip": "AirportCEOTweaks\\UI\\Flight Planner UI\\Patch_FlightPlannerPanelUI.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAIIAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-11T01:51:07.294Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AirportCEOTweaksConfig.cs",
+              "DocumentMoniker": "C:\\My Stuff\\Airport CEO Modding\\UMF Development Environment\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaksConfig.cs",
+              "RelativeDocumentMoniker": "AirportCEOTweaks\\AirportCEOTweaksConfig.cs",
+              "ToolTip": "C:\\My Stuff\\Airport CEO Modding\\UMF Development Environment\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaksConfig.cs",
+              "RelativeToolTip": "AirportCEOTweaks\\AirportCEOTweaksConfig.cs",
+              "ViewState": "AQIAACgAAAAAAAAAAAAQwDYAAABtAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-11T01:42:22.547Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Patch_Flight_Information_DisplayUI.cs",
+              "DocumentMoniker": "C:\\My Stuff\\Airport CEO Modding\\UMF Development Environment\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\UI\\Flight Info Card\\Patch_Flight_Information_DisplayUI.cs",
+              "RelativeDocumentMoniker": "AirportCEOTweaks\\UI\\Flight Info Card\\Patch_Flight_Information_DisplayUI.cs",
+              "ToolTip": "C:\\My Stuff\\Airport CEO Modding\\UMF Development Environment\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\UI\\Flight Info Card\\Patch_Flight_Information_DisplayUI.cs",
+              "RelativeToolTip": "AirportCEOTweaks\\UI\\Flight Info Card\\Patch_Flight_Information_DisplayUI.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAAnAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-11T01:41:50.953Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Patch_FlightSlotContainerUI.cs",
+              "DocumentMoniker": "C:\\My Stuff\\Airport CEO Modding\\UMF Development Environment\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\UI\\Flight Planner UI\\Flight Container\\Patch_FlightSlotContainerUI.cs",
+              "RelativeDocumentMoniker": "AirportCEOTweaks\\UI\\Flight Planner UI\\Flight Container\\Patch_FlightSlotContainerUI.cs",
+              "ToolTip": "C:\\My Stuff\\Airport CEO Modding\\UMF Development Environment\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\UI\\Flight Planner UI\\Flight Container\\Patch_FlightSlotContainerUI.cs",
+              "RelativeToolTip": "AirportCEOTweaks\\UI\\Flight Planner UI\\Flight Container\\Patch_FlightSlotContainerUI.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAGQAAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-11T01:41:26.75Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            }
+          ]
+        },
+        {
+          "DockedHeight": 170,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{a80febb4-e7e0-4147-b476-21aaf2453969}"
+            }
+          ]
+        },
+        {
+          "DockedHeight": 47,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

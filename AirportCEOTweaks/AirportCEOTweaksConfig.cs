@@ -5,8 +5,8 @@ namespace AirportCEOTweaks
 {
     public class AirportCEOTweaksConfig
     {
-        private static readonly string configVersion = "2.3.0";
-        public static string displayConfigVersion = "2.3.1 Alpha 3"; //This is displayed in the ACEO top bar (Patch_AppVersionLabel), can be changed independtly of other config version
+        private static readonly string configVersion = "2.3.7";
+        public static string displayConfigVersion = "2.3.7 EP"; //This is displayed in the ACEO top bar (Patch_AppVersionLabel), can be changed independtly of other config version
 
 
         //Add your config vars here.
@@ -24,6 +24,8 @@ namespace AirportCEOTweaks
         public static bool smallPlaneBaggageOff;
         public static bool disconnectedBaggageOff;
         public static bool higherFlightCap;
+
+        public static bool plannerUIModifications;
 
         public static bool liveryLogs;
 
@@ -70,7 +72,7 @@ namespace AirportCEOTweaks
                     disconnectedBaggageOff = cfg.Read("Disconnected Stands No-Baggage", new UMFConfigBool(true, false, true), "When enabled aircraft of any size assigned to stands with no connected baggage bay will not request baggage service.");
                     higherFlightCap = cfg.Read("Increase Flight Cap", new UMFConfigBool(true, false, true), "A tweak to increase the flight cap by building multiple ATC towers.");
                     plannerChanges = cfg.Read("Planner Changes", new UMFConfigBool(true, false, true), "Enable/Disable player controlled planner hacks such as hold-shift to reschedule all flights in series.");
-                    
+                    plannerUIModifications = cfg.Read("Planner UI Modifications", new UMFConfigBool(false, false, true), "Disables planner UI changes. Enabling results in CTD upon opening planner!!!");
 
                     cargoAirlineFlags = cfg.Read("Cargo Airline Flags", new UMFConfigStringArray(new string[] { "cargo","freight","logistics", "mail", "dhl","fedex","ups", "kalitta","amazon air" }), "Define flags which, in the name of any airline, flag that airline as a cargo operator.");
 
