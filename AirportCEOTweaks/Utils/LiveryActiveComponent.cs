@@ -44,7 +44,7 @@ namespace AirportCEOTweaks
                 if (sections[i] == "exactly" || sections[i] == "xact")
                 {
                     exactly = (!exactly);
-                    if (AirportCEOTweaksConfig.liveryLogs)
+                    if (AirportCEOTweaksConfig.LiveryLogs.Value)
                     {
                         Debug.LogError("ACEO Tweaks | Livery Debug: Found xact");
                     }
@@ -54,7 +54,7 @@ namespace AirportCEOTweaks
                 if (exactly)
                 {
                     exactStrings.Add(sections[i]);
-                    if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogError("ACEO Tweaks | Livery Debug: nouns += " + sections[i]); }
+                    if (AirportCEOTweaksConfig.LiveryLogs.Value) { Debug.LogError("ACEO Tweaks | Livery Debug: nouns += " + sections[i]); }
                     continue;
                 }
                 
@@ -68,7 +68,7 @@ namespace AirportCEOTweaks
                         if (sections[i] == word)
                         {
                             groupWords.Add(word);
-                            if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogError("ACEO Tweaks | Livery Debug: groupWord+=" + word); }
+                            if (AirportCEOTweaksConfig.LiveryLogs.Value) { Debug.LogError("ACEO Tweaks | Livery Debug: groupWord+=" + word); }
                             break;
                         }
                     }
@@ -87,7 +87,7 @@ namespace AirportCEOTweaks
                     if (sections[i] == word)
                     {
                         verbs.Add(word);
-                        if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogError("ACEO Tweaks | Livery Debug: verbs+=" + word); }
+                        if (AirportCEOTweaksConfig.LiveryLogs.Value) { Debug.LogError("ACEO Tweaks | Livery Debug: verbs+=" + word); }
                         break;
                     }
                 } //check for all action words
@@ -99,7 +99,7 @@ namespace AirportCEOTweaks
 
                 //Debug.LogError("Reached PARAMETERS");
                 parameters.Union(new string[] { sections[i] });
-                if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogError("ACEO Tweaks | Livery Debug: parameters+=" + sections[i]); }
+                if (AirportCEOTweaksConfig.LiveryLogs.Value) { Debug.LogError("ACEO Tweaks | Livery Debug: parameters+=" + sections[i]); }
 
 
             }
@@ -144,7 +144,7 @@ namespace AirportCEOTweaks
             //z = (z <= -99f) ? 0f : z;
             if (z <= -99)
             {
-                if (AirportCEOTweaksConfig.liveryLogs)
+                if (AirportCEOTweaksConfig.LiveryLogs.Value)
                     { 
                     Debug.LogError("ACEO Tweaks | Livery Debug: found "+name+"at z="+z.ToString()+" : moving to z=0.");
                     }
@@ -152,7 +152,7 @@ namespace AirportCEOTweaks
                 Vector3 newPos = new Vector3(originalComponent.transform.localPosition.x, originalComponent.transform.localPosition.y, 0.010f);
                 originalComponent.transform.localPosition = newPos;
                 
-                if (AirportCEOTweaksConfig.liveryLogs)
+                if (AirportCEOTweaksConfig.LiveryLogs.Value)
                 { 
                     Debug.LogError("ACEO Tweaks | Livery Debug: " + name + " now at local z=" + originalComponent.transform.localPosition.z.ToString("0.0000000"));
                     Debug.LogError("ACEO Tweaks | Livery Debug: " + name + " now at global z=" + originalComponent.transform.position.z.ToString("0.0000000"));
@@ -160,7 +160,7 @@ namespace AirportCEOTweaks
             }
             else
             {
-                if (AirportCEOTweaksConfig.liveryLogs)
+                if (AirportCEOTweaksConfig.LiveryLogs.Value)
                 { 
                     //Debug.LogError("ACEO Tweaks | Livery Debug: found " + name + "at z=" + z.ToString() + " : not moving.");
                 }
@@ -181,10 +181,10 @@ namespace AirportCEOTweaks
             {
                 switch (verb)
                 {
-                    case "setpax":    if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
-                    case "setrows":   if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
-                    case "setstairs": if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
-                    case "settitle":  if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
+                    case "setpax":    if (AirportCEOTweaksConfig.LiveryLogs.Value) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
+                    case "setrows":   if (AirportCEOTweaksConfig.LiveryLogs.Value) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
+                    case "setstairs": if (AirportCEOTweaksConfig.LiveryLogs.Value) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
+                    case "settitle":  if (AirportCEOTweaksConfig.LiveryLogs.Value) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
 
                     case "moveabs": Move(gameObjects, originalComponent.transform.localPosition, false, originalComponent.transform.localEulerAngles.z); flag = true; break;
                     case "moverel": Move(gameObjects, originalComponent.transform.localPosition, true, originalComponent.transform.localEulerAngles.z); flag = true; break;
@@ -194,8 +194,8 @@ namespace AirportCEOTweaks
                     case "setlayerorder": SetLayerOrderParse(gameObjects, parameters); break;
                     case "makewindow": MakeChildOf(gameObjects, new string[] { "nightwindows" }); SetMaterial(gameObjects, "nonlit"); break;
                     case "makenonlit": SetMaterial(gameObjects, "nonlit"); break;
-                    case "makelightsource": if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
-                    case "makelightsprite": if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
+                    case "makelightsource": if (AirportCEOTweaksConfig.LiveryLogs.Value) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
+                    case "makelightsprite": if (AirportCEOTweaksConfig.LiveryLogs.Value) { Debug.LogWarning("ACEO Tweaks | WARN: attempted to verb " + verb + ". not implimented!"); } break;
                     case "makechildof": MakeChildOf(gameObjects, parameters); break;
 
                     default:
@@ -358,7 +358,7 @@ namespace AirportCEOTweaks
             float scale = Scale();
             foreach (GameObject obj in gameObjects)
             {
-                if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogError("ACEO Tweaks | Livery Debug: moving " + obj.name + " oldpos = " + obj.transform.localPosition.ToString()); }
+                if (AirportCEOTweaksConfig.LiveryLogs.Value) { Debug.LogError("ACEO Tweaks | Livery Debug: moving " + obj.name + " oldpos = " + obj.transform.localPosition.ToString()); }
                 if (rel)
                 {
                     obj.transform.position += (position*scale);
@@ -367,7 +367,7 @@ namespace AirportCEOTweaks
                 {
                     obj.transform.localPosition = (position*scale);
                 }
-                if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogError("ACEO Tweaks | Livery Debug: moved " + obj.name + " newpos = " + obj.transform.localPosition.ToString() + "(move scaled by " + scale + ")"); }
+                if (AirportCEOTweaksConfig.LiveryLogs.Value) { Debug.LogError("ACEO Tweaks | Livery Debug: moved " + obj.name + " newpos = " + obj.transform.localPosition.ToString() + "(move scaled by " + scale + ")"); }
                 obj.transform.Rotate(Vector3.forward, rotation);
             }
         }
@@ -375,7 +375,7 @@ namespace AirportCEOTweaks
         {
             foreach (GameObject obj in gameObjects)
             {
-                if (AirportCEOTweaksConfig.liveryLogs)
+                if (AirportCEOTweaksConfig.LiveryLogs.Value)
                 {
                     Debug.LogError("ACEO Tweaks | Livery Debug: enable/disabled " + obj.name + " enabled = " + flag.ToString());
                 }
@@ -389,7 +389,7 @@ namespace AirportCEOTweaks
             {
                 SpriteRenderer r = obj.GetComponent<SpriteRenderer>();
                 r.material = m;
-                if (AirportCEOTweaksConfig.liveryLogs)
+                if (AirportCEOTweaksConfig.LiveryLogs.Value)
                 {
                     Debug.LogError("ACEO Tweaks | Livery Debug: changed " + obj.name + "material to " + matString);
                 }
@@ -403,7 +403,7 @@ namespace AirportCEOTweaks
                 
                     SpriteRenderer r = obj.GetComponent<SpriteRenderer>();
                     r.sortingOrder = layer;
-                    if (AirportCEOTweaksConfig.liveryLogs)
+                    if (AirportCEOTweaksConfig.LiveryLogs.Value)
                     {
                     Debug.LogError("ACEO Tweaks | Livery Debug: changed " + obj.name + "layer order to "+layer.ToString());
                     }
@@ -432,7 +432,7 @@ namespace AirportCEOTweaks
             foreach (GameObject obj in gameObjects)
             {
                 obj.layer = layer;
-                if (AirportCEOTweaksConfig.liveryLogs)
+                if (AirportCEOTweaksConfig.LiveryLogs.Value)
                 {
                     Debug.LogError("ACEO Tweaks | Livery Debug: changed " + obj.name + "layer type");
                 }
@@ -446,7 +446,7 @@ namespace AirportCEOTweaks
             foreach (GameObject obj in gameObjects)
             {
                 obj.transform.SetParent(parent.transform);
-                if (AirportCEOTweaksConfig.liveryLogs)
+                if (AirportCEOTweaksConfig.LiveryLogs.Value)
                 {
                     Debug.LogError("ACEO Tweaks | Livery Debug: changed " + obj.name + " parent/group to "+parent.name);
                 }

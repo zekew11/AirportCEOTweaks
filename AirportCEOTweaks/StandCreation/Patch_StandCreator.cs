@@ -15,8 +15,8 @@ namespace AirportCEOTweaks
         public static void Prefix(SaveLoadGameDataController __instance)
         {
             return;
-            AirportCEOTweaks.Log("initial test");
-            StandCreator.CreateStandMedium();
+            //AirportCEOTweaks.Log("initial test");
+            //StandCreator.CreateStandMedium();
         }
 
     }

@@ -26,12 +26,12 @@ namespace AirportCEOTweaks
             {
                 FlightSlotContainerUI[] flightSlotContainerUIs = FlightPlannerPanelUI.Instance.transform.GetComponentsInChildren<FlightSlotContainerUI>();
 
-                if (Input.GetKeyDown(AirportCEOTweaksConfig.increaseTurnaroundBind))
+                if (Input.GetKeyDown(AirportCEOTweaksConfig.IncreaseTurnaroundBind.Value.MainKey))
                 {
                     turnaroundPlayerBiasBufferMins += 15f;
                     UpdateFlightSlot(flightSlotContainerUIs);
                 }
-                if (Input.GetKeyDown(AirportCEOTweaksConfig.decreaseTurnaroundBind))
+                if (Input.GetKeyDown(AirportCEOTweaksConfig.DecreaseTurnaroundBind.Value.MainKey))
                 {
                     turnaroundPlayerBiasBufferMins -= 15f;
                     UpdateFlightSlot(flightSlotContainerUIs);
@@ -69,7 +69,7 @@ namespace AirportCEOTweaks
 
             //Debug.Log(StringAircraftStatistic());
 
-            if (AirportCEOTweaksConfig.airlineNationality && !GameSettingManager.RealisticInternationalStands)
+            if (AirportCEOTweaksConfig.AirlineNationality.Value && !GameSettingManager.RealisticInternationalStands)
             {
                 DialogPanel.Instance.ShowQuestionPanelCustomOptions(new Action<bool>(EnableRealisticInternational), "ACEO Tweaks airline nationality is enabled. Realistic international stands setting is recommended! \n \n (ACEO Tweaks options are available via shift-F10)", "Enable", "Ignore", true, false);
             }

@@ -16,7 +16,7 @@ namespace AirportCEOTweaks
         [HarmonyPostfix]
         static void ShortenContainer(ref AirlineContainerUI __instance, ref Transform ___infoTransform, ref Image ___airlineLogo)
         {
-            if (!AirportCEOTweaksConfig.plannerUIModifications)
+            if (!AirportCEOTweaksConfig.PlannerUIModifications.Value)
             {
                 return;
             }

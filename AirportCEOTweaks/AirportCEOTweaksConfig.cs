@@ -1,95 +1,77 @@
 using System;
-using UModFramework.API;
+using System.Collections.Generic;
+using BepInEx.Configuration;
+using Mono.CompilerServices.SymbolWriter;
 
-namespace AirportCEOTweaks
+namespace AirportCEOTweaks;
+
+public class AirportCEOTweaksConfig
 {
-    public class AirportCEOTweaksConfig
+    // Versioning and watermark offloaded to mod loader
+
+    public static ConfigEntry<KeyboardShortcut> IncreaseTurnaroundBind { get; private set; }
+    public static ConfigEntry<KeyboardShortcut> DecreaseTurnaroundBind { get; private set; }
+
+    // No references?
+    //public static ConfigEntry<KeyboardShortcut> scheduleSoonerBind { get; private set; }
+    //public static ConfigEntry<KeyboardShortcut> scheduleLaterBind { get; private set; }
+    //public static ConfigEntry<KeyboardShortcut> pickupConfirmBind { get; private set; }
+
+    public static ConfigEntry<KeyboardShortcut> OverloadShiftBind { get; private set; }
+
+    public static ConfigEntry<bool> AirlineNationality { get; private set; }
+    public static ConfigEntry<bool> PlannerChanges { get; private set; }
+    public static ConfigEntry<bool> ForceNormalTurnaroundTime { get; private set; }
+    public static ConfigEntry<bool> PermisivePlanner { get; private set; }
+    public static ConfigEntry<bool> SmallPlaneBaggageOff { get; private set; }
+    public static ConfigEntry<bool> DisconnectedBaggageOff { get; private set; }
+    public static ConfigEntry<bool> HigherFlightCap { get; private set; }
+    public static ConfigEntry<bool> PlannerUIModifications { get; private set; }
+    public static ConfigEntry<bool> LiveryLogs { get; private set; }
+
+    public static ConfigEntry<string> CargoAirlineFlags { get; private set; }
+    public static string[] CargoAirlineFlagsArray
     {
-        private static readonly string configVersion = "2.3.7";
-        public static string displayConfigVersion = "2.3.7 EP"; //This is displayed in the ACEO top bar (Patch_AppVersionLabel), can be changed independtly of other config version
-
-
-        //Add your config vars here.
-        public static UnityEngine.KeyCode increaseTurnaroundBind;
-        public static UnityEngine.KeyCode decreaseTurnaroundBind;
-        public static UnityEngine.KeyCode scheduleSoonerBind;
-        public static UnityEngine.KeyCode scheduleLaterBind;
-        public static UnityEngine.KeyCode pickupConfirmBind;
-        public static UnityEngine.KeyCode overloadShiftBind;
-
-        public static bool airlineNationality;
-        public static bool plannerChanges;
-        public static bool forceNormalTurnaroundTime;
-        public static bool permisivePlanner;
-        public static bool smallPlaneBaggageOff;
-        public static bool disconnectedBaggageOff;
-        public static bool higherFlightCap;
-
-        public static bool plannerUIModifications;
-
-        public static bool liveryLogs;
-
-        public static string[] cargoAirlineFlags;
-        public static int flightGenerationMultiplyer;
-        public static float structureRepairLevel; //Affects both stands and runways
-
-        internal static void Load()
+        get
         {
-            AirportCEOTweaks.Log("Loading settings.");
-            try
+            string[] values = CargoAirlineFlags.Value.Split(',');
+            for (int i = 0; i < values.Length; i++)
             {
-                using (UMFConfig cfg = new UMFConfig())
-                {
-                    string cfgVer = cfg.Read("ConfigVersion", new UMFConfigString());
-                    if (cfgVer != string.Empty && cfgVer != configVersion)
-                    {
-                        cfg.DeleteConfig(true);
-                        AirportCEOTweaks.Log("The config file was outdated and has been deleted. A new config will be generated.");
-                    }
-
-                    cfg.Write("SupportsHotLoading", new UMFConfigBool(false)); //Uncomment if your mod can't be loaded once the game has started.
-                    cfg.Write("ModDependencies", new UMFConfigStringArray(new string[] { })); //A comma separated list of mod/library names that this mod requires to function. Format: SomeMod:1.50,SomeLibrary:0.60
-                    cfg.Read("LoadPriority", new UMFConfigString("Normal"));
-                    cfg.Write("MinVersion", new UMFConfigString("0.53.5"));
-                    //cfg.Write("MaxVersion", new UMFConfigString("0.54.99999.99999")); //This will prevent the mod from being loaded after the next major UMF release
-                    cfg.Write("UpdateURL", new UMFConfigString("https://umodframework.com/updatemod?id=33"));
-                    cfg.Write("ConfigVersion", new UMFConfigString(configVersion));
-
-                    AirportCEOTweaks.Log("Finished UMF Settings.");
-
-                    //Add your settings here
-
-                    increaseTurnaroundBind = cfg.Read("Increase Turnaround Keybind", new UMFConfigKeyCode(UnityEngine.KeyCode.Equals), "Keybind to make turnaround time longer (while dragging)");
-                    decreaseTurnaroundBind = cfg.Read("Decrease Turnaround Keybind", new UMFConfigKeyCode(UnityEngine.KeyCode.Minus), "Keybind to make turnaround time shorter (while dragging)");
-
-                    overloadShiftBind = cfg.Read("Shift-Key Duplicate Keybind", new UMFConfigKeyCode(UnityEngine.KeyCode.None), "Keybind which will replicate the shift-key's behavior within the mod, such as reschedulng all flights in series. Shift-key will continue to function, this keybind will duplicate the functionality.");
-
-
-
-                    airlineNationality = cfg.Read("Airline Nationality System", new UMFConfigBool(true, false, true), "When enabled, airlines will operate to and from their home nations. More options below...");
-                    forceNormalTurnaroundTime = cfg.Read("Force Vanilla Turnaround Times", new UMFConfigBool(false, true, false), "Expirimental: force vanilla turnaround time on all flights. Better autoplanner compatability.");
-                    smallPlaneBaggageOff = cfg.Read("Small Aircraft No-Baggage", new UMFConfigBool(false, false, true), "When enabled small aircraft will never request baggage service.");
-                    disconnectedBaggageOff = cfg.Read("Disconnected Stands No-Baggage", new UMFConfigBool(true, false, true), "When enabled aircraft of any size assigned to stands with no connected baggage bay will not request baggage service.");
-                    higherFlightCap = cfg.Read("Increase Flight Cap", new UMFConfigBool(true, false, true), "A tweak to increase the flight cap by building multiple ATC towers.");
-                    plannerChanges = cfg.Read("Planner Changes", new UMFConfigBool(true, false, true), "Enable/Disable player controlled planner hacks such as hold-shift to reschedule all flights in series.");
-                    plannerUIModifications = cfg.Read("Planner UI Modifications", new UMFConfigBool(false, false, true), "Disables planner UI changes. Enabling results in CTD upon opening planner!!!");
-
-                    cargoAirlineFlags = cfg.Read("Cargo Airline Flags", new UMFConfigStringArray(new string[] { "cargo","freight","logistics", "mail", "dhl","fedex","ups", "kalitta","amazon air" }), "Define flags which, in the name of any airline, flag that airline as a cargo operator.");
-
-                    flightGenerationMultiplyer = cfg.Read("Flight Generation Multiplyer", new UMFConfigInt(3, 1, 10, 3, false), "At each opportunity airlines attempt to generate this many flights. High values may result in duplicate flights.");
-
-                    liveryLogs = cfg.Read("Livery Author Log Files", new UMFConfigBool(false, false, false), "Enable/Disable extra log files for livery authors to debug active liveries");
-                    permisivePlanner = cfg.Read("Permissive Flight Planning", new UMFConfigBool(false, false, false), "Unreasonably permissive flight planning rules for expirimentation and debug");
-
-                    structureRepairLevel = cfg.Read("Structure Repair Level", new UMFConfigFloat(0.25f, 0.01f, 0.95f, 2, 0.25f, false), "Repairs stands and runways at the set level rather than the vanilla value");
-
-                    AirportCEOTweaks.Log("ACEO Tweaks | Finished loading settings.");
-                }
+                values[i].Trim(' ', '.');
             }
-            catch (Exception e)
-            {
-                AirportCEOTweaks.Log("ACEO Tweaks | Error loading mod settings: " + e.Message + "(" + e.InnerException?.Message + ")");
-            }
+            return values;
+        }
+        set
+        {
+            CargoAirlineFlags.Value = string.Join(", ", value);
         }
     }
+    public static ConfigEntry<int> FlightGenerationMultiplyer { get; private set; }
+    public static ConfigEntry<string> PathToCrosshairImage { get; private set; }
+    
+    // Struture repair removed (to an external mod maybe)
+
+    internal static void SetUpConfig()
+    {
+        IncreaseTurnaroundBind = ConfigRef.Bind("Keybinds", "Increase Turnaround Keybind", new KeyboardShortcut(UnityEngine.KeyCode.Equals), "Keybind to make turnaround time longer (while dragging)");
+        DecreaseTurnaroundBind = ConfigRef.Bind("Keybinds", "Decrease Turnaround Keybind", new KeyboardShortcut(UnityEngine.KeyCode.Minus), "Keybind to make turnaround time shorter (while dragging)");
+        OverloadShiftBind = ConfigRef.Bind("Keybinds", "Shift-Key Duplicate Keybind", new KeyboardShortcut(UnityEngine.KeyCode.None), "Keybind which will replicate the shift-key's behavior within the mod, such as reschedulng all flights in series. Shift-key will continue to function, this keybind will duplicate the functionality.");
+
+        AirlineNationality = ConfigRef.Bind("General", "Airline Nationality System", true, "When enabled, airlines will operate to and from their home nations. More options below...");
+        ForceNormalTurnaroundTime = ConfigRef.Bind("General", "Force Vanilla Turnaround Times", false, "Expirimental: force vanilla turnaround time on all flights. Better autoplanner compatability.");
+        SmallPlaneBaggageOff = ConfigRef.Bind("General", "Small Aircraft No-Baggage", false, "When enabled small aircraft will never request baggage service.");
+        DisconnectedBaggageOff = ConfigRef.Bind("General", "Disconnected Stands No-Baggage", true, "When enabled aircraft of any size assigned to stands with no connected baggage bay will not request baggage service.");
+        HigherFlightCap = ConfigRef.Bind("General", "Flight Cap Changes", true, "A tweak to increase the flight cap by building multiple ATC towers.");
+        CargoAirlineFlags = ConfigRef.Bind("General", "Cargo Airline Flags", string.Join(", ", "cargo","freight","logistics", "mail", "dhl","fedex","ups", "kalitta","amazon air"), "Define flags which, in the name of any airline, flag that airline as a cargo operator.");
+        FlightGenerationMultiplyer = ConfigRef.Bind("General", "Flight Generation Multiplyer", 3, "At each opportunity airlines attempt to generate this many flights. High values may result in duplicate flights.");
+
+        PlannerChanges = ConfigRef.Bind("Planner", "Planner Changes", true, "Enable/Disable player controlled planner hacks such as hold-shift to reschedule all flights in series.");
+        PlannerUIModifications = ConfigRef.Bind("Planner", "Planner UI Modifications", false, "Disables planner UI changes. Enabling results in (frequent) CTD upon opening planner!");
+        PermisivePlanner = ConfigRef.Bind("Planner", "Permissive Flight Planning", false, "Unreasonably permissive flight planning rules for expirimentation and debug");
+
+        LiveryLogs = ConfigRef.Bind("Debug", "Livery Author Log Files", false, "Enable/Disable extra log files for livery authors to debug active liveries");
+        PathToCrosshairImage = ConfigRef.Bind("Debug", "Path to crosshair", "", "Path to crosshair for mod devs. If empty function will not work");
+    }
+
+    private static ConfigFile ConfigRef => AirportCEOTweaks.ConfigReference;
 }

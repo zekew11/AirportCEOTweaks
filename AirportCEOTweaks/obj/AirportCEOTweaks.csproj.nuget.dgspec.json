@@ -1,33 +1,35 @@
 {
   "format": 1,
   "restore": {
-    "C:\\My Stuff\\Airport CEO Modding\\UMF Development Environment\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj": {}
+    "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj": {}
   },
   "projects": {
-    "C:\\My Stuff\\Airport CEO Modding\\UMF Development Environment\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj": {
-      "version": "1.0.0",
+    "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj": {
+      "version": "2.4.0",
       "restore": {
-        "projectUniqueName": "C:\\My Stuff\\Airport CEO Modding\\UMF Development Environment\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
+        "projectUniqueName": "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
         "projectName": "AirportCEOTweaks",
-        "projectPath": "C:\\My Stuff\\Airport CEO Modding\\UMF Development Environment\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
+        "projectPath": "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
         "packagesPath": "C:\\Users\\zsolt\\.nuget\\packages\\",
-        "outputPath": "C:\\My Stuff\\Airport CEO Modding\\UMF Development Environment\\Tweaks Collab\\AirportCEOTweaks\\AirportCEOTweaks\\obj\\",
+        "outputPath": "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\obj\\",
         "projectStyle": "PackageReference",
-        "crossTargeting": true,
         "configFilePaths": [
           "C:\\Users\\zsolt\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net462"
+          "net46"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.bepinex.dev/v3/index.json": {},
+          "https://nuget.samboy.dev/v3/index.json": {}
         },
         "frameworks": {
-          "net462": {
-            "targetAlias": "net462",
+          "net46": {
+            "targetAlias": "net46",
             "projectReferences": {}
           }
         },
@@ -43,9 +45,38 @@
         }
       },
       "frameworks": {
-        "net462": {
-          "targetAlias": "net462",
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.200\\RuntimeIdentifierGraph.json"
+        "net46": {
+          "targetAlias": "net46",
+          "dependencies": {
+            "BepInEx.Analyzers": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.*, )"
+            },
+            "BepInEx.Core": {
+              "target": "Package",
+              "version": "[5.*, )"
+            },
+            "BepInEx.PluginInfoProps": {
+              "target": "Package",
+              "version": "[1.*, )"
+            },
+            "Microsoft.NETFramework.ReferenceAssemblies": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.0.3, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
+            "UnityEngine.Modules": {
+              "include": "Compile",
+              "target": "Package",
+              "version": "[2019.4.40, )"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.311\\RuntimeIdentifierGraph.json"
         }
       }
     }

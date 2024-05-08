@@ -13,7 +13,7 @@ namespace AirportCEOTweaks
 		[HarmonyPatch("InitializeAirTraffic")]
 		public static void Patch_PreActivateFlights(AirTrafficController __instance)
 		{
-			if (AirportCEOTweaksConfig.plannerChanges)
+			if (AirportCEOTweaksConfig.PlannerChanges.Value)
 			{
 				__instance.StartCoroutine(Extend_AirTrafficController.PreActivateFlights());
 			}
@@ -26,7 +26,7 @@ namespace AirportCEOTweaks
 		[HarmonyPatch("GetMaxNbrOfScheduleableFlights")]
 		public static bool Patch_MaxNbrOfScheduleableFlights(AirTrafficController __instance, int[] ___atcTowerMaxFlights, ref int __result)
         {
-			if (GameDataController.Sandbox.UnlimitedFlights || !AirportCEOTweaksConfig.higherFlightCap)
+			if (GameDataController.Sandbox.UnlimitedFlights || !AirportCEOTweaksConfig.HigherFlightCap.Value)
 			{
 				return true;
 			}
