@@ -49,7 +49,7 @@ namespace AirportCEOTweaks
                 return false;
             }
 
-            for (int i = 0; i<AirportCEOTweaksConfig.flightGenerationMultiplyer;i++)
+            for (int i = 0; i<AirportCEOTweaksConfig.FlightGenerationMultiplyer.Value;i++)
             {
                 eam.GenerateFlight(__instance, isEmergency, isAmbulance);
             }

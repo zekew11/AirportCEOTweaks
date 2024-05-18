@@ -16,6 +16,11 @@ namespace AirportCEOTweaks
         [HarmonyPostfix]
         static void ShortenContainer(ref AirlineContainerUI __instance, ref Transform ___infoTransform, ref Image ___airlineLogo)
         {
+            if (!AirportCEOTweaksConfig.PlannerUIModifications.Value)
+            {
+                return;
+            }
+
             ///Add a mouse enter/leave listener
             ///
             if (!__instance.gameObject.TryGetComponent<Extend_AirlineContainer>(out Extend_AirlineContainer extension))

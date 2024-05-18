@@ -75,7 +75,7 @@ namespace AirportCEOTweaks
             {
                 if (!Singleton<ModsController>.Instance.IsDomestic(countries))
                 {
-                    if (AirportCEOTweaksConfig.liveryLogs)
+                    if (AirportCEOTweaksConfig.LiveryLogs.Value)
                     {
                         Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged NOT domestic becasue it would be unable to fly to player airport");
                     }
@@ -89,7 +89,7 @@ namespace AirportCEOTweaks
 
                 if(countries == null)
                 {
-                    if (AirportCEOTweaksConfig.liveryLogs)
+                    if (AirportCEOTweaksConfig.LiveryLogs.Value)
                     {
                         Debug.Log("ACEO Tweaks | Debug: airline " + parent.businessName + " is flagged NOT domestic by country == null");
                     }
@@ -141,7 +141,7 @@ namespace AirportCEOTweaks
 
             countryCode = Singleton<BusinessController>.Instance?.GetAirline(airline.businessName)?.countryCode ?? "";
 
-            if (!AirportCEOTweaksConfig.airlineNationality)
+            if (!AirportCEOTweaksConfig.AirlineNationality.Value)
             {
                 countries = null;
                 goto describer;
@@ -463,7 +463,7 @@ namespace AirportCEOTweaks
             {
                 //Debug.Log("countries is null or length 0");
                 forceOrigin = false;
-                if (AirportCEOTweaksConfig.liveryLogs && AirportCEOTweaksConfig.airlineNationality)
+                if (AirportCEOTweaksConfig.LiveryLogs.Value && AirportCEOTweaksConfig.AirlineNationality.Value)
                 {
                     //Debug.Log("ACEO Tweaks | Warn: Generate flight for " + parent.businessName + "encountered (airline) country == null");
                 }
@@ -603,14 +603,14 @@ namespace AirportCEOTweaks
             bool SelectAircaft()
             {
                 
-                var filteredTypeModels = typeModels.Where(model => model.CanServeRoute(container, 0f ,AirportCEOTweaksConfig.liveryLogs));
+                var filteredTypeModels = typeModels.Where(model => model.CanServeRoute(container, 0f ,AirportCEOTweaksConfig.LiveryLogs.Value));
                 SortedDictionary<float, TypeModel> orderedTypeDictionay = new SortedDictionary<float, TypeModel>();
                 float totalSutability = 0f;
 
                 if (filteredTypeModels.Count() == 0)
                 {
 
-                    if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: filteredTypeModels.Count == 0"); }
+                    if (AirportCEOTweaksConfig.LiveryLogs.Value) { Debug.LogWarning("ACEO Tweaks | WARN: filteredTypeModels.Count == 0"); }
                     return false;
                 }
 
@@ -647,7 +647,7 @@ namespace AirportCEOTweaks
                 if (selectedAircraft == null) { return false; }
                 return true;
             }
-            if (!SelectAircaft()) { if (AirportCEOTweaksConfig.liveryLogs) { Debug.LogWarning("ACEO Tweaks | WARN: Generate flight for " + parent.businessName + " failed due to failure to select an aircraft"); } return true; }
+            if (!SelectAircaft()) { if (AirportCEOTweaksConfig.LiveryLogs.Value) { Debug.LogWarning("ACEO Tweaks | WARN: Generate flight for " + parent.businessName + " failed due to failure to select an aircraft"); } return true; }
 
             // Debug.Log("Aircraft selected");
             // Determine the flight data ...........................................................................................
@@ -788,7 +788,7 @@ namespace AirportCEOTweaks
         }
         public float GetModEconomyTiers(string name, Enums.BusinessClass stars)
         {
-                foreach (string flag in AirportCEOTweaksConfig.cargoAirlineFlags)
+                foreach (string flag in AirportCEOTweaksConfig.CargoAirlineFlagsArray)
                 {
                     if (name.ToLower().Contains(flag.ToLower()))
                     {

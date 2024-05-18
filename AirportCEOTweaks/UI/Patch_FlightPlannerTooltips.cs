@@ -16,7 +16,7 @@ namespace AirportCEOTweaks
     {
         public static void Postfix()
         {
-            if (!AirportCEOTweaksConfig.plannerChanges)
+            if (!AirportCEOTweaksConfig.PlannerChanges.Value)
             {
                 return;
             }

@@ -17,7 +17,7 @@ namespace AirportCEOTweaks
         {
             //rescedule changes
 
-            if (AirportCEOTweaksConfig.plannerChanges == false) { return; }
+            if (AirportCEOTweaksConfig.PlannerChanges.Value == false) { return; }
 
             Button button = __instance.transform.Find("FlightAllocationButtons").Find("RescheduleFlightButton").GetComponent<Button>();
             button.interactable = true;

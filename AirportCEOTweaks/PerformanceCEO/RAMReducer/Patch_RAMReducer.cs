@@ -2,7 +2,6 @@ using UnityEngine;
 using HarmonyLib;
 using System;
 using System.Reflection;
-using UModFramework;
 
 namespace Tweaks_PerformanceCEO.RAMReducer
 {

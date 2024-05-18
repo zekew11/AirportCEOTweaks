@@ -14,16 +14,16 @@ namespace AirportCEOTweaks
         {
             bool firstSchedule = !__instance.rescheduleInProgress;
             
-            if (rescheduleAborted && (AirportCEOTweaksConfig.plannerChanges))
+            if (rescheduleAborted && (AirportCEOTweaksConfig.PlannerChanges.Value))
             {
                 __instance.rowStandReferenceID = __instance.flight.assignedStandReferenceID;
                 return true;
             }
-            if (__instance.flight == null || AirportCEOTweaksConfig.plannerChanges == false)
+            if (__instance.flight == null || AirportCEOTweaksConfig.PlannerChanges.Value == false)
             {
                 return true;
             }
-            if (((Input.GetKey(KeyCode.LeftShift)) || (Input.GetKey(KeyCode.RightShift)) || (Input.GetKey(AirportCEOTweaksConfig.overloadShiftBind))) || firstSchedule)
+            if (((Input.GetKey(KeyCode.LeftShift)) || (Input.GetKey(KeyCode.RightShift)) || (Input.GetKey(AirportCEOTweaksConfig.OverloadShiftBind.Value.MainKey))) || firstSchedule)
             {
                 List<CommercialFlightModel> allFlights = __instance.flight.Airline.flightListObjects;
                 HashSet<CommercialFlightModel> flightsToChange = new HashSet<CommercialFlightModel>();
@@ -65,12 +65,12 @@ namespace AirportCEOTweaks
         [HarmonyPatch("CancelFlightPlan")]//Cancel Flight applies to all subsiquent if shift is held
         public static bool Prefix(ref FlightSlotContainerUI __instance) //PlannerChangesMod
         {
-            if (__instance.flight == null || AirportCEOTweaksConfig.plannerChanges == false)
+            if (__instance.flight == null || AirportCEOTweaksConfig.PlannerChanges.Value == false)
             {
                 return true;
             }
 
-            if ( (Input.GetKey(KeyCode.LeftShift)) || (Input.GetKey(KeyCode.RightShift)) || (Input.GetKey(AirportCEOTweaksConfig.overloadShiftBind)))
+            if ( (Input.GetKey(KeyCode.LeftShift)) || (Input.GetKey(KeyCode.RightShift)) || (Input.GetKey(AirportCEOTweaksConfig.OverloadShiftBind.Value.MainKey)))
             {
                 List<CommercialFlightModel> allFlights = __instance.flight.Airline.flightListObjects;
                 HashSet<CommercialFlightModel> flightsToChange = new HashSet<CommercialFlightModel>();
@@ -99,7 +99,7 @@ namespace AirportCEOTweaks
         [HarmonyPrefix]
         public static bool Prefix_IsPositionLegal(ref bool __result, ref FlightSlotContainerUI __instance) //PlannerChangesMod
         {
-            if (AirportCEOTweaksConfig.plannerChanges == false) { return true; }
+            if (AirportCEOTweaksConfig.PlannerChanges.Value == false) { return true; }
 
             __result = false; //Flight position is illigal unless exonerated
             //__instance.SetMessageDisplay("Defaulted Illegal?!");
@@ -147,13 +147,13 @@ namespace AirportCEOTweaks
             DateTime fDTime = fTime + f.turnaroundTime;
 
             //The Past
-            if (fTime < cTime && !AirportCEOTweaksConfig.permisivePlanner)
+            if (fTime < cTime && !AirportCEOTweaksConfig.PermisivePlanner.Value)
             {
                 __instance.SetMessageDisplay("Cannot Schedule for the Past!");
                 return false;
             }
             //Night Flight w/out Reasearch
-            if ((fTime.Hour < AirportController.restrictedTimeEnd.Hours || fDTime.Hour >= AirportController.restrictedTimeStart.Hours) && Singleton<ProgressionManager>.Instance.GetProjectCompletionStatus(Enums.SpecificProjectType.NightFlights) == false && !AirportCEOTweaksConfig.permisivePlanner)
+            if ((fTime.Hour < AirportController.restrictedTimeEnd.Hours || fDTime.Hour >= AirportController.restrictedTimeStart.Hours) && Singleton<ProgressionManager>.Instance.GetProjectCompletionStatus(Enums.SpecificProjectType.NightFlights) == false && !AirportCEOTweaksConfig.PermisivePlanner.Value)
             {
                 __instance.SetMessageDisplay("Must Unlock Night Flights!");
                 return false;
@@ -171,7 +171,7 @@ namespace AirportCEOTweaks
                 return false;
             }
             //Arrives too soon
-            if (f.GetTimeUntilArrival() < 1 && __instance.rescheduleInProgress && !AirportCEOTweaksConfig.permisivePlanner)
+            if (f.GetTimeUntilArrival() < 1 && __instance.rescheduleInProgress && !AirportCEOTweaksConfig.PermisivePlanner.Value)
             {
                 __instance.SetMessageDisplay("Flight Due Too Soon! (Or In The Past)");
                 return false;
@@ -212,7 +212,7 @@ namespace AirportCEOTweaks
             //Not Activated...
             else
             {
-                bool all = !__instance.rescheduleInProgress || (Input.GetKey(KeyCode.LeftShift)) || Input.GetKey(KeyCode.RightShift) || Input.GetKey(AirportCEOTweaksConfig.overloadShiftBind); //are we re-scheduling one or all?
+                bool all = !__instance.rescheduleInProgress || (Input.GetKey(KeyCode.LeftShift)) || Input.GetKey(KeyCode.RightShift) || Input.GetKey(AirportCEOTweaksConfig.OverloadShiftBind.Value.MainKey); //are we re-scheduling one or all?
                 if (!Singleton<AirTrafficController>.Instance.CanAllocateFlightSerie(f.GetAllOccuringFlightDates(fTime, all), f.TurnaroundTime, stand.ReferenceID, 0))
                 {
                     __instance.SetMessageDisplay("Flights Overlap!");
@@ -223,7 +223,7 @@ namespace AirportCEOTweaks
                     __instance.SetMessageDisplay("Aircraft is Too Small For Jetway Access!");
                     return false;
                 }
-                if (fTime-flightTime-flightTime<cTime && !AirportCEOTweaksConfig.permisivePlanner)
+                if (fTime-flightTime-flightTime<cTime && !AirportCEOTweaksConfig.PermisivePlanner.Value)
                 {
                     __instance.SetMessageDisplay("Cannot Schedule New Flight This Soon!");
                     return false;

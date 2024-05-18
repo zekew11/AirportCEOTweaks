@@ -1,0 +1,107 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2BE3A42D-F0E7-45A0-9232-81FC4DF99D3C}|AirportCEOTweaks\\AirportCEOTweaks.csproj|c:\\my stuff\\airport ceo modding\\bepinex development environment\\airportceotweaks\\airportceotweaks\\ui\\retired_appversionlabel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2BE3A42D-F0E7-45A0-9232-81FC4DF99D3C}|AirportCEOTweaks\\AirportCEOTweaks.csproj|solutionrelative:airportceotweaks\\ui\\retired_appversionlabel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2BE3A42D-F0E7-45A0-9232-81FC4DF99D3C}|AirportCEOTweaks\\AirportCEOTweaks.csproj|c:\\my stuff\\airport ceo modding\\bepinex development environment\\airportceotweaks\\airportceotweaks\\airportceotweaksconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2BE3A42D-F0E7-45A0-9232-81FC4DF99D3C}|AirportCEOTweaks\\AirportCEOTweaks.csproj|solutionrelative:airportceotweaks\\airportceotweaksconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2BE3A42D-F0E7-45A0-9232-81FC4DF99D3C}|AirportCEOTweaks\\AirportCEOTweaks.csproj|c:\\my stuff\\airport ceo modding\\bepinex development environment\\airportceotweaks\\airportceotweaks\\business\\airline\\extend_airlinemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2BE3A42D-F0E7-45A0-9232-81FC4DF99D3C}|AirportCEOTweaks\\AirportCEOTweaks.csproj|solutionrelative:airportceotweaks\\business\\airline\\extend_airlinemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "RETIRED_AppVersionLabel.cs",
+              "DocumentMoniker": "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\UI\\RETIRED_AppVersionLabel.cs",
+              "RelativeDocumentMoniker": "AirportCEOTweaks\\UI\\RETIRED_AppVersionLabel.cs",
+              "ToolTip": "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\UI\\RETIRED_AppVersionLabel.cs",
+              "RelativeToolTip": "AirportCEOTweaks\\UI\\RETIRED_AppVersionLabel.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAABwAAAALAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-04T05:38:29.34Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Extend_AirlineModel.cs",
+              "DocumentMoniker": "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\Business\\Airline\\Extend_AirlineModel.cs",
+              "RelativeDocumentMoniker": "AirportCEOTweaks\\Business\\Airline\\Extend_AirlineModel.cs",
+              "ToolTip": "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\Business\\Airline\\Extend_AirlineModel.cs",
+              "RelativeToolTip": "AirportCEOTweaks\\Business\\Airline\\Extend_AirlineModel.cs",
+              "ViewState": "AQIAAAQDAAAAAAAAAAAQwBcDAAARAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-04T05:36:31.169Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AirportCEOTweaksConfig.cs",
+              "DocumentMoniker": "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaksConfig.cs",
+              "RelativeDocumentMoniker": "AirportCEOTweaks\\AirportCEOTweaksConfig.cs",
+              "ToolTip": "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaksConfig.cs",
+              "RelativeToolTip": "AirportCEOTweaks\\AirportCEOTweaksConfig.cs",
+              "ViewState": "AQIAAB0AAAAAAAAAAAAcwCkAAAAaAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-04T05:29:49.464Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 1154,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{a80febb4-e7e0-4147-b476-21aaf2453969}"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 1154,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

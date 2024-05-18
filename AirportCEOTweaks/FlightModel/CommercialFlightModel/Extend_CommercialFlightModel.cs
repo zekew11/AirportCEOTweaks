@@ -752,7 +752,7 @@ namespace AirportCEOTweaks
         {
             get
             {
-                if (AirportCEOTweaksConfig.forceNormalTurnaroundTime)
+                if (AirportCEOTweaksConfig.ForceNormalTurnaroundTime.Value)
                 {
                     return AirTrafficController.GetTurnaroundTime(parent.weightClass, parent.isEmergency, IsRemote);
                 }
@@ -1180,13 +1180,13 @@ namespace AirportCEOTweaks
                 int result = 0;
                 capable = Singleton<AirportController>.Instance.AirportData.baggageHandlingSystemEnabled;
 
-                if (ecfm.aircraftModel.weightClass == Enums.ThreeStepScale.Small && AirportCEOTweaksConfig.smallPlaneBaggageOff)
+                if (ecfm.aircraftModel.weightClass == Enums.ThreeStepScale.Small && AirportCEOTweaksConfig.SmallPlaneBaggageOff.Value)
                 {
                     return -1;
                 }
                 try
                 {
-                    if (!flightModel.Stand.HasConnectedBaggageBay && AirportCEOTweaksConfig.disconnectedBaggageOff)
+                    if (!flightModel.Stand.HasConnectedBaggageBay && AirportCEOTweaksConfig.DisconnectedBaggageOff.Value)
                     {
                         capable = false;
                     }
