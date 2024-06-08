@@ -8,7 +8,7 @@ using UnityEngine;
 using HarmonyLib;
 
 
-namespace AirportCEOTweaks.AddNewAircraft.Patches
+namespace AirportCEOAircraft.AddNewAircraft.Patches
 {
     [HarmonyPatch(typeof(AircraftEffectsManager))]
     public static class Patch_AircraftEffectsManager

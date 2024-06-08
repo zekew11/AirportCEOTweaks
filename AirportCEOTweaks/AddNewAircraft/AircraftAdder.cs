@@ -12,7 +12,7 @@ using Tweaks_PerformanceCEO;
 
 
 
-namespace AirportCEOTweaks
+namespace AirportCEOAircraft
 {
     class AircraftAdder : MonoBehaviour
     {
@@ -20,7 +20,7 @@ namespace AirportCEOTweaks
 
         public void Initilize()
         {
-            List<AircraftTypeData> aircraftTypeList = ProccessAircraftPaths(AirportCEOTweaks.aircraftPaths.ToArray());
+            List<AircraftTypeData> aircraftTypeList = ProccessAircraftPaths(AirportCEOAircraft.aircraftPaths.ToArray());
             AirTrafficController atc = Singleton<AirTrafficController>.Instance;
             HashSet<GameObject> aircraftGameObjectsSet = new HashSet<GameObject>();
             
@@ -45,16 +45,16 @@ namespace AirportCEOTweaks
 
                     aircraftGameObjectsSet.Add(aircraftGameObject);
 
-                    if (!AirportCEOTweaks.aircraftTypeDataDict.ContainsKey(aircraftTypeData.id[i]))
+                    if (!AirportCEOAircraft.aircraftTypeDataDict.ContainsKey(aircraftTypeData.id[i]))
                     {
-                        AirportCEOTweaks.aircraftTypeDataDict.Add(aircraftTypeData.id[i], aircraftTypeData);
+                        AirportCEOAircraft.aircraftTypeDataDict.Add(aircraftTypeData.id[i], aircraftTypeData);
                     }
                 }
 
             }
 
             aircraftGameObjectsSet.UnionWith(atc.aircraftPrefabs);
-            aircraftGameObjectsSet.ExceptWith(AirportCEOTweaks.aircraftPrefabOverwrites.Keys);
+            aircraftGameObjectsSet.ExceptWith(AirportCEOAircraft.aircraftPrefabOverwrites.Keys);
             atc.aircraftPrefabs = aircraftGameObjectsSet.ToArray();
             List<AircraftModel> aircraftModelList = new List<AircraftModel>();
             foreach (GameObject prefab in atc.aircraftPrefabs)
@@ -92,13 +92,13 @@ namespace AirportCEOTweaks
                 newGameObject.transform.localEulerAngles = Vector3.zero;
 
                 //Add the overwrite to dictionary
-                if (AirportCEOTweaks.aircraftPrefabOverwrites.ContainsKey(copyOf))
+                if (AirportCEOAircraft.aircraftPrefabOverwrites.ContainsKey(copyOf))
                 {
                     Debug.LogError("ACEO Tweaks | Error: Duplicate overwrites for " + aircraftType.id);
                 }
                 else
                 {
-                    AirportCEOTweaks.aircraftPrefabOverwrites.Add(copyOf, newGameObject);
+                    AirportCEOAircraft.aircraftPrefabOverwrites.Add(copyOf, newGameObject);
                 }
             }
             else

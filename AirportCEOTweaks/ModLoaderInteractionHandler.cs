@@ -5,17 +5,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AirportCEOTweaks;
-
-internal class ModLoaderInteractionHandler
+namespace AirportCEOAircraft
 {
-    internal static void SetUpInteractions()
+
+    internal class ModLoaderInteractionHandler
     {
-        // More will probably be added!
-        AirportCEOTweaks.LogInfo("Seting up ModLoader interactions");
+        internal static void SetUpInteractions()
+        {
+            // More will probably be added!
+            AirportCEOAircraft.LogInfo("Seting up ModLoader interactions");
 
-        WatermarkUtils.Register(new WatermarkInfo(PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION, false));
+            WatermarkUtils.Register(new WatermarkInfo(PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION, false));
 
-        AirportCEOTweaks.LogInfo("Completed ModLoader interactions!");
+            AirportCEOAircraft.LogInfo("Completed ModLoader interactions!");
+        }
     }
 }

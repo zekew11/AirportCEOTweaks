@@ -7,7 +7,7 @@ using UnityEngine;
 using System.IO;
 using HarmonyLib;
 
-namespace AirportCEOTweaks
+namespace AirportCEOAircraft
 {
     [HarmonyPatch(typeof(GameController))]
     static class Patch_AttachModsController 

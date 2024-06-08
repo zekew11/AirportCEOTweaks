@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using HarmonyLib;
 using UnityEngine;
 
-namespace AirportCEOTweaks
+namespace AirportCEOAircraft
 {
 	[HarmonyPatch(typeof(ModManager))]
 	static class Patch_ModManagerToLoadNewAircraft
@@ -22,7 +22,7 @@ namespace AirportCEOTweaks
 			{
 				if (directories[i].SafeSubstring(directories[i].Length - 8, 8).Equals("Aircraft"))
 				{
-					AirportCEOTweaks.aircraftPaths.Add(path);
+					AirportCEOAircraft.aircraftPaths.Add(path);
 					Debug.Log("ACEO Tweaks | Log : added path "+path+" to List<> aircraftPaths");
 				}
 			}

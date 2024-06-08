@@ -897,10 +897,10 @@
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
-    "version": "2.4.0",
+    "version": "1.0.0",
     "restore": {
       "projectUniqueName": "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
-      "projectName": "AirportCEOTweaks",
+      "projectName": "AirportCEOAircraft",
       "projectPath": "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
       "packagesPath": "C:\\Users\\Ezekiel\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks\\obj\\",

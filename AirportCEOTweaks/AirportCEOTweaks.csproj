@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
-    <AssemblyName>AirportCEOTweaks</AssemblyName>
-    <Description>My first plugin</Description>
-    <Version>2.4.0</Version>
+    <AssemblyName>AirportCEOAircraft</AssemblyName>
+    <Description></Description>
+    <Version>1.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <RestoreAdditionalProjectSources>
@@ -12,6 +12,12 @@
       https://nuget.bepinex.dev/v3/index.json;
       https://nuget.samboy.dev/v3/index.json
     </RestoreAdditionalProjectSources>
+    <Authors>Ezekiel Ward</Authors>
+    <Company />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>C:\Program Files (x86)\Steam\steamapps\common\Airport CEO\BepInEx\plugins\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

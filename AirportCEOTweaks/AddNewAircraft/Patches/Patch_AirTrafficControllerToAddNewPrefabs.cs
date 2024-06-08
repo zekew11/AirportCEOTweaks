@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using HarmonyLib;
 
-namespace AirportCEOTweaks
+namespace AirportCEOAircraft
 {
 	[HarmonyPatch(typeof(AirTrafficController))]
 	static class Patch_AirTrafficControllerToAddNewPrefabs

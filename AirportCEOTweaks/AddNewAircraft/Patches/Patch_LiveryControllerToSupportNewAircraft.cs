@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using HarmonyLib;
 using UnityEngine;
 
-namespace AirportCEOTweaks
+namespace AirportCEOAircraft
 {
     [HarmonyPatch(typeof(LiveryController))]
     static class Patch_LiveryControllerToSupportNewAircraft

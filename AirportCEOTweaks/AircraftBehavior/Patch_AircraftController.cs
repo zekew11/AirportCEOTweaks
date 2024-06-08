@@ -3,7 +3,7 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 
-namespace AirportCEOTweaks
+namespace AirportCEOAircraft
 {
     [HarmonyPatch(typeof(AircraftController))]
     static class Patch_AircraftController

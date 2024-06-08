@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace AirportCEOTweaks
+namespace AirportCEOAircraft
 {
     public class AircraftScaleManager : MonoBehaviour
     {

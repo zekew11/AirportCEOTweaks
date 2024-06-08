@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace AirportCEOTweaks
+namespace AirportCEOAircraft
 {
 	[Serializable]
 	public struct AircraftTypeData
@@ -268,7 +268,7 @@ namespace AirportCEOTweaks
     {
 		public static AircraftTypeData AircraftTypeDataCondensed(string aircraftType)
         {
-			if (AirportCEOTweaks.aircraftTypeDataDict.TryGetValue(aircraftType, out AircraftTypeData aircraftTypeData))
+			if (AirportCEOAircraft.aircraftTypeDataDict.TryGetValue(aircraftType, out AircraftTypeData aircraftTypeData))
 			{
 			}
 			else

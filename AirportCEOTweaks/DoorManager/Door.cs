@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace AirportCEOTweaks.DoorManager
+namespace AirportCEOAircraft.DoorManager
 {
     class Door : MonoBehaviour
     {

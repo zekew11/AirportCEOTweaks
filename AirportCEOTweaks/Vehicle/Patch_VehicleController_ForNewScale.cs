@@ -11,10 +11,10 @@ using System.Linq;
 
 
 
-namespace AirportCEOTweaks
+namespace AirportCEOAircraft
 {
     [HarmonyPatch(typeof(VehicleController))]
-    static class Patch_VehicleController
+    static class Patch_VehicleController_ForNewScale
     {
         [HarmonyPatch("Launch")]
         [HarmonyPostfix]
