@@ -42,14 +42,10 @@
           "MonoMod.RuntimeDetour": "21.12.13.1"
         },
         "compile": {
-          "lib/net45/0Harmony.dll": {
-            "related": ".xml"
-          }
+          "lib/net45/0Harmony.dll": {}
         },
         "runtime": {
-          "lib/net45/0Harmony.dll": {
-            "related": ".xml"
-          }
+          "lib/net45/0Harmony.dll": {}
         }
       },
       "Microsoft.NETFramework.ReferenceAssemblies/1.0.3": {
@@ -67,32 +63,16 @@
       "Mono.Cecil/0.11.4": {
         "type": "package",
         "compile": {
-          "lib/net40/Mono.Cecil.Mdb.dll": {
-            "related": ".pdb"
-          },
-          "lib/net40/Mono.Cecil.Pdb.dll": {
-            "related": ".pdb"
-          },
-          "lib/net40/Mono.Cecil.Rocks.dll": {
-            "related": ".pdb"
-          },
-          "lib/net40/Mono.Cecil.dll": {
-            "related": ".Mdb.pdb;.pdb;.Pdb.pdb;.Rocks.pdb"
-          }
+          "lib/net40/Mono.Cecil.Mdb.dll": {},
+          "lib/net40/Mono.Cecil.Pdb.dll": {},
+          "lib/net40/Mono.Cecil.Rocks.dll": {},
+          "lib/net40/Mono.Cecil.dll": {}
         },
         "runtime": {
-          "lib/net40/Mono.Cecil.Mdb.dll": {
-            "related": ".pdb"
-          },
-          "lib/net40/Mono.Cecil.Pdb.dll": {
-            "related": ".pdb"
-          },
-          "lib/net40/Mono.Cecil.Rocks.dll": {
-            "related": ".pdb"
-          },
-          "lib/net40/Mono.Cecil.dll": {
-            "related": ".Mdb.pdb;.pdb;.Pdb.pdb;.Rocks.pdb"
-          }
+          "lib/net40/Mono.Cecil.Mdb.dll": {},
+          "lib/net40/Mono.Cecil.Pdb.dll": {},
+          "lib/net40/Mono.Cecil.Rocks.dll": {},
+          "lib/net40/Mono.Cecil.dll": {}
         }
       },
       "MonoMod.RuntimeDetour/21.12.13.1": {
@@ -105,14 +85,10 @@
           "System"
         ],
         "compile": {
-          "lib/net452/MonoMod.RuntimeDetour.dll": {
-            "related": ".xml"
-          }
+          "lib/net452/MonoMod.RuntimeDetour.dll": {}
         },
         "runtime": {
-          "lib/net452/MonoMod.RuntimeDetour.dll": {
-            "related": ".xml"
-          }
+          "lib/net452/MonoMod.RuntimeDetour.dll": {}
         }
       },
       "MonoMod.Utils/21.12.13.1": {
@@ -124,27 +100,19 @@
           "System"
         ],
         "compile": {
-          "lib/net452/MonoMod.Utils.dll": {
-            "related": ".xml"
-          }
+          "lib/net452/MonoMod.Utils.dll": {}
         },
         "runtime": {
-          "lib/net452/MonoMod.Utils.dll": {
-            "related": ".xml"
-          }
+          "lib/net452/MonoMod.Utils.dll": {}
         }
       },
       "Newtonsoft.Json/13.0.3": {
         "type": "package",
         "compile": {
-          "lib/net45/Newtonsoft.Json.dll": {
-            "related": ".xml"
-          }
+          "lib/net45/Newtonsoft.Json.dll": {}
         },
         "runtime": {
-          "lib/net45/Newtonsoft.Json.dll": {
-            "related": ".xml"
-          }
+          "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
       "UnityEngine.Modules/2019.4.40": {
@@ -924,19 +892,26 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\zsolt\\.nuget\\packages\\": {}
+    "C:\\Users\\Ezekiel\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "2.4.0",
     "restore": {
-      "projectUniqueName": "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
+      "projectUniqueName": "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
       "projectName": "AirportCEOTweaks",
-      "projectPath": "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
-      "packagesPath": "C:\\Users\\zsolt\\.nuget\\packages\\",
-      "outputPath": "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\obj\\",
+      "projectPath": "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
+      "packagesPath": "C:\\Users\\Ezekiel\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+      ],
       "configFilePaths": [
-        "C:\\Users\\zsolt\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Ezekiel\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -944,7 +919,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://api.nuget.org/v3/index.json": {},
         "https://api.nuget.org/v3/index.json": {},
         "https://nuget.bepinex.dev/v3/index.json": {},
         "https://nuget.samboy.dev/v3/index.json": {}
@@ -959,11 +933,6 @@
         "warnAsError": [
           "NU1605"
         ]
-      },
-      "restoreAuditProperties": {
-        "enableAudit": "true",
-        "auditLevel": "low",
-        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -998,7 +967,7 @@
             "version": "[2019.4.40, )"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.311\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.413\\RuntimeIdentifierGraph.json"
       }
     }
   }

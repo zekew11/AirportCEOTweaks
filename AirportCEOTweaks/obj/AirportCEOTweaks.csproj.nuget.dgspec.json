@@ -1,20 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj": {}
+    "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj": {}
   },
   "projects": {
-    "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj": {
+    "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj": {
       "version": "2.4.0",
       "restore": {
-        "projectUniqueName": "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
+        "projectUniqueName": "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
         "projectName": "AirportCEOTweaks",
-        "projectPath": "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
-        "packagesPath": "C:\\Users\\zsolt\\.nuget\\packages\\",
-        "outputPath": "C:\\My Stuff\\Airport CEO Modding\\BepInEx Development Environment\\AirportCEOTweaks\\AirportCEOTweaks\\obj\\",
+        "projectPath": "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks.csproj",
+        "packagesPath": "C:\\Users\\Ezekiel\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Ezekiel\\Documents\\ACEOTweaks\\AirportCEOTweaks\\AirportCEOTweaks\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\zsolt\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Ezekiel\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -37,11 +42,6 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -76,7 +76,7 @@
               "version": "[2019.4.40, )"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.311\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.413\\RuntimeIdentifierGraph.json"
         }
       }
     }

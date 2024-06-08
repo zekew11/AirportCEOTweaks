@@ -5,18 +5,23 @@
     <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
     <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
     <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
-    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">C:\Users\zsolt\.nuget\packages\</NuGetPackageFolders>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">C:\Users\Ezekiel\.nuget\packages\;C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages;C:\Program Files\dotnet\sdk\NuGetFallbackFolder</NuGetPackageFolders>
     <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
-    <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">6.9.2</NuGetToolVersion>
+    <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">5.11.2</NuGetToolVersion>
   </PropertyGroup>
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <SourceRoot Include="C:\Users\zsolt\.nuget\packages\" />
+    <SourceRoot Include="C:\Users\Ezekiel\.nuget\packages\" />
+    <SourceRoot Include="C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages\" />
+    <SourceRoot Include="C:\Program Files\dotnet\sdk\NuGetFallbackFolder\" />
   </ItemGroup>
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
   <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <Import Project="$(NuGetPackageRoot)bepinex.plugininfoprops\1.1.0\build\BepInEx.PluginInfoProps.props" Condition="Exists('$(NuGetPackageRoot)bepinex.plugininfoprops\1.1.0\build\BepInEx.PluginInfoProps.props')" />
   </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <PkgBepInEx_Core Condition=" '$(PkgBepInEx_Core)' == '' ">C:\Users\zsolt\.nuget\packages\bepinex.core\5.4.21</PkgBepInEx_Core>
-    <PkgBepInEx_Analyzers Condition=" '$(PkgBepInEx_Analyzers)' == '' ">C:\Users\zsolt\.nuget\packages\bepinex.analyzers\1.0.8</PkgBepInEx_Analyzers>
+    <PkgBepInEx_Core Condition=" '$(PkgBepInEx_Core)' == '' ">C:\Users\Ezekiel\.nuget\packages\bepinex.core\5.4.21</PkgBepInEx_Core>
+    <PkgBepInEx_Analyzers Condition=" '$(PkgBepInEx_Analyzers)' == '' ">C:\Users\Ezekiel\.nuget\packages\bepinex.analyzers\1.0.8</PkgBepInEx_Analyzers>
   </PropertyGroup>
 </Project>
