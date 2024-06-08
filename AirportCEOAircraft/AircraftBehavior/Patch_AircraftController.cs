@@ -10,34 +10,6 @@ namespace AirportCEOAircraft
     {
 
         [HarmonyPostfix]
-        [HarmonyPatch("LaunchAircraft")]
-        public static void Patch_EvaluateNightLightHide(AircraftController __instance)
-        {
-            if (__instance.FlightModel == null)
-            {
-                return;
-            }
-
-            if (__instance.FlightModel is CommercialFlightModel)
-            {
-                CommercialFlightModel f = __instance.FlightModel as CommercialFlightModel;
-                //Debug.Log("ACEO Tweaks | Debug: Launch Aircraft is Commercial");
-                if (f.currentTotalNbrOfArrivingPassengers==0 && f.currentTotalNbrOfDepartingPassengers==0)
-                {
-                    NightLightHide n;
-                    if (__instance.gameObject.TryGetComponent<NightLightHide>(out n))
-                    {
-                        Debug.LogError("ACEO Tweaks: ERROR | Tried adding anouther nightlight hide in Aircraft Controller Patch 'Launch Aircraft'");
-                    }
-                    else
-                    {
-                        __instance.gameObject.AddComponent<NightLightHide>();
-                    }
-                }
-            }
-        }
-
-        [HarmonyPostfix]
         [HarmonyPatch(typeof(AircraftController), "SetLivery", new Type[] { })]
         public static void Patch_LiveryAddActive(AircraftController __instance)
         {
@@ -70,30 +42,6 @@ namespace AirportCEOAircraft
             {
                 Debug.LogError("ACEO Tweaks | Error: failed to postfix SetLivery in Aircraft Controller");
             }
-        }
-
-        [HarmonyPrefix]
-        [HarmonyPatch("ChargeFlightIncome")]
-        public static bool Patch_FlightIncome(ref AircraftController __instance)
-        {
-            if (__instance.FlightModel == null)
-            {
-                return false;
-            }
-            CommercialFlightModel cfm;
-
-            if ((cfm = (__instance.FlightModel as CommercialFlightModel)) != null && cfm.Airline != null)
-            {
-                Singleton<ModsController>.Instance.GetExtensions(cfm, out Extend_CommercialFlightModel ecfm, out Extend_AirlineModel eam);
-
-                float val = eam.PaymentPerFlight(ecfm,cfm.Airline.GetPaymentPerFlight(cfm.weightClass)) * ecfm.GetPaymentPercentAndReportRating();
-
-                if (!__instance.IsTotaled)
-                {
-                    Singleton<EconomyController>.Instance.CollectFlightCompletionFee<AircraftController>(val, __instance);
-                }
-            }    
-            return false;
         }
 
         [HarmonyPrefix]
