@@ -8,7 +8,7 @@ using BepInEx;
 using BepInEx.Configuration;
 using UnityEngine;
 using Unity;
-
+using HarmonyLib.Tools;
 
 namespace AirportCEOAircraft
 {
@@ -25,26 +25,42 @@ namespace AirportCEOAircraft
 
             asBaseModel = airlineModel;
 
-            if (asBaseModel != (AirlineModel)this)
-            {
-                Debug.LogError("AirlineModelExtended for " + businessName + " is not equal to its base AirlineModel");
-            }
-            
+            //if (asBaseModel != (AirlineModel)this)
+            //{
+            //    Debug.LogError("AirlineModelExtended for " + businessName + " is not equal to its base AirlineModel");
+            //}
+
+            ConsumeBaseAirlineModel(airlineModel);
+
+            this.referenceID = airlineModel.referenceID;
+
             if (Singleton<ModsController>.Instance.airlineBusinessDataByBusinessName.TryGetValue(businessName, out AirlineBusinessData data))
             {
                 airlineBusinessData = data;
             }
 
             MakeUpdateTypeModelDictionary();
+            
 
+            Singleton<BusinessController>.Instance.RemoveFromBusinessList(airlineModel);
             airlineModel = this;
+            Singleton<BusinessController>.Instance.RemoveFromBusinessList(this);
+            Singleton<BusinessController>.Instance.AddToBusinessList(this);
+
+
         }
 
         public void Refresh()
         {
             MakeUpdateTypeModelDictionary();
         }
-
+        private void ConsumeBaseAirlineModel(AirlineModel airlineModel)
+        {
+            foreach (var field in typeof(AirlineModel).GetFields(HarmonyLib.AccessTools.all))
+            {
+                field.SetValue(this, field.GetValue(airlineModel));
+            }
+        }
         private void MakeUpdateTypeModelDictionary()
         {
             //Replace Fleet with TweaksFleet

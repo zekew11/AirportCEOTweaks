@@ -9,7 +9,7 @@ namespace AirportCEOAircraft
 {
     public static class AirlineModelStaticFunctions
     {
-        public static AirlineModelExtended Extend(this AirlineModel a, ref AirlineModel me)
+        public static AirlineModelExtended Extend<T>(this T a, ref AirlineModel me) where T:AirlineModel
         {
             if (a as AirlineModelExtended != null)
             {
@@ -17,26 +17,22 @@ namespace AirportCEOAircraft
                 return a as AirlineModelExtended;
             }
             Debug.Log("Extend about to create a new AirlineModelExtended");
-            AirlineModelExtended aa = null;
-            try
-            {
-                aa = MakeAirlineModelExtended(me);
-                Debug.Log("Extend created a new AirlineModelExtended");
-            }
-            catch
-            {
-                Debug.LogError("Extend failed to create a new AirlineModelExtended");
-            }
-            //me = aa;
-            return aa;
-        }
 
-        static AirlineModelExtended MakeAirlineModelExtended(AirlineModel a)
+            AirlineModelExtended aa = MakeAirlineModelExtended(ref me);
+            Debug.Log("Extend created a new AirlineModelExtended");
+            //me = aa;
+            return (AirlineModelExtended)aa;
+        }
+    
+
+        static AirlineModelExtended MakeAirlineModelExtended(ref AirlineModel me)
         {
-            Airline airline = Singleton<BusinessController>.Instance.GetAirline(a.businessName);
-            
-            a = new AirlineModelExtended(airline, ref a); //using the constructor airline = this
-            return (AirlineModelExtended)a;
+            Debug.Log("Entered MakeAirlineModelExtended");
+            Airline airline = Singleton<BusinessController>.Instance.GetAirline(me.businessName);
+            Debug.Log("MakeAirlineModelExtended airline.name = " + airline.name);
+            AirlineModelExtended aa = new AirlineModelExtended(airline, ref me);
+            Debug.Log("MakeAirlineModelExtended aa.name = " + aa.businessName);
+            return (AirlineModelExtended)aa;
         }
 
     }
