@@ -23,30 +23,22 @@ namespace AirportCEOAircraft
 
             Debug.Log("AirlineModelExtended for " + businessName + " is ctor-ing");
 
-            asBaseModel = airlineModel;
-
-            //if (asBaseModel != (AirlineModel)this)
-            //{
-            //    Debug.LogError("AirlineModelExtended for " + businessName + " is not equal to its base AirlineModel");
-            //}
+            Singleton<BusinessController>.Instance.RemoveFromBusinessList(this);
 
             ConsumeBaseAirlineModel(airlineModel);
-
-            this.referenceID = airlineModel.referenceID;
 
             if (Singleton<ModsController>.Instance.airlineBusinessDataByBusinessName.TryGetValue(businessName, out AirlineBusinessData data))
             {
                 airlineBusinessData = data;
-            }
-
-            MakeUpdateTypeModelDictionary();
-            
+            } 
 
             Singleton<BusinessController>.Instance.RemoveFromBusinessList(airlineModel);
             airlineModel = this;
             Singleton<BusinessController>.Instance.RemoveFromBusinessList(this);
             Singleton<BusinessController>.Instance.AddToBusinessList(this);
 
+
+            MakeUpdateTypeModelDictionary();
 
         }
 
@@ -68,7 +60,7 @@ namespace AirportCEOAircraft
             {
                 Debug.Log("ACEO Tweaks | Debug - Airline " + businessName + " tweaksFleet is null or 0");
                 
-                if (airlineBusinessData.fleet != null || airlineBusinessData.fleet.Length > 0)
+                if (airlineBusinessData.fleet != null && airlineBusinessData.fleet.Length > 0)
                 {
                     aircraftFleetModels = airlineBusinessData.fleet;
                     Debug.Log("updated a non-tweaksFleet fleet");
@@ -79,7 +71,7 @@ namespace AirportCEOAircraft
                 aircraftFleetModels = airlineBusinessData.tweaksFleet;
                 //Debug.Log("ACEO Tweaks | Debug - Airline " + businessName + " tweaksFleet length > 0");
 
-                if (airlineBusinessData.tweaksFleetCount.Length == aircraftFleetModels.Length)
+                if (airlineBusinessData.tweaksFleetCount != null && airlineBusinessData.tweaksFleetCount.Length == aircraftFleetModels.Length)
                 {
                     fleetCount = airlineBusinessData.tweaksFleetCount;
                 }
@@ -87,15 +79,18 @@ namespace AirportCEOAircraft
 
             // Create a fleet counts if none exists ........................................................................................
 
-            if (fleetCount == null || fleetCount.Length != aircraftFleetModels.Length)
+            if (airlineBusinessData.tweaksFleetCount != null)
             {
-                fleetCount = new int[aircraftFleetModels.Length];
-                for (int i = 0; i < fleetCount.Length; i++)
+                if (fleetCount == null || fleetCount.Length != aircraftFleetModels.Length)
                 {
-                    fleetCount[i] = 2 * ((int)businessClass);
-                }
+                    fleetCount = new int[aircraftFleetModels.Length];
+                    for (int i = 0; i < fleetCount.Length; i++)
+                    {
+                        fleetCount[i] = 2 * ((int)businessClass);
+                    }
 
-                airlineBusinessData.tweaksFleetCount = fleetCount;
+                    airlineBusinessData.tweaksFleetCount = fleetCount;
+                }
             }
         }
     }
