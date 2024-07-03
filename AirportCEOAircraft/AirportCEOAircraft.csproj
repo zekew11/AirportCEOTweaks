@@ -33,6 +33,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AirportCEOTweaksCore\AirportCEOTweaksCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="AirportCEOModLoader">
       <HintPath>lib\AirportCEOModLoader.dll</HintPath>
     </Reference>

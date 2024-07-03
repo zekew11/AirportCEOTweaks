@@ -7,12 +7,14 @@ using HarmonyLib;
 using System.Reflection;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+using AirportCEOTweaksCore;
 
 namespace AirportCEOAircraft
 {
 
     [BepInPlugin("org.airportceoaircraft.zeke", PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     [BepInDependency("org.airportceomodloader.humoresque")]
+    [BepInDependency("org.airportceotweakscore.zeke")]
     [BepInIncompatibility("org.airportceotweaks.zeke")]
     public class AirportCEOAircraft : BaseUnityPlugin
     {
