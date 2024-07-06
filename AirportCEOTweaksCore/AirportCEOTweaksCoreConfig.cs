@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using BepInEx.Configuration;
 using Mono.CompilerServices.SymbolWriter;
 
-namespace AirportCEOTweaksCore
+namespace AirportCEOFlightLimitTweak
 {
 
     public class AirportCEOTweaksCoreConfig

@@ -11,7 +11,7 @@ using Unity;
 using HarmonyLib.Tools;
 using System.Reflection;
 
-namespace AirportCEOTweaksCore
+namespace AirportCEOFlightLimitTweak
 {
     public class AirlineModelExtended : AirlineModel
     {

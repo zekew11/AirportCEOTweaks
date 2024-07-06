@@ -7,7 +7,7 @@ using UnityEngine;
 using System.IO;
 using HarmonyLib;
 
-namespace AirportCEOTweaksCore
+namespace AirportCEOFlightLimitTweak
 {
     [HarmonyPatch(typeof(GameController))]
     static class Patch_AttachModsController 

@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 
-namespace AirportCEOTweaksCore
+namespace AirportCEOFlightLimitTweak
 {
     public class ModsController : Singleton<ModsController>
     {

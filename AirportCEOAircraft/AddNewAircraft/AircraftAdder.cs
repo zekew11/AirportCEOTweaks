@@ -9,7 +9,7 @@ using UnityEngine;
 using Newtonsoft.Json;
 using System.Reflection;
 using Tweaks_PerformanceCEO;
-using AirportCEOTweaksCore;
+using AirportCEOFlightLimitTweak;
 
 
 

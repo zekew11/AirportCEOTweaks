@@ -8,7 +8,7 @@ using HarmonyLib;
 using UnityEngine;
 using Newtonsoft.Json;
 
-namespace AirportCEOTweaksCore
+namespace AirportCEOFlightLimitTweak
 {
 	[HarmonyPatch(typeof(BusinessLoader))]
 	static class Patch_BusinessLoadertoAddAirlinePathstoList

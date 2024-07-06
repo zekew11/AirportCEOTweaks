@@ -17,7 +17,7 @@ namespace AirportCEOAircraft
 		public static void Patch_AddPrefabs(string path)
 		{
 			//Debug.Log("ACEO Tweaks | Log : postfic on quemods running...");
-			string[] directories = Directory.GetDirectories(path);
+			string[] directories = Directory.GetDirectories(path,"*",SearchOption.AllDirectories);
 			for (int i = 0; i < directories.Length; i++)
 			{
 				if (directories[i].SafeSubstring(directories[i].Length - 8, 8).Equals("Aircraft"))
