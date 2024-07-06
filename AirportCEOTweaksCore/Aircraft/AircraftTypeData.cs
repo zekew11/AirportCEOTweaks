@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace AirportCEOFlightLimitTweak
+namespace AirportCEOTweaksCore
 {
 	[Serializable]
 	public struct AircraftTypeData

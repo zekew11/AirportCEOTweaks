@@ -4,7 +4,7 @@ using UnityEngine;
 using HarmonyLib;
 using BepInEx;
 
-namespace AirportCEOFlightLimitTweak
+namespace AirportCEOTweaksCore
 {
 	[HarmonyPatch(typeof(AirlineModel))]
 	static class Patch_AirlineModeltoExtend

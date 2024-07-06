@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 
-namespace AirportCEOFlightLimitTweak
+namespace AirportCEOTweaksCore
 {
 
     internal class ModLoaderInteractionHandler

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Newtonsoft;
 using AirportCEOFlightLimitTweak;
+using AirportCEOTweaksCore;
 
 namespace AirportCEOAircraft
 {

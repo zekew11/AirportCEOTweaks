@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using HarmonyLib;
 
-namespace AirportCEOTweaks
+namespace AirportCEOFlightLimitTweak
 {
 	[HarmonyPatch(typeof(AirTrafficController))]
 	static class Patch_MaxSchedulableFlights

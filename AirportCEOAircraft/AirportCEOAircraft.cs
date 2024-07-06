@@ -7,7 +7,7 @@ using HarmonyLib;
 using System.Reflection;
 using BepInEx.Configuration;
 using BepInEx.Logging;
-using AirportCEOFlightLimitTweak;
+using AirportCEOTweaksCore;
 
 namespace AirportCEOAircraft
 {

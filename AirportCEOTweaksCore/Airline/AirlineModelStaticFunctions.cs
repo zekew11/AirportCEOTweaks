@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace AirportCEOFlightLimitTweak
+namespace AirportCEOTweaksCore
 {
     public static class AirlineModelStaticFunctions
     {

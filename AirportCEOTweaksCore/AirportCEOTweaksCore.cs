@@ -8,7 +8,7 @@ using System.Reflection;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 
-namespace AirportCEOFlightLimitTweak
+namespace AirportCEOTweaksCore
 {
 
     [BepInPlugin(GUID,PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
