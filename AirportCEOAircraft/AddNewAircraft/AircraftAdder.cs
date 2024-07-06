@@ -95,7 +95,7 @@ namespace AirportCEOAircraft
                 //Add the overwrite to dictionary
                 if (AirportCEOAircraft.aircraftPrefabOverwrites.ContainsKey(copyOf))
                 {
-                    Debug.LogError("ACEO Tweaks | Error: Duplicate overwrites for " + aircraftType.id);
+                    Debug.LogWarning("ACEO Tweaks | Warn: Duplicate overwrites for " + aircraftType.id);
                 }
                 else
                 {

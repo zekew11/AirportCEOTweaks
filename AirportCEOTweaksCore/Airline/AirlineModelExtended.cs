@@ -9,12 +9,12 @@ using BepInEx.Configuration;
 using UnityEngine;
 using Unity;
 using HarmonyLib.Tools;
+using System.Reflection;
 
 namespace AirportCEOTweaksCore
 {
     public class AirlineModelExtended : AirlineModel
     {
-        AirlineModel asBaseModel;
         AirlineBusinessData airlineBusinessData;
         public AirlineModelExtended(Airline airline, ref AirlineModel airlineModel) : base(airline)
         {
@@ -30,7 +30,11 @@ namespace AirportCEOTweaksCore
             if (Singleton<ModsController>.Instance.airlineBusinessDataByBusinessName.TryGetValue(businessName, out AirlineBusinessData data))
             {
                 airlineBusinessData = data;
-            } 
+            }
+            else
+            {
+                Debug.LogWarning("ACEO Tweaks WARN: No airlinebusinessdata path for "+businessName);
+            }
 
             Singleton<BusinessController>.Instance.RemoveFromBusinessList(airlineModel);
             airlineModel = this;
@@ -62,14 +66,47 @@ namespace AirportCEOTweaksCore
                 
                 if (airlineBusinessData.fleet != null && airlineBusinessData.fleet.Length > 0)
                 {
+                    List<string> FleetList = airlineBusinessData.fleet.ToList();
+                    List<string> AllTypesList = ((string[])typeof(AirTrafficController).GetField("aircraftModels", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Singleton<AirTrafficController>.Instance)).ToList();
+
+                    for (int i = 0; i < FleetList.Count;)
+                    {
+                        if (AllTypesList.Contains(FleetList[i]))
+                        {
+                            i++;
+                        }
+                        else
+                        {
+                            FleetList.RemoveAt(i);
+                        }
+                    }
+
                     aircraftFleetModels = airlineBusinessData.fleet;
                     Debug.Log("updated a non-tweaksFleet fleet");
                 }
             }
             else
             {
-                aircraftFleetModels = airlineBusinessData.tweaksFleet;
-                //Debug.Log("ACEO Tweaks | Debug - Airline " + businessName + " tweaksFleet length > 0");
+                List<string> FleetList = airlineBusinessData.tweaksFleet.ToList();
+                List<AircraftModel> AllTypesList = ((AircraftModel[])typeof(AirTrafficController).GetField("aircraftModels", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Singleton<AirTrafficController>.Instance)).ToList();
+                
+                for (int i = 0; i < FleetList.Count;)
+                {
+                    foreach (AircraftModel aircraftModel in AllTypesList)
+                    {
+                        if (aircraftModel.aircraftType == FleetList[i] && AirTrafficController.OwnsDLCAircraft(FleetList[i]))
+                        {
+                            i++;
+                            continue;
+                        }
+                    }
+
+                    //if we get here it means we processed all types and didn't get a match
+                    FleetList.RemoveAt(i);
+
+                }
+                
+                aircraftFleetModels = FleetList.ToArray();
 
                 if (airlineBusinessData.tweaksFleetCount != null && airlineBusinessData.tweaksFleetCount.Length == aircraftFleetModels.Length)
                 {

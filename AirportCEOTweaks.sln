@@ -29,6 +29,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+		BuildVersion_AssemblyInfoFilename = AirportCEOTweaksCore\DummyAssemblyInfo.cs
 		SolutionGuid = {E2E518B2-8CAF-4DDA-A710-A1C378900D73}
+		BuildVersion_StartDate = 2000/1/1
+		BuildVersion_UseGlobalSettings = True
 	EndGlobalSection
 EndGlobal

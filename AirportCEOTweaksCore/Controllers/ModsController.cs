@@ -75,7 +75,7 @@ namespace AirportCEOTweaksCore
         private void UpdateAirlineBuisinessDataDictionary()
         {
             string filetext;
-            Debug.Log("Mods controller is creating the buisiness data dict");
+            Debug.Log("Mods controller is creating the buisiness data dict!");
             foreach (string path in AirportCEOTweaksCore.airlinePaths)
             {
                 string[] files = Directory.GetFiles(path);

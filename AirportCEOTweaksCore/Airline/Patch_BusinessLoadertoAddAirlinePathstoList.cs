@@ -8,14 +8,14 @@ using HarmonyLib;
 using UnityEngine;
 using Newtonsoft.Json;
 
-namespace AirportCEOAircraft
+namespace AirportCEOTweaksCore
 {
 	[HarmonyPatch(typeof(BusinessLoader))]
 	static class Patch_BusinessLoadertoAddAirlinePathstoList
 	{
         [HarmonyPatch("ProcessSingleBusiness")]
         [HarmonyPostfix]
-        private static void Patch_GetAirlineData(BusinessLoadType busType)
+        private static void Patch_GetAirlineData(ref BusinessLoadType busType)
         {
             //Patch_BuisinessLoaderForAirlineExt.currentBusType = busType;
             if (busType.businessType != Enums.BusinessType.Airline)
@@ -23,7 +23,7 @@ namespace AirportCEOAircraft
                 return;
             }
             
-            AirportCEOAircraft.airlinePaths.Add(busType.path);
+            AirportCEOTweaksCore.airlinePaths.Add(busType.path);
         }
 	}
 

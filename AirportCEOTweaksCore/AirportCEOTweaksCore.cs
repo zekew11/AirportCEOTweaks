@@ -11,11 +11,13 @@ using BepInEx.Logging;
 namespace AirportCEOTweaksCore
 {
 
-    [BepInPlugin("org.airportceotweakscore.zeke","TweaksCore", "1.0")]
+    [BepInPlugin(GUID,PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     [BepInDependency("org.airportceomodloader.humoresque")]
     [BepInIncompatibility("org.airportceotweaks.zeke")]
     public class AirportCEOTweaksCore : BaseUnityPlugin
     {
+        public const string GUID = "org.airportceotweakscore.zeke";
+
         public static List<string> aircraftPaths = new List<string>();
         public static List<string> airlinePaths = new List<string>();
         public static Dictionary<GameObject, GameObject> aircraftPrefabOverwrites = new Dictionary<GameObject, GameObject>();
@@ -28,8 +30,8 @@ namespace AirportCEOTweaksCore
 
         private void Awake()
         {
-            Logger.LogInfo($"Plugin {"org.airportceotweakscore.zeke"} is loaded!");
-            Harmony = new Harmony("org.airportceotweakscore.zeke");
+            Logger.LogInfo($"Plugin {GUID} is loaded!");
+            Harmony = new Harmony(GUID);
             Harmony.PatchAll();
 
             Instance = this;
@@ -37,9 +39,9 @@ namespace AirportCEOTweaksCore
             ConfigReference = Config;
 
             // Config
-            Logger.LogInfo($"{"org.airportceotweakscore.zeke"} is setting up config.");
+            Logger.LogInfo($"{GUID} is setting up config.");
             AirportCEOTweaksCoreConfig.SetUpConfig();
-            Logger.LogInfo($"{"org.airportceotweakscore.zeke"} finished setting up config.");
+            Logger.LogInfo($"{GUID} finished setting up config.");
 
             GameObject child = Instantiate(new GameObject());
             child.transform.SetParent(null);
