@@ -362,3 +362,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 *.cache
+.vs/AirportCEOTweaks/DesignTimeBuild/.dtbcache.v2
