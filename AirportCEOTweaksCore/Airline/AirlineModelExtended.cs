@@ -67,7 +67,13 @@ namespace AirportCEOTweaksCore
                 if (airlineBusinessData.fleet != null && airlineBusinessData.fleet.Length > 0)
                 {
                     List<string> FleetList = airlineBusinessData.fleet.ToList();
-                    List<string> AllTypesList = ((string[])typeof(AirTrafficController).GetField("aircraftModels", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Singleton<AirTrafficController>.Instance)).ToList();
+
+                    List<string> AllTypesList = new List<string>();
+                    foreach (AircraftModel aircraftModel in Singleton<AirTrafficController>.Instance.aircraftModels)
+                    {
+                        AllTypesList.Add(aircraftModel.aircraftType);
+                    }
+                        //Singleton<AirTrafficController>.Instance.aircraftModels.ToList()//(typeof(AirTrafficController).GetField("aircraftModels", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Singleton<AirTrafficController>.Instance)).ToList();
 
                     for (int i = 0; i < FleetList.Count;)
                     {
@@ -78,6 +84,10 @@ namespace AirportCEOTweaksCore
                         else
                         {
                             FleetList.RemoveAt(i);
+                            if (i >= FleetList.Count)
+                            {
+                                break;
+                            }
                         }
                     }
 
@@ -103,6 +113,10 @@ namespace AirportCEOTweaksCore
 
                     //if we get here it means we processed all types and didn't get a match
                     FleetList.RemoveAt(i);
+                    if (i >= FleetList.Count)
+                    {
+                        break;
+                    }
 
                 }
                 

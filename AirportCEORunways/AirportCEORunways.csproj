@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
-    <AssemblyName>AirportCEOFlightLimitTweak</AssemblyName>
-	<Product>AirportCEOFlightLimitTweak</Product>
+    <AssemblyName>AirportCEORunwaysk</AssemblyName>
+	<Product>AirportCEORunways</Product>
     <Description></Description>
 	<Version>0.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

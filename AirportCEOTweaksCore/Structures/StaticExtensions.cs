@@ -23,7 +23,7 @@ namespace AirportCEOTweaksCore
             GameObject gameObject = original.gameObject;
             ExtenededT extended = gameObject.AddComponent<ExtenededT>();
             extended.SetupExtend(original);
-            GameObject.Destroy(original);
+            //GameObject.Destroy(original);
 
             originalRef = extended;
             return extended;

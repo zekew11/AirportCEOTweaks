@@ -11,16 +11,14 @@ namespace AirportCEOTweaksCore
     public class RunwayModelExtended : RunwayModel, IMonoClassExtension
     {
 		public Color asphaltTearColor;
-		int startPos;
-		int endPos;
-		int pieceOffset;
-		Transform pieceParent;
+		float startPos;
+		float endPos;
 		Vector2 middlePosition;
 		//private List<TaxiwayBuilderNode> tbnList;
-		private List<TaxiwayNodeAttacher> tnList;
-		private GameObject runwayPieceObj;
-		private RunwayPiece rp;
-		
+		//private List<TaxiwayNodeAttacher> tnList;
+		int extensionDist = 40;
+
+
 		public void SetupExtend(MonoBehaviour runwayModel)
         {
 			if (runwayModel is RunwayModel)
@@ -30,51 +28,74 @@ namespace AirportCEOTweaksCore
 					field.SetValue(this, field.GetValue(runwayModel));
 				}
 			}
+			middlePosition = new Vector2(runwayMiddle.transform.position.x, runwayMiddle.transform.position.y);
+			startPos = runwayEnds[1].transform.localPosition.x;
+			endPos = runwayEnds[0].transform.localPosition.x;
 		}
 		public bool CanExtendRunway(int newStart)
 		{
-			Vector3[] position = {this.pieceParent.position};
+			Vector3[] position = {this.runwayMiddle.transform.position};
 			if (this.direction == Enums.Direction.N)
 			{
-				position[0] = new Vector2(this.pieceParent.position.x, this.pieceParent.position.y + (float)newStart);
+				position[0] = new Vector2(middlePosition.x, middlePosition.y + (float)newStart);
 			}
 			else if (this.direction == Enums.Direction.S)
 			{
-				position[0] = new Vector2(this.pieceParent.position.x, this.pieceParent.position.y - (float)newStart);
+				position[0] = new Vector2(middlePosition.x, middlePosition.y - (float)newStart);
 			}
 			else if (this.direction == Enums.Direction.E)
 			{
-				position[0] = new Vector2(this.pieceParent.position.x + (float)newStart, this.pieceParent.position.y);
+				position[0] = new Vector2(middlePosition.x + (float)newStart, middlePosition.y);
 			}
 			else if (this.direction == Enums.Direction.W)
 			{
-				position[0] = new Vector2(this.pieceParent.position.x - (float)newStart, this.pieceParent.position.y);
+				position[0] = new Vector2(middlePosition.x - (float)newStart, middlePosition.y);
 			}
 			string temp = "";
 			return Singleton<GridController>.Instance.IsLegalWorldPosition(position,ref temp);
 		}
-		private void ClearRunwayPieces()
-		{
-			//for (int i = 0; i < this.tbnList.Count; i++)
-			//{
-			//	Singleton<TaxiwayController>.Instance.RemoveBuilderNode(this.tbnList[i]);
-			//}
-			for (int j = 0; j < this.tnList.Count; j++)
-			{
-				this.tnList[j].NotifyOnRemove();
-			}
-			//this.tbnList.Clear();
-			this.tnList.Clear();
-			for (int k = 0; k < this.pieceParent.childCount; k++)
-			{
-				UnityEngine.Object.Destroy(this.pieceParent.GetChild(k).gameObject);
-			}
-		}
+		//private void ClearRunwayPieces()
+		//{
+		//	//for (int i = 0; i < this.tbnList.Count; i++)
+		//	//{
+		//	//	Singleton<TaxiwayController>.Instance.RemoveBuilderNode(this.tbnList[i]);
+		//	//}
+		//	for (int j = 0; j < this.tnList.Count; j++)
+		//	{
+		//		this.tnList[j].NotifyOnRemove();
+		//	}
+		//	//this.tbnList.Clear();
+		//	this.tnList.Clear();
+		//	for (int k = 0; k < this.transform.childCount; k++)
+		//	{
+		//		UnityEngine.Object.Destroy(this.transform.GetChild(k).gameObject);
+		//	}
+		//}
 		public void ExtendRunway(bool reversed = false)
 		{
 			short reverseMult = (short)(reversed ? -1 : 1);
-			int num = this.endPos + this.pieceOffset*reverseMult;
-			if (!this.CanExtendRunway(num + this.pieceOffset * reverseMult * 3))
+			float oldStartOrEnd = reversed ? startPos : endPos;
+			Vector3 extensionVector = new Vector3(0,0,0);
+
+			switch (direction)
+            {
+				case Enums.Direction.N:
+					extensionVector.y = reversed ? -1 : 1;
+					break;
+				case Enums.Direction.S:
+					extensionVector.y = reversed ? 1 : -1;
+					break;
+				case Enums.Direction.E:
+					extensionVector.x = reversed ? -1 : 1;
+					break;
+				case Enums.Direction.W:
+					extensionVector.x = reversed ? 1 : -1;
+					break;
+			}
+
+			int newStartorEnd = (int)(oldStartOrEnd + this.extensionDist*reverseMult);
+
+			if (!this.CanExtendRunway(newStartorEnd))
 			{
 				DialogPanel.Instance.ShowMessagePanel("Cannot extend runway outside world!");
 				return;
@@ -85,14 +106,9 @@ namespace AirportCEOTweaksCore
 				GameMessagePanelUI.Instance.ShowTextMiddle("Insufficient funds!", Color.red, true, Singleton<DataPlaceholderColors>.Instance.softBlack, 1f);
 				return;
 			}
-			if (reversed)
-            {
-				this.startPos = num;
-			}
-            else
-            {
-				this.endPos = num;
-			}
+
+			this.transform.position += extensionVector*(extensionDist/2);
+			this.length += extensionDist;
 			this.UpdateRunway();
 			Singleton<TaxiwayController>.Instance.UpdateAllTaxiwayBuilders();
 			Singleton<EnvironmentController>.Instance.AttemptRemoveTerrainObjects(this.GetAllBorderPositions());
@@ -112,44 +128,49 @@ namespace AirportCEOTweaksCore
 		private void GenerateRunway()
 		{
 			this.SetDirection();
-			this.ClearRunwayPieces();
+			//this.ClearRunwayPieces();
 			this.SetSpriteDamage(base.Condition);
-			bool flag = Foundation == Enums.FoundationType.Grass;
+			bool isGrass = Foundation == Enums.FoundationType.Grass;
 
+			float midlength = objectSize == Enums.ThreeStepScale.Large ? length - 112 : length - 176;
 
 			this.runwayMiddle.sprite = SingletonNonDestroy<DataPlaceholderStructures>.Instance.GetRunwayPiece(this.objectSize, Foundation, 0);
 			if (this.objectSize == Enums.ThreeStepScale.Large)
 			{
-				this.runwayMiddle.size = new Vector2(this.runwayMiddle.size.x, 28f);
+				this.runwayMiddle.size = new Vector2(midlength, 28f);
 			}
 			else if (this.objectSize == Enums.ThreeStepScale.Medium)
 			{
-				this.runwayMiddle.size = new Vector2(this.runwayMiddle.size.x, 20.2f);
+				this.runwayMiddle.size = new Vector2(midlength, 20.2f);
 			}
 			else
 			{
-				this.runwayMiddle.size = new Vector2((float)(flag ? 144 : 260), flag ? 13.3f : 20.2f);
-				this.runwayMiddle.tileMode = (flag ? SpriteTileMode.Continuous : SpriteTileMode.Adaptive);
+				this.runwayMiddle.size = new Vector2((float)(isGrass ? midlength/1.52f : midlength), isGrass ? 13.3f : 20.2f);
+				this.runwayMiddle.tileMode = (isGrass ? SpriteTileMode.Continuous : SpriteTileMode.Adaptive);
 			}
-			this.runwayMiddle.transform.localScale = new Vector3(flag ? 1.52f : 1f, flag ? 1.52f : 1f, 1f);
-			this.runwayMiddle.material = SingletonNonDestroy<DataPlaceholderMaterials>.Instance.GetRunwayMaterial(flag);
+			this.runwayMiddle.transform.localScale = new Vector3(isGrass ? 1.52f : 1f, isGrass ? 1.52f : 1f, 1f);
+			this.runwayMiddle.material = SingletonNonDestroy<DataPlaceholderMaterials>.Instance.GetRunwayMaterial(isGrass);
 			for (int i = 0; i < this.runwayEnds.Length; i++)
 			{
 				this.runwayEnds[i].sprite = SingletonNonDestroy<DataPlaceholderStructures>.Instance.GetRunwayPiece(this.objectSize, Foundation, 1);
-				this.runwayEnds[i].transform.localScale = new Vector3(flag ? 1.52f : 1f, flag ? 1.52f : 1f, 1f);
-				this.runwayEnds[i].material = SingletonNonDestroy<DataPlaceholderMaterials>.Instance.GetRunwayMaterial(flag);
+				this.runwayEnds[i].transform.localScale = new Vector3(isGrass ? 1.52f : 1f, isGrass ? 1.52f : 1f, 1f);
+				this.runwayEnds[i].material = SingletonNonDestroy<DataPlaceholderMaterials>.Instance.GetRunwayMaterial(isGrass);
 				if (this.objectSize == Enums.ThreeStepScale.Small)
 				{
-					float num = (float)(flag ? -130 : -123);
-					this.runwayEnds[i].transform.localPosition = new Vector3((i == 0) ? Mathf.Abs(num) : num, 0f, 0f);
+					//float num = (float)(isGrass ? -130 : -123);
+					float num = (length / 2) - 25;
+					this.runwayEnds[i].transform.localPosition = new Vector3((i%2 == 0) ? Mathf.Abs(num) : num, 0f, 0f);
+					Debug.LogWarning("ACEO Tweaks WARN: found a small runway");
 				}
 				else if (this.objectSize == Enums.ThreeStepScale.Medium)
 				{
-					this.runwayEnds[i].transform.localPosition = new Vector3((float)((i == 0) ? 183 : -183), 0f, 0f);
+					float num = (length / 2) - 25;
+					this.runwayEnds[i].transform.localPosition = new Vector3((float)((i%2 == 0) ? num : -num), 0f, 0f);
 				}
 				else
 				{
-					this.runwayEnds[i].transform.localPosition = new Vector3((float)((i == 0) ? 288 : -288), 0f, 0f);
+					float num = (length / 2) - 15;
+					this.runwayEnds[i].transform.localPosition = new Vector3((float)((i%2 == 0) ? num : -num), 0f, 0f);
 				}
 			}
 			for (int j = 0; j < this.runwayAimsA.Length; j++)
@@ -178,11 +199,11 @@ namespace AirportCEOTweaksCore
 			{
 				if (this.direction == Enums.Direction.N)
 				{
-					this.middlePosition = new Vector2(base.transform.position.x, base.transform.position.y + (float)((this.startPos + this.endPos) / 2));
+					this.middlePosition = new Vector2(runwayMiddle.transform.position.x, runwayMiddle.transform.position.y + (float)((this.startPos + this.endPos) / 2));
 				}
 				else if (this.direction == Enums.Direction.S)
 				{
-					this.middlePosition = new Vector2(base.transform.position.x, base.transform.position.y - (float)((this.startPos + this.endPos) / 2));
+					this.middlePosition = new Vector2(runwayMiddle.transform.position.x, runwayMiddle.transform.position.y - (float)((this.startPos + this.endPos) / 2));
 				}
 				this.boundary.SetBorder(new Vector2(borderTransforms[0].x, this.middlePosition.y - this.length / 2f), new Vector2(borderTransforms[1].x, this.middlePosition.y + this.length / 2f));
 				base.AddToMainGrid();
@@ -191,11 +212,11 @@ namespace AirportCEOTweaksCore
 			{
 				if (this.direction == Enums.Direction.E)
 				{
-					this.middlePosition = new Vector2(base.transform.position.x + (float)((this.startPos + this.endPos) / 2), base.transform.position.y);
+					this.middlePosition = new Vector2(runwayMiddle.transform.position.x + (float)((this.startPos + this.endPos) / 2), runwayMiddle.transform.position.y);
 				}
 				else if (this.direction == Enums.Direction.W)
 				{
-					this.middlePosition = new Vector2(base.transform.position.x - (float)((this.startPos + this.endPos) / 2), base.transform.position.y);
+					this.middlePosition = new Vector2(runwayMiddle.transform.position.x - (float)((this.startPos + this.endPos) / 2), runwayMiddle.transform.position.y);
 				}
 				this.boundary.SetBorder(new Vector2(this.middlePosition.x - this.length / 2f, borderTransforms[0].y), new Vector2(this.middlePosition.x + this.length / 2f, borderTransforms[1].y));
 				base.AddToMainGrid();
@@ -206,8 +227,6 @@ namespace AirportCEOTweaksCore
 				SelectionHighlightController.Instance.SetSelectionHighlightSizeAndPosition(this.objectGridSize, this.middlePosition, base.transform.rotation);
 			}
 			this.SetDamageLevel();
-			this.startPos -= 20;
-			this.endPos += 20;
 			this.RemoveApproachLights();
 			this.AddApproachLights();
 			this.aircraftSpawnPoints[0].localPosition = new Vector2((float)(-700 + this.startPos + 150), 0f);
@@ -218,10 +237,10 @@ namespace AirportCEOTweaksCore
 			//{
 			//	this.tbnList[j].UpdatePiece();
 			//}
-			for (int k = 0; k < this.tnList.Count; k++)
-			{
-				tnList[k].UpdateTaxiwayNode();
-			}
+			//for (int k = 0; k < this.tnList.Count; k++)
+			//{
+			//	tnList[k].UpdateTaxiwayNode();
+			//}
 		}
 		public float GetExtensionPrice()
 		{
@@ -261,25 +280,6 @@ namespace AirportCEOTweaksCore
 					SpriteRenderer component2 = this.tearFront.transform.GetChild(j).GetComponent<SpriteRenderer>();
 					component2.color = new Color(this.asphaltTearColor.r, this.asphaltTearColor.g, this.asphaltTearColor.b, 1f - base.Condition);
 				}
-			}
-		}
-		private void SetDirection()
-		{
-			if (base.transform.eulerAngles.z == 0f)
-			{
-				this.direction = Enums.Direction.E;
-			}
-			else if (base.transform.eulerAngles.z == 90f)
-			{
-				this.direction = Enums.Direction.N;
-			}
-			else if (base.transform.eulerAngles.z == 180f)
-			{
-				this.direction = Enums.Direction.W;
-			}
-			else
-			{
-				this.direction = Enums.Direction.S;
 			}
 		}
 		private void UpdateRunway()

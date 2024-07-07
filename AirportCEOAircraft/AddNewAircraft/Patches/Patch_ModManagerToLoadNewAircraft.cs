@@ -17,13 +17,26 @@ namespace AirportCEOAircraft
 		public static void Patch_AddPrefabs(string path)
 		{
 			//Debug.Log("ACEO Tweaks | Log : postfic on quemods running...");
-			string[] directories = Directory.GetDirectories(path,"*",SearchOption.AllDirectories);
-			for (int i = 0; i < directories.Length; i++)
+			List<string> directories = Directory.GetDirectories(path).ToList();
+			List<string> moreDirectories = new List<string>();
+
+			for (int i = 0; i < 3; i++) //search to a given depth
+			{
+				foreach (string directory in directories)
+				{
+					moreDirectories.AddRange(Directory.GetDirectories(directory));
+				}
+				directories = directories.Union(moreDirectories).ToList();
+			}
+
+			for (int i = 0; i < directories.Count; i++)
 			{
 				if (directories[i].SafeSubstring(directories[i].Length - 8, 8).Equals("Aircraft"))
 				{
-					AirportCEOAircraft.aircraftPaths.Add(path);
-					Debug.Log("ACEO Tweaks | Log : added path "+path+" to List<> aircraftPaths");
+					if (AirportCEOAircraft.aircraftPaths.AddIfNotContains(path))
+					{
+						Debug.Log("ACEO Tweaks | Log : added path " + path + " to List<> aircraftPaths");
+					}
 				}
 			}
 		}
