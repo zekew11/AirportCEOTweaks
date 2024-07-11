@@ -21,7 +21,7 @@ namespace AirportCEOTweaksCore
             if (airline == null) { Debug.LogError("ERROR: Airline Model Extended ctor encountered airline == null!");  return; }
             if (Singleton<ModsController>.Instance == null) { Debug.LogError("ERROR: Airline Model Extended ctor encountered ModsController == null!"); return; }
 
-            Debug.Log("AirlineModelExtended for " + businessName + " is ctor-ing");
+            //Debug.Log("AirlineModelExtended for " + businessName + " is ctor-ing");
 
             Singleton<BusinessController>.Instance.RemoveFromBusinessList(this);
 
@@ -36,7 +36,7 @@ namespace AirportCEOTweaksCore
                 Debug.LogWarning("ACEO Tweaks WARN: No airlinebusinessdata path for "+businessName);
             }
 
-            Singleton<BusinessController>.Instance.RemoveFromBusinessList(airlineModel);
+            //Singleton<BusinessController>.Instance.RemoveFromBusinessList(airlineModel);
             airlineModel = this;
             Singleton<BusinessController>.Instance.RemoveFromBusinessList(this);
             Singleton<BusinessController>.Instance.AddToBusinessList(this);
@@ -92,22 +92,25 @@ namespace AirportCEOTweaksCore
                     }
 
                     aircraftFleetModels = airlineBusinessData.fleet;
-                    Debug.Log("updated a non-tweaksFleet fleet");
+                    //Debug.Log("updated a non-tweaksFleet fleet");
                 }
             }
             else
             {
                 List<string> FleetList = airlineBusinessData.tweaksFleet.ToList();
                 List<AircraftModel> AllTypesList = ((AircraftModel[])typeof(AirTrafficController).GetField("aircraftModels", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Singleton<AirTrafficController>.Instance)).ToList();
-                
-                for (int i = 0; i < FleetList.Count;)
+
+                int i = 0;
+                OuterTweaksLoop:
+                for (;i < FleetList.Count;)
                 {
+                    
                     foreach (AircraftModel aircraftModel in AllTypesList)
                     {
                         if (aircraftModel.aircraftType == FleetList[i] && AirTrafficController.OwnsDLCAircraft(FleetList[i]))
                         {
                             i++;
-                            continue;
+                            goto OuterTweaksLoop;
                         }
                     }
 

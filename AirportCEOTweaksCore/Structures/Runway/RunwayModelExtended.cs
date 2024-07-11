@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using BepInEx;
+using Unity.Mathematics;
 
 namespace AirportCEOTweaksCore
 {
@@ -16,16 +17,17 @@ namespace AirportCEOTweaksCore
 		Vector2 middlePosition;
 		//private List<TaxiwayBuilderNode> tbnList;
 		//private List<TaxiwayNodeAttacher> tnList;
-		int extensionDist = 40;
+		int extensionDist = 20;
 
-
-		public void SetupExtend(MonoBehaviour runwayModel)
+        public new float Length => ((float)(length + (Math.Pow(length, 2) * 0.0045))).RoundToNearest(20f);
+        public void SetupExtend(MonoBehaviour runwayModel)
         {
 			if (runwayModel is RunwayModel)
 			{
 				foreach (var field in typeof(RunwayModel).GetFields(HarmonyLib.AccessTools.all))
 				{
 					field.SetValue(this, field.GetValue(runwayModel));
+
 				}
 			}
 			middlePosition = new Vector2(runwayMiddle.transform.position.x, runwayMiddle.transform.position.y);
@@ -54,23 +56,6 @@ namespace AirportCEOTweaksCore
 			string temp = "";
 			return Singleton<GridController>.Instance.IsLegalWorldPosition(position,ref temp);
 		}
-		//private void ClearRunwayPieces()
-		//{
-		//	//for (int i = 0; i < this.tbnList.Count; i++)
-		//	//{
-		//	//	Singleton<TaxiwayController>.Instance.RemoveBuilderNode(this.tbnList[i]);
-		//	//}
-		//	for (int j = 0; j < this.tnList.Count; j++)
-		//	{
-		//		this.tnList[j].NotifyOnRemove();
-		//	}
-		//	//this.tbnList.Clear();
-		//	this.tnList.Clear();
-		//	for (int k = 0; k < this.transform.childCount; k++)
-		//	{
-		//		UnityEngine.Object.Destroy(this.transform.GetChild(k).gameObject);
-		//	}
-		//}
 		public void ExtendRunway(bool reversed = false)
 		{
 			short reverseMult = (short)(reversed ? -1 : 1);
@@ -95,6 +80,7 @@ namespace AirportCEOTweaksCore
 
 			int newStartorEnd = (int)(oldStartOrEnd + this.extensionDist*reverseMult);
 
+
 			if (!this.CanExtendRunway(newStartorEnd))
 			{
 				DialogPanel.Instance.ShowMessagePanel("Cannot extend runway outside world!");
@@ -107,9 +93,15 @@ namespace AirportCEOTweaksCore
 				return;
 			}
 
+			this.startPos -= extensionDist / 2;
+			this.endPos += extensionDist / 2;
 			this.transform.position += extensionVector*(extensionDist/2);
+			this.runwayEnds[0].transform.localPosition = new Vector3(endPos, 0, 0);
+			this.runwayEnds[1].transform.localPosition = new Vector3(startPos, 0, 0);
 			this.length += extensionDist;
-			this.UpdateRunway();
+
+
+			this.GenerateRunway();
 			Singleton<TaxiwayController>.Instance.UpdateAllTaxiwayBuilders();
 			Singleton<EnvironmentController>.Instance.AttemptRemoveTerrainObjects(this.GetAllBorderPositions());
 			Singleton<TaxiwayController>.Instance.UpdateAllTaxiwayNodes();
@@ -132,7 +124,8 @@ namespace AirportCEOTweaksCore
 			this.SetSpriteDamage(base.Condition);
 			bool isGrass = Foundation == Enums.FoundationType.Grass;
 
-			float midlength = objectSize == Enums.ThreeStepScale.Large ? length - 112 : length - 176;
+			//float midlength = objectSize == Enums.ThreeStepScale.Large ? length - 56 : length - 88;
+			float midlength = objectSize == Enums.ThreeStepScale.Large ? length-28 : length-44 ;
 
 			this.runwayMiddle.sprite = SingletonNonDestroy<DataPlaceholderStructures>.Instance.GetRunwayPiece(this.objectSize, Foundation, 0);
 			if (this.objectSize == Enums.ThreeStepScale.Large)
@@ -150,51 +143,10 @@ namespace AirportCEOTweaksCore
 			}
 			this.runwayMiddle.transform.localScale = new Vector3(isGrass ? 1.52f : 1f, isGrass ? 1.52f : 1f, 1f);
 			this.runwayMiddle.material = SingletonNonDestroy<DataPlaceholderMaterials>.Instance.GetRunwayMaterial(isGrass);
-			for (int i = 0; i < this.runwayEnds.Length; i++)
-			{
-				this.runwayEnds[i].sprite = SingletonNonDestroy<DataPlaceholderStructures>.Instance.GetRunwayPiece(this.objectSize, Foundation, 1);
-				this.runwayEnds[i].transform.localScale = new Vector3(isGrass ? 1.52f : 1f, isGrass ? 1.52f : 1f, 1f);
-				this.runwayEnds[i].material = SingletonNonDestroy<DataPlaceholderMaterials>.Instance.GetRunwayMaterial(isGrass);
-				if (this.objectSize == Enums.ThreeStepScale.Small)
-				{
-					//float num = (float)(isGrass ? -130 : -123);
-					float num = (length / 2) - 25;
-					this.runwayEnds[i].transform.localPosition = new Vector3((i%2 == 0) ? Mathf.Abs(num) : num, 0f, 0f);
-					Debug.LogWarning("ACEO Tweaks WARN: found a small runway");
-				}
-				else if (this.objectSize == Enums.ThreeStepScale.Medium)
-				{
-					float num = (length / 2) - 25;
-					this.runwayEnds[i].transform.localPosition = new Vector3((float)((i%2 == 0) ? num : -num), 0f, 0f);
-				}
-				else
-				{
-					float num = (length / 2) - 15;
-					this.runwayEnds[i].transform.localPosition = new Vector3((float)((i%2 == 0) ? num : -num), 0f, 0f);
-				}
-			}
-			for (int j = 0; j < this.runwayAimsA.Length; j++)
-			{
-				this.runwayAimsA[j].sprite = SingletonNonDestroy<DataPlaceholderStructures>.Instance.GetRunwayPiece(this.objectSize, Foundation, 2);
-				if (this.objectSize != Enums.ThreeStepScale.Large)
-				{
-					this.runwayAimsA[j].size = new Vector2(40f, 20.2f);
-				}
-			}
-			for (int k = 0; k < this.runwayAimsB.Length; k++)
-			{
-				this.runwayAimsB[k].sprite = SingletonNonDestroy<DataPlaceholderStructures>.Instance.GetRunwayPiece(this.objectSize, Foundation, 3);
-			}
-			if (SaveLoadGameDataController.loadComplete)
-			{
-				Singleton<TaxiwayController>.Instance.UpdateAllTaxiwayNodes();
-				if (this.isBuilt)
-				{
-					Singleton<ConstructionController>.Instance.TriggerConstructionEffect(this, Enums.ConstructionOperation.Construct);
-				}
-			}
 
-			Vector3[] borderTransforms = this.boundary.GetAllBorderPositions(1);
+
+
+			Vector3[] borderTransforms = this.boundary.GetAllBorderPositions(0);
 			if (this.direction == Enums.Direction.N || this.direction == Enums.Direction.S)
 			{
 				if (this.direction == Enums.Direction.N)
@@ -221,14 +173,21 @@ namespace AirportCEOTweaksCore
 				this.boundary.SetBorder(new Vector2(this.middlePosition.x - this.length / 2f, borderTransforms[0].y), new Vector2(this.middlePosition.x + this.length / 2f, borderTransforms[1].y));
 				base.AddToMainGrid();
 			}
+
 			this.objectGridSize = new Vector2(this.length, this.objectGridSize.y);
 			if (SelectionController.Instance.selectedObject != null)
 			{
 				SelectionHighlightController.Instance.SetSelectionHighlightSizeAndPosition(this.objectGridSize, this.middlePosition, base.transform.rotation);
 			}
+			
+
 			this.SetDamageLevel();
 			this.RemoveApproachLights();
-			this.AddApproachLights();
+			//this.AddApproachLights(); needs update
+			TaxiwayNodeCreator taxiwayNodeCreator = this.transform.GetComponentInChildren<TaxiwayNodeCreator>();
+			taxiwayNodeCreator.runwaySize = length.RoundToIntLikeANormalPerson();
+			taxiwayNodeCreator.NotifyOnPlaced();
+			this.ActivateNodes();
 			this.aircraftSpawnPoints[0].localPosition = new Vector2((float)(-700 + this.startPos + 150), 0f);
 			this.touchDownZones[0].localPosition = new Vector2((float)(-150 + this.startPos + 150), 0f);
 			this.aircraftSpawnPoints[1].localPosition = new Vector2((float)(700 + this.endPos - 150), 0f);
@@ -241,10 +200,19 @@ namespace AirportCEOTweaksCore
 			//{
 			//	tnList[k].UpdateTaxiwayNode();
 			//}
+			if (SaveLoadGameDataController.loadComplete)
+			{
+				Singleton<TaxiwayController>.Instance.UpdateAllTaxiwayNodes();
+				if (this.isBuilt)
+				{
+					Singleton<ConstructionController>.Instance.TriggerConstructionEffect(this, Enums.ConstructionOperation.Construct);
+				}
+			}
+
 		}
 		public float GetExtensionPrice()
 		{
-			float num = 10000;
+			float num = 5000;
 			if (this.Foundation == Enums.FoundationType.Grass)
 			{
 				return num;
@@ -282,9 +250,6 @@ namespace AirportCEOTweaksCore
 				}
 			}
 		}
-		private void UpdateRunway()
-		{
-			this.GenerateRunway();
-		}
+
 	}
 }

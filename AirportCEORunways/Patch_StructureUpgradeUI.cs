@@ -15,6 +15,7 @@ namespace AirportCEORunways
         [HarmonyPatch(typeof(StructureUpgradeUI), "AddUpgradeContainers", new Type[] {typeof(RunwayModel[])})]
         public static bool Patch_AddUpgradeContainers(RunwayModel[] runways, ref StructureUpgradeUI __instance)
         {
+            
             RunwayModel runway = runways[0];
             RunwayModelExtended runwayext = (RunwayModelExtended)runway.ExtendMono<RunwayModel,RunwayModelExtended>(ref runway);
             
@@ -22,6 +23,7 @@ namespace AirportCEORunways
             {
                 return false;
             }
+
             
             __instance.InstantiateUpdgradeContainer(runwayext.GetExtensionPrice(), "Extend runway towards " + runway.direction.ReverseDirection(), new Action(runwayext.ExtendRunwayReversed));
             __instance.InstantiateUpdgradeContainer(runwayext.GetExtensionPrice(), "Extend runway towards " + runway.direction, new Action(runwayext.ExtendRunway));

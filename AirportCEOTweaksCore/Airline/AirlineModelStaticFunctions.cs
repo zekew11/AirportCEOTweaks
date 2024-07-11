@@ -9,17 +9,17 @@ namespace AirportCEOTweaksCore
 {
     public static class AirlineModelStaticFunctions
     {
-        public static AirlineModelExtended Extend<T>(this T a, ref AirlineModel me) where T:AirlineModel
+        public static AirlineModelExtended ExtendAirlineModel<T>(this T a, ref AirlineModel me) where T:AirlineModel
         {
             if (a as AirlineModelExtended != null)
             {
-                Debug.Log("Extend found already extended");
+                //Debug.Log("Extend found already extended");
                 return a as AirlineModelExtended;
             }
-            Debug.Log("Extend about to create a new AirlineModelExtended");
+            //Debug.Log("Extend about to create a new AirlineModelExtended");
 
             AirlineModelExtended aa = MakeAirlineModelExtended(ref me);
-            Debug.Log("Extend created a new AirlineModelExtended");
+            //Debug.Log("Extend created a new AirlineModelExtended");
             //me = aa;
             return (AirlineModelExtended)aa;
         }
@@ -27,11 +27,11 @@ namespace AirportCEOTweaksCore
 
         static AirlineModelExtended MakeAirlineModelExtended(ref AirlineModel me)
         {
-            Debug.Log("Entered MakeAirlineModelExtended");
+            //Debug.Log("Entered MakeAirlineModelExtended");
             Airline airline = Singleton<BusinessController>.Instance.GetAirline(me.businessName);
-            Debug.Log("MakeAirlineModelExtended airline.name = " + airline.name);
+            //Debug.Log("MakeAirlineModelExtended airline.name = " + airline.name);
             AirlineModelExtended aa = new AirlineModelExtended(airline, ref me);
-            Debug.Log("MakeAirlineModelExtended aa.name = " + aa.businessName);
+            //Debug.Log("MakeAirlineModelExtended aa.name = " + aa.businessName);
             return (AirlineModelExtended)aa;
         }
 

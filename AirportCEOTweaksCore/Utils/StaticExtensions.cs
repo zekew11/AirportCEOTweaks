@@ -14,7 +14,7 @@ namespace AirportCEOTweaksCore
             where ExtenededT:OriginalT , IMonoClassExtension
             where OriginalT : MonoBehaviour
         {
-            if (original is ExtenededT)
+            if (originalRef is ExtenededT)
             {
                 return originalRef as ExtenededT;
             }
@@ -28,10 +28,28 @@ namespace AirportCEOTweaksCore
             originalRef = extended;
             return extended;
         }
+        public static IClassExtension Extend<OriginalT,ExtendedT>(this OriginalT original, ref OriginalT originalRef)
+            where ExtendedT: class, OriginalT , IClassExtension, new()
+            where OriginalT: class
+        {
+            if (originalRef is ExtendedT)
+            {
+                return originalRef as ExtendedT;
+            }
+            ExtendedT extended = new ExtendedT();
+            extended.SetupExtend(originalRef);
+            originalRef = extended;
+            return extended;
+        }
     }
+
 
     public interface IMonoClassExtension
     {
         void SetupExtend(MonoBehaviour original);
+    }
+    public interface IClassExtension
+    {
+        void SetupExtend(object oringinal);
     }
 }

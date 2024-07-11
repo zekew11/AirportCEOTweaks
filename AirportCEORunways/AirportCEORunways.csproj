@@ -5,7 +5,7 @@
     <AssemblyName>AirportCEORunwaysk</AssemblyName>
 	<Product>AirportCEORunways</Product>
     <Description></Description>
-	<Version>0.0.0</Version>
+	<Version>0.0.707.55</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <RestoreAdditionalProjectSources>

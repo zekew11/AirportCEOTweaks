@@ -19,7 +19,7 @@ namespace AirportCEOTweaksCore
 				return;// true;
             }
 			Debug.Log("Patch to extend " + __instance.businessName + " is triggered (ctor)");
-			__instance.Extend(ref __instance);
+			__instance.ExtendAirlineModel(ref __instance);
 			//if (__instance as AirlineModelExtended != null) { ((AirlineModelExtended)__instance).Refresh(); return false; }
 			//else { Debug.LogError("AirlineModelExtended turned null before could refresh"); return true; }
 			//return false;
@@ -35,7 +35,7 @@ namespace AirportCEOTweaksCore
 				return;// true;
 			}
 			Debug.Log("Patch to extend " + __instance.businessName + " is triggered (Generate Flight)");
-			__instance.Extend(ref __instance);
+			__instance.ExtendAirlineModel(ref __instance);
 			//if (__instance as AirlineModelExtended != null) { ((AirlineModelExtended)__instance).Refresh(); return false; }
 			//else { Debug.LogError("AirlineModelExtended turned null before could refresh"); return true; }
 			//return false;
