@@ -16,7 +16,7 @@ namespace AirportCEOFlightLimitTweak
             // More will probably be added!
             AirportCEOFlightLimitTweak.LogInfo("Seting up ModLoader interactions");
 
-            WatermarkUtils.Register(new WatermarkInfo("FL-Tweak", Assembly.GetExecutingAssembly().GetName().Version.ToString(), false));
+            WatermarkUtils.Register(new WatermarkInfo("T-FL", "", true));
 
             AirportCEOFlightLimitTweak.LogInfo("Completed ModLoader interactions!");
         }

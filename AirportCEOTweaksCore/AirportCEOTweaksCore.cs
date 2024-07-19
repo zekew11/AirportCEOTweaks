@@ -30,7 +30,7 @@ namespace AirportCEOTweaksCore
 
         private void Awake()
         {
-            Logger.LogInfo($"Plugin {GUID} is loaded!");
+            Logger.LogInfo($"Plugin {GUID} version {Assembly.GetExecutingAssembly().GetName().Version} is loaded!");
             Harmony = new Harmony(GUID);
             Harmony.PatchAll();
 

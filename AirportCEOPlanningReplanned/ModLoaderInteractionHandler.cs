@@ -16,7 +16,7 @@ namespace AirportCEOPlanningReplanned
             // More will probably be added!
             AirportCEOPlanningReplanned.LogInfo("Seting up ModLoader interactions");
 
-            WatermarkUtils.Register(new WatermarkInfo("T-PR", Assembly.GetExecutingAssembly().GetName().Version.ToString(), true));
+            WatermarkUtils.Register(new WatermarkInfo("T-PR", "", true));
 
             AirportCEOPlanningReplanned.LogInfo("Completed ModLoader interactions!");
         }
