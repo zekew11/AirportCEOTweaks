@@ -27,12 +27,12 @@ namespace AirportCEOTweaksCore
 				foreach (var field in typeof(RunwayModel).GetFields(HarmonyLib.AccessTools.all))
 				{
 					field.SetValue(this, field.GetValue(runwayModel));
-
 				}
 			}
 			middlePosition = new Vector2(runwayMiddle.transform.position.x, runwayMiddle.transform.position.y);
 			startPos = runwayEnds[1].transform.localPosition.x;
 			endPos = runwayEnds[0].transform.localPosition.x;
+			GenerateRunway();
 		}
 		public bool CanExtendRunway(int newStart)
 		{

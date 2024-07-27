@@ -15,7 +15,29 @@ namespace AirportCEOTweaksCore
         RunwayModelExtended runwayModel;
         public void SetupExtend(MonoBehaviour runwayUi)
         {
+            Transform containerList = transform.Find("InformationPanel/List");
+            Transform flightsInPattern = containerList.Find("FlightsInPattern");
+            Vector3 pos;
 
+            foreach (Transform transform in containerList.GetComponentsInChildren<Transform>())
+            {
+                if (transform.GetComponentInParent<Transform>() != containerList)  //don't include lower level children
+                {
+                    continue;
+                }
+                pos = transform.localPosition;
+                transform.localPosition = new Vector3(pos.x, pos.y - 20, pos.z);
+            }
+            GameObject runwayLengthTextGameObj = Instantiate(flightsInPattern.gameObject, containerList, true);
+            runwayLengthTextGameObj.name = "RunwayLengthText";
+            pos = runwayLengthTextGameObj.transform.localPosition;
+            runwayLengthTextGameObj.transform.localPosition = new Vector3(pos.x, pos.y + 20, pos.z);
+
+            runwayLengthText = runwayLengthTextGameObj.transform.Find("FlightsInPatternText").GetComponent<TextMeshProUGUI>();
+            runwayLengthValueText = runwayLengthTextGameObj.transform.Find("FlightsInPatternValueText").GetComponent<TextMeshProUGUI>();
+
+            runwayLengthText.text = "Runway Length: ";
+            runwayLengthValueText.text = "unknown";
         }
         public void UpdateText(RunwayModelExtended runwayModel)
         {
@@ -29,23 +51,6 @@ namespace AirportCEOTweaksCore
             {
                 this.runwayModel = runwayModel;
             }
-
-            Transform containerList = transform.Find("InformationPanel/List");
-            Transform flightsInPattern = containerList.Find("FlightsInPattern");
-            Vector3 pos;
-           
-            foreach (Transform transform in containerList.GetComponentsInChildren<Transform>())
-            {
-                pos = transform.localPosition;
-                transform.localPosition = new Vector3(pos.x, pos.y - 20, pos.z);
-            }
-            GameObject runwayLengthTextGameObj = Instantiate<GameObject>(flightsInPattern.gameObject, containerList, true);
-            runwayLengthTextGameObj.name = "RunwayLengthText";
-            pos = runwayLengthTextGameObj.transform.localPosition;
-            runwayLengthTextGameObj.transform.localPosition = new Vector3(pos.x, pos.y + 20, pos.z);
-            
-            runwayLengthText = runwayLengthTextGameObj.transform.Find("FlightsInPatternText").GetComponent<TextMeshProUGUI>();
-            runwayLengthValueText = runwayLengthTextGameObj.transform.Find("FlightsInPatternValueText").GetComponent<TextMeshProUGUI>();
             
             runwayLengthText.text = "Runway Length: ";
             runwayLengthValueText.text = runwayModel.Length.ToString() + "m";
