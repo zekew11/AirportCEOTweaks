@@ -258,7 +258,7 @@ namespace AirportCEOAircraft
                 int newX = Utils.RoundToIntLikeANormalPerson((float)texture2D.width / downscaleAmount);
                 int newY = Utils.RoundToIntLikeANormalPerson((float)texture2D.height / downscaleAmount);
 
-                texture2D = DowncaleTexture(texture2D, newX, newY);
+                texture2D = DownscaleTexture(texture2D, newX, newY);
             }
 
             if (GameSettingManager.CompressImages)
@@ -444,14 +444,14 @@ namespace AirportCEOAircraft
 		    return new Vector2(Utils.RoundToIntLikeANormalPerson(vec.x), Utils.RoundToIntLikeANormalPerson(vec.y));
 	    }
 
-	    private static Texture2D DowncaleTexture(Texture2D source, int newWidth, int newHeight)
+	    private static Texture2D DownscaleTexture(Texture2D source, int newWidth, int newHeight)
 	    {
 		    RenderTexture rt = RenderTexture.GetTemporary(newWidth, newHeight);
 
 		    RenderTexture.active = rt;
 
 		    Graphics.Blit(source, rt);
-		    source.Resize(newWidth, newHeight, TextureFormat.ARGB32, false);
+		    source.Resize(newWidth, newHeight, TextureFormat.ARGB32, false); //.ARGB32
 		    source.ReadPixels(new Rect(0, 0, newWidth, newHeight), 0,0);
 		    source.Apply();
 		    RenderTexture.active = null;

@@ -11,10 +11,13 @@ namespace AirportCEOAircraft
     {
         public enum DownscaleLevel
         {
+            [Description("Full Quality")]
             Original,
+            [Description("Downscale2X - Recommended")]
             Downscale2X,
+            [Description("Downscale4X - Aggressive")]
             Downscale4X,
-            [Description("Downscale8X - NOT RECOMMENDED")]
+            [Description("Downscale8X - Not Recommended")]
             Downscale8X
         }
     }

@@ -17,7 +17,7 @@ namespace AirportCEOAircraft
 
         internal static void SetUpConfig()
         {
-            DownscaleLevel = ConfigRef.Bind("General", "Downscaling Level", DownscaleEnums.DownscaleLevel.Original, 
+            DownscaleLevel = ConfigRef.Bind("General", "Downscaling Level", DownscaleEnums.DownscaleLevel.Downscale2X, 
                 "Amount to downscale the texture by (per axis, so 2x means 2x less RAM/VRAM usage, but you get 4x less quality)");
             LiveryLogs = ConfigRef.Bind("Debug", "Livery Author Log Files", false, "Enable/Disable extra log files for livery authors to debug active liveries");
             PathToCrosshairImage = ConfigRef.Bind("Debug", "Path to crosshair", "", "Path to crosshair for mod devs. If empty function will not work");
