@@ -225,11 +225,11 @@ namespace AirportCEOAircraft
             string[] PNGfiles = Directory.GetFiles(filePath, "*.png");
 
             string[] specificJSONFiles = Directory.GetFiles(filePath, aircraftGameObject.name + "*_Visual.json");
-            string[] specificPNGfiles  = Directory.GetFiles(filePath, aircraftGameObject.name + "*.png");
+            string[] specificPNGfiles = Directory.GetFiles(filePath, aircraftGameObject.name + "*.png");
 
             List<GameObject> componentGameObjects = new List<GameObject>();
 
-            if (jsonFiles.Length == 0  || PNGfiles.Length == 0)
+            if (jsonFiles.Length == 0 || PNGfiles.Length == 0)
             {
                 return;
             }
@@ -245,11 +245,22 @@ namespace AirportCEOAircraft
             }
 
             GameObject tweaksContainer = new GameObject("tweaksContainer");
-            
+
             LiveryData liveryData = Utils.CreateFromJSON<LiveryData>(Utils.ReadFile(jsonFiles[0]));
             byte[] data = File.ReadAllBytes(PNGfiles[0]);
             Texture2D texture2D = new Texture2D(2, 2);
             texture2D.LoadImage(data);
+
+            float downscaleAmount = GetDownscaleFloat();
+
+            if (AirportCEOAircraftConfig.DownscaleLevel.Value != DownscaleEnums.DownscaleLevel.Original)
+            {
+                int newX = Utils.RoundToIntLikeANormalPerson((float)texture2D.width / downscaleAmount);
+                int newY = Utils.RoundToIntLikeANormalPerson((float)texture2D.height / downscaleAmount);
+
+                texture2D = DowncaleTexture(texture2D, newX, newY);
+            }
+
             if (GameSettingManager.CompressImages)
             {
                 texture2D.Compress(true);
@@ -262,6 +273,11 @@ namespace AirportCEOAircraft
             for (int j = 0; j < liveryComponetArray.Length; j++)
             {
                 LiveryComponent liveryComponent = liveryComponetArray[j];
+
+                liveryComponent.slicePosition = RoundVecToInt(liveryComponent.slicePosition / downscaleAmount);
+				liveryComponent.sliceSize = RoundVecToInt(liveryComponent.sliceSize / downscaleAmount);
+				liveryComponent.scale *= downscaleAmount;
+
                 liveryComponent.ClampValues(new Vector2((float)texture2D.width, (float)texture2D.height));
                 if (lhs == Vector2.zero || lhs2 == Vector2.zero || lhs != liveryComponent.slicePosition || lhs2 != liveryComponent.sliceSize)
                 {
@@ -298,7 +314,7 @@ namespace AirportCEOAircraft
             {
                 lac = aircraftGameObject.AddComponent<LiveryActiveComponent>();
             }
-            
+
             foreach (GameObject obj in componentGameObjects)
             {
                 if (obj == null) { continue; }
@@ -307,10 +323,31 @@ namespace AirportCEOAircraft
 
 
             Tweaks_PerformanceCEO.RAMReducer.Tweaks_RAMReducerManager.TweaksAircraftCall = false;
-            
+
 
         }
-        
+
+        private static float GetDownscaleFloat()
+        {
+            float downscaleAmount = 1;
+            switch (AirportCEOAircraftConfig.DownscaleLevel.Value)
+            {
+                case DownscaleEnums.DownscaleLevel.Original:
+                    downscaleAmount = 1;
+                    break;
+                case DownscaleEnums.DownscaleLevel.Downscale2X:
+                    downscaleAmount = 2;
+                    break;
+                case DownscaleEnums.DownscaleLevel.Downscale4X:
+                    downscaleAmount = 4;
+                    break;
+                case DownscaleEnums.DownscaleLevel.Downscale8X:
+                    downscaleAmount = 8; // Not recommended
+                    break;
+            };
+            return downscaleAmount;
+        }
+
         private static List<AircraftTypeData> ProccessAircraftPaths(string[] args)
         {
             List<AircraftTypeData> List = new List<AircraftTypeData>();
@@ -401,5 +438,27 @@ namespace AirportCEOAircraft
                 return false;
             }
         }
+
+	    private static Vector2 RoundVecToInt(Vector2 vec)
+	    {
+		    return new Vector2(Utils.RoundToIntLikeANormalPerson(vec.x), Utils.RoundToIntLikeANormalPerson(vec.y));
+	    }
+
+	    private static Texture2D DowncaleTexture(Texture2D source, int newWidth, int newHeight)
+	    {
+		    RenderTexture rt = RenderTexture.GetTemporary(newWidth, newHeight);
+
+		    RenderTexture.active = rt;
+
+		    Graphics.Blit(source, rt);
+		    source.Resize(newWidth, newHeight, TextureFormat.ARGB32, false);
+		    source.ReadPixels(new Rect(0, 0, newWidth, newHeight), 0,0);
+		    source.Apply();
+		    RenderTexture.active = null;
+		    RenderTexture.ReleaseTemporary(rt);
+		    return source;
+	    }
+
+
     }
 }
