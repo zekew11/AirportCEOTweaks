@@ -17,7 +17,7 @@ using System.IO;
 [assembly: ComVisible(false)]
 
 
-[assembly: AssemblyVersion("3.0.0727.82")]
-[assembly: AssemblyFileVersion("3.0.0727.82")]
+[assembly: AssemblyVersion("3.0.0731.100")]
+[assembly: AssemblyFileVersion("3.0.0731.100")]
 
 

@@ -19,12 +19,13 @@ namespace AirportCEOAircraft
     {
         public bool working = true;
 
-        public void Initilize()
+        public IEnumerator Initilize(bool isMod)
         {
             List<AircraftTypeData> aircraftTypeList = ProccessAircraftPaths(AirportCEOAircraft.aircraftPaths.ToArray());
             AirTrafficController atc = Singleton<AirTrafficController>.Instance;
             HashSet<GameObject> aircraftGameObjectsSet = new HashSet<GameObject>();
-            
+
+            int processedAircraftCount = 1;
             foreach (AircraftTypeData aircraftTypeData in aircraftTypeList)
             {
 
@@ -51,7 +52,9 @@ namespace AirportCEOAircraft
                         AirportCEOAircraft.aircraftTypeDataDict.Add(aircraftTypeData.id[i], aircraftTypeData);
                     }
                 }
-
+                yield return new WaitForEndOfFrame();
+                Singleton<SceneMessagePanelUI>.Instance.SetLoadingText("Tweaks Aircraft | Loading:   " + aircraftTypeData.DisplayName, ((processedAircraftCount*100f)/(float)aircraftTypeList.Count).RoundToIntLikeANormalPerson().Clamp(5, 100));
+                processedAircraftCount++;
             }
 
             aircraftGameObjectsSet.UnionWith(atc.aircraftPrefabs);
@@ -66,6 +69,8 @@ namespace AirportCEOAircraft
             atc.GetType().GetField("aircraftModels",BindingFlags.NonPublic | BindingFlags.Instance).SetValue(atc, aircraftModelList.ToArray());
 
             working = false;
+            Singleton<SaveLoadGameDataController>.Instance.LoadGameData(isMod);
+            yield return null;
             //Debug.Log("ACEO Tweaks | Log: Aircraft Adder Awake End");
         }
         private GameObject MakeAircraftGameObject(AircraftTypeData aircraftTypeData, int index = 0)
