@@ -19,8 +19,9 @@ namespace AirportCEOAircraft
     {
         public bool working = true;
 
-        public IEnumerator Initilize(bool isMod)
+        public IEnumerator Initilize()
         {
+            Debug.Log("Tweaks Aircraft loader init");
             List<AircraftTypeData> aircraftTypeList = ProccessAircraftPaths(AirportCEOAircraft.aircraftPaths.ToArray());
             AirTrafficController atc = Singleton<AirTrafficController>.Instance;
             HashSet<GameObject> aircraftGameObjectsSet = new HashSet<GameObject>();
@@ -28,7 +29,7 @@ namespace AirportCEOAircraft
             int processedAircraftCount = 1;
             foreach (AircraftTypeData aircraftTypeData in aircraftTypeList)
             {
-
+                Debug.Log("Tweaks Aircraft loader foreach "+ aircraftTypeData.Id);
                 for (int i = 0; i<aircraftTypeData.id.Length; i++)
                 {
                     GameObject aircraftGameObject = MakeAircraftGameObject(aircraftTypeData, i);
@@ -52,7 +53,7 @@ namespace AirportCEOAircraft
                         AirportCEOAircraft.aircraftTypeDataDict.Add(aircraftTypeData.id[i], aircraftTypeData);
                     }
                 }
-                yield return new WaitForEndOfFrame();
+                yield return null;
                 Singleton<SceneMessagePanelUI>.Instance.SetLoadingText("Tweaks Aircraft | Loading:   " + aircraftTypeData.DisplayName, ((processedAircraftCount*100f)/(float)aircraftTypeList.Count).RoundToIntLikeANormalPerson().Clamp(5, 100));
                 processedAircraftCount++;
             }
@@ -69,9 +70,13 @@ namespace AirportCEOAircraft
             atc.GetType().GetField("aircraftModels",BindingFlags.NonPublic | BindingFlags.Instance).SetValue(atc, aircraftModelList.ToArray());
 
             working = false;
-            Singleton<SaveLoadGameDataController>.Instance.LoadGameData(isMod);
-            yield return null;
-            //Debug.Log("ACEO Tweaks | Log: Aircraft Adder Awake End");
+            //Singleton<SaveLoadGameDataController>.Instance.InitializeGameSession();
+            yield break;
+        }
+        public IEnumerator packagedEnumerator(object original)
+        {
+            yield return base.StartCoroutine(Initilize());
+            yield return original;
         }
         private GameObject MakeAircraftGameObject(AircraftTypeData aircraftTypeData, int index = 0)
         {
