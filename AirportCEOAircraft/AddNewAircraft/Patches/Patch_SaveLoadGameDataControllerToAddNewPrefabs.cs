@@ -49,8 +49,8 @@ namespace AirportCEOAircraft
 		{
 			Action prefixAction = () =>  { Debug.Log("--> before LaunchGame"); };
 			Action postfixAction = () => { Debug.Log("--> after LaunchGame"); };
-			Action<object> preItemAction = (item) =>  { Debug.Log($"--> before LaunchGame iteration {iteration}"); };
-			Action<object> postItemAction = (item) => { Debug.Log($"--> after  LaunchGame iteration {iteration}"); iteration++; };
+			Action<object> preItemAction = (item) =>  { ; };
+			Action<object> postItemAction = (item) => { iteration++; };
 			Func<object, object> itemAction = (item) =>
 			{
 				//var newItem = item + "+";

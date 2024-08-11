@@ -5,7 +5,7 @@
     <AssemblyName>AirportCEOFlightLimitTweak</AssemblyName>
 	<Product>AirportCEOFlightLimitTweak</Product>
     <Description></Description>
-	<Version>3.0.710.74</Version>
+	<Version>3.0.809.131</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <RestoreAdditionalProjectSources>
