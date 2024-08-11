@@ -40,13 +40,13 @@ namespace AirportCEOFlightLimitTweak
 
             GameObject child = Instantiate(new GameObject());
             child.transform.SetParent(null);
-            child.name = "ACEOTweaksActive";
+            child.name = "ACEOTweaksFlightLimitActive";
         }
 
         private void Start()
         {
             ModLoaderInteractionHandler.SetUpInteractions();
-            LogInfo("Tweaks finished start");
+            LogInfo("Tweaks flight limit finished start");
         }
 
         // This is code for BepInEx logging, which Tweaks doesn't really use. Here if nessesary

@@ -45,13 +45,13 @@ namespace AirportCEOAircraft
 
             GameObject child = Instantiate(new GameObject());
             child.transform.SetParent(null);
-            child.name = "ACEOTweaksActive";
+            child.name = "ACEOTweaksAircraftActive";
         }
 
         private void Start()
         {
             ModLoaderInteractionHandler.SetUpInteractions();
-            LogInfo("Tweaks finished start");
+            LogInfo("Tweaks Aircraft finished start");
         }
 
         // This is code for BepInEx logging, which Tweaks doesn't really use. Here if nessesary

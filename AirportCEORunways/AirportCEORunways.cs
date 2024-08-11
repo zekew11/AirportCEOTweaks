@@ -41,13 +41,13 @@ namespace AirportCEORunways
 
             GameObject child = Instantiate(new GameObject());
             child.transform.SetParent(null);
-            child.name = "ACEOTweaksActive";
+            child.name = "ACEOTweaksRunwaysActive";
         }
 
         private void Start()
         {
             ModLoaderInteractionHandler.SetUpInteractions();
-            LogInfo("Tweaks finished start");
+            LogInfo("Tweaks Runways finished start");
         }
 
         // This is code for BepInEx logging, which Tweaks doesn't really use. Here if nessesary
