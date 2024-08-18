@@ -10,6 +10,7 @@ using UnityEngine;
 using Unity;
 using HarmonyLib.Tools;
 using System.Reflection;
+using Random = UnityEngine.Random;
 
 namespace AirportCEOTweaksCore
 {
@@ -42,13 +43,15 @@ namespace AirportCEOTweaksCore
             Singleton<BusinessController>.Instance.AddToBusinessList(this);
 
 
-            MakeUpdateTypeModelDictionary();
+            MakeUpdateFleet();
 
         }
 
+        public Dictionary<string, (float Available, float Allocated)> AircraftTypeAllocation = new Dictionary<string, (float Available, float Allocated)>();
+
         public void Refresh()
         {
-            MakeUpdateTypeModelDictionary();
+            MakeUpdateFleet();
         }
         private void ConsumeBaseAirlineModel(AirlineModel airlineModel)
         {
@@ -57,7 +60,7 @@ namespace AirportCEOTweaksCore
                 field.SetValue(this, field.GetValue(airlineModel));
             }
         }
-        private void MakeUpdateTypeModelDictionary()
+        private void MakeUpdateFleet()
         {
             //Replace Fleet with TweaksFleet
             if (airlineBusinessData.tweaksFleet == null || airlineBusinessData.tweaksFleet.Length <= 0)
@@ -144,6 +147,63 @@ namespace AirportCEOTweaksCore
                     }
 
                     airlineBusinessData.tweaksFleetCount = fleetCount;
+                }
+            }
+        }
+
+        public string GetAndAllocateRandomAircraft(bool allocate = true)
+        {
+            string aircraft;
+            SortedDictionary<float, string> lotto = new SortedDictionary<float, string>();
+            float counter = 0;
+            foreach (string key in AircraftTypeAllocation.Keys)
+            {
+                if (Singleton<ModsController>.Instance.CanServeAircraftType(key))
+                {
+                    float numToAdd = AircraftTypeAllocation[key].Available + counter;
+                    lotto.Add(numToAdd, key);
+                    counter += AircraftTypeAllocation[key].Available;
+                }
+            }
+
+            float pick = Random.Range(0, counter);
+            
+            foreach (float number in lotto.Keys)
+            {
+                if (number >= pick)
+                {
+                    aircraft = lotto[number];
+                    if (allocate) { AircraftTypeAllocation[aircraft] = (AircraftTypeAllocation[aircraft].Available, AircraftTypeAllocation[aircraft].Allocated + 1); }
+                    return aircraft;
+                }
+            }
+            return "ERROR NO AIRCRAFT AVAILABLE";
+        }
+        private void MakeUpdateFleetAllocations()
+        {
+            for (int i = 0; i < aircraftFleetModels.Length ; i++)
+            {
+                string aircraft = aircraftFleetModels[i];
+                float count = (i < fleetCount.Length) ? fleetCount[i] : 0f ;
+                if (! AircraftTypeAllocation.ContainsKey(aircraft))
+                {
+                    AircraftTypeAllocation.Add(aircraft, (0, 0));
+                }
+                AircraftTypeData aTD = AirportCEOTweaksCore.aircraftTypeDataDict[aircraft];
+                AircraftTypeAllocation[aircraft] = (aTD.GetAllocationCount() * count, 0);
+            }
+            foreach (string aircraft in AircraftTypeAllocation.Keys)
+            {
+                if (! aircraftFleetModels.Contains(aircraft))
+                {
+                    AircraftTypeAllocation.Remove(aircraft);
+                }
+            }
+            foreach (CommercialFlightModel cFM in flightListObjects)
+            {
+                if (cFM.arrivalTimeDT - Singleton<TimeController>.Instance.GetCurrentContinuousTime() < new TimeSpan(24*AircraftTypeDataUtilities.AllocationBaselineDays, 0, 0)) 
+                {
+                    AircraftTypeAllocation[cFM.aircraftTypeString] = (AircraftTypeAllocation[cFM.aircraftTypeString].Available, AircraftTypeAllocation[cFM.aircraftTypeString].Allocated + 1f);
                 }
             }
         }

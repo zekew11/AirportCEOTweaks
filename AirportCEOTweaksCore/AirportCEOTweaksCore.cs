@@ -23,6 +23,7 @@ namespace AirportCEOTweaksCore
         public static Dictionary<GameObject, GameObject> aircraftPrefabOverwrites = new Dictionary<GameObject, GameObject>();
         public static Dictionary<string, AircraftTypeData> aircraftTypeDataDict = new Dictionary<string, AircraftTypeData>();
 
+
         public static AirportCEOTweaksCore Instance { get; private set; }
         internal static Harmony Harmony { get; private set; }
         internal static ManualLogSource TweaksLogger { get; private set; }

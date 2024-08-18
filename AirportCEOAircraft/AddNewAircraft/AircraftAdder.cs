@@ -48,9 +48,9 @@ namespace AirportCEOAircraft
 
                     aircraftGameObjectsSet.Add(aircraftGameObject);
 
-                    if (!AirportCEOAircraft.aircraftTypeDataDict.ContainsKey(aircraftTypeData.id[i]))
+                    if (!AirportCEOTweaksCore.AirportCEOTweaksCore.aircraftTypeDataDict.ContainsKey(aircraftTypeData.id[i]))
                     {
-                        AirportCEOAircraft.aircraftTypeDataDict.Add(aircraftTypeData.id[i], aircraftTypeData);
+                        AirportCEOTweaksCore.AirportCEOTweaksCore.aircraftTypeDataDict.Add(aircraftTypeData.id[i], aircraftTypeData.SingleAircraftTypeData(aircraftTypeData.id[i]));
                     }
                 }
                 yield return null;

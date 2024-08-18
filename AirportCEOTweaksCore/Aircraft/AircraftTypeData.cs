@@ -266,6 +266,7 @@ namespace AirportCEOTweaksCore
 
 	public static class AircraftTypeDataUtilities
     {
+		public const int AllocationBaselineDays = 3;
 		public static AircraftTypeData AircraftTypeDataCondensed(string aircraftType)
         {
 			if (AirportCEOTweaksCore.aircraftTypeDataDict.TryGetValue(aircraftType, out AircraftTypeData aircraftTypeData))
@@ -285,7 +286,7 @@ namespace AirportCEOTweaksCore
         {
 			return AircraftTypeDataCondensed(FlightModel.aircraftTypeString);
         }
-		public static T GetAtIndexOrZero<T>(this T[] array,int index)
+		private static T GetAtIndexOrZero<T>(this T[] array,int index)
         {
 
 			if (array.Length>index)
@@ -301,5 +302,13 @@ namespace AirportCEOTweaksCore
 				return default;
             }
         }
+		public static float GetAllocationCount(this AircraftTypeData aircraftTypeData)
+        {
+			// range(km)/speed(km/h)=flightduration(h)
+			float duration = aircraftTypeData.range_KM[0] / aircraftTypeData.speed_KMH[0];
+
+			// assume 4 hrs/day on the ground min, 24h-4h=20h
+			return (20f*AllocationBaselineDays) / duration;
+		}
     }
 }

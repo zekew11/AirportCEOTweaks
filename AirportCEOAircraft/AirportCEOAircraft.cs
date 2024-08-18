@@ -21,7 +21,6 @@ namespace AirportCEOAircraft
         public static List<string> aircraftPaths = new List<string>();
         public static List<string> airlinePaths = new List<string>();
         public static Dictionary<GameObject, GameObject> aircraftPrefabOverwrites = new Dictionary<GameObject, GameObject>();
-        public static Dictionary<string, AircraftTypeData> aircraftTypeDataDict = new Dictionary<string, AircraftTypeData>();
 
         public static AirportCEOAircraft Instance { get; private set; }
         internal static Harmony Harmony { get; private set; }
