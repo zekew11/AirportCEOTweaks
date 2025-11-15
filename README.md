@@ -1,3 +1,7 @@
+## For the most up to date version of Tweaks, please refer to the "Tweaks Stable" fork https://github.com/Humoresque811/AirportCEOTweaks. As of right now, this repository is not recieving active maintence.
+
+---
+
 Before installing ACEO Tweaks, install [ACEO Mod Loader](https://github.com/Humoresque811/AirportCEO-Mod-Loader/wiki).
 
 ---
