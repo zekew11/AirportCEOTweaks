@@ -64,9 +64,35 @@ namespace AirportCEONationality
 
             //Select Aircraft
 
+            string aircraft = airlineME.GetAndAllocateRandomAircraft(false);
+            AircraftModel aircraftModel = AirTrafficController.instance.GetAircraftModel(aircraft);
 
+            if (aircraftModel == null)
+            {
+                Debug.LogError("ACEO Tweaks Nationality | Error: Couldn't get aircraft model for "+ aircraft);
+                return false;
+            }
+            int range = aircraftModel.rangeKM;
+            int pax = aircraftModel.MaxPax;
+            bool simple_cargo = aircraftModel.maxPax <= 1 ? true : false;
 
             //Select Route
+
+            RouteGenerationController routeGC = UnityEngine.GameObject.Find("CoreGameControllers").GetComponent<RouteGenerationController>();
+
+            SortedSet<RouteContainer> routeContainers = new SortedSet<RouteContainer>();
+
+            Stack<Airport> hubs = new Stack<Airport>();
+            Stack<float> ranges = new Stack<float>();
+
+            if (airlineME.hUBs != null)
+            {
+                foreach (KeyValuePair<Airport, float> kvp in hUBs)
+                {
+                    hubs.Push(kvp.Key);
+                    ranges.Push(kvp.Value);
+                }
+            }
 
             //Instantiate the Flights
         }

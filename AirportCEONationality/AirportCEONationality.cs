@@ -15,6 +15,7 @@ namespace AirportCEONationality
     [BepInDependency("org.airportceomodloader.humoresque")]
     [BepInIncompatibility("org.airportceotweaks.zeke")]
     [BepInDependency("org.airportceotweakscore.zeke")]
+    //[BepInDependency("org.airportceoaircraft.zeke")]
     public class AirportCEONationality : BaseUnityPlugin
     {
         public const string GUID = "org.airportceonationality.zeke";
