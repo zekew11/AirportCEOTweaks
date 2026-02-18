@@ -34,7 +34,7 @@ namespace AirportCEONationality
 		private float distance;      //Access Distance
 		private short direction;     //Access Direction
 		private short directionr;    //Access Directionr
-		private int chance = -1;			 //Access Chance
+		private int chance = -1;	 //Access Chance
 
 
 		public RouteContainer(Route route)

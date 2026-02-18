@@ -45,7 +45,7 @@ namespace AirportCEOTweaksCore
 		[HarmonyPrefix]
 		public static bool Patch_GenerateFlight(AirlineModel __instance, bool isEmergency, bool isAmbulance)
 		{
-			if (Singleton<ModsController>.Instance.flightGenerator.OverrideHarmonyPrefix)
+			if (Singleton<ModsController>.Instance.flightGenerator.SkipHarmonyPrefix)
             {
 				return true;
             }

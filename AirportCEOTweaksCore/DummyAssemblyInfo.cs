@@ -15,5 +15,5 @@ using System.Reflection;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM.
 
-[assembly: AssemblyVersion("1.0.0813.117")]
-[assembly: AssemblyFileVersion("1.0.0813.116")]
+[assembly: AssemblyVersion("1.0.0218.122")]
+[assembly: AssemblyFileVersion("1.0.0218.121")]

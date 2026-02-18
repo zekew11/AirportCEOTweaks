@@ -10,15 +10,13 @@ namespace AirportCEONationality
 {
     class NationalityIFlightGenerator : IFlightGenerator
     {
-        public bool OverrideHarmonyPrefix => false;
+        public bool SkipHarmonyPrefix => false;
 
         public bool GenerateFlight(AirlineModel airlineModel, bool isEmergency, bool isAmbulance)
         {
-            AirlineModelExtended airlineME = airlineModel.ExtendAirlineModel(ref airlineModel);
+            AirlineModelExtended airlineModelExtended = airlineModel.ExtendAirlineModel(ref airlineModel);
 
             //Check Possible to Gen a Flight
-
-
 
             if (airlineModel.fleetCount.Length == 0)
             {
@@ -64,7 +62,7 @@ namespace AirportCEONationality
 
             //Select Aircraft
 
-            string aircraft = airlineME.GetAndAllocateRandomAircraft(false);
+            string aircraft = airlineModelExtended.GetAndAllocateRandomAircraft(false);
             AircraftModel aircraftModel = AirTrafficController.instance.GetAircraftModel(aircraft);
 
             if (aircraftModel == null)
@@ -82,19 +80,10 @@ namespace AirportCEONationality
 
             SortedSet<RouteContainer> routeContainers = new SortedSet<RouteContainer>();
 
-            Stack<Airport> hubs = new Stack<Airport>();
-            Stack<float> ranges = new Stack<float>();
-
-            if (airlineME.hUBs != null)
-            {
-                foreach (KeyValuePair<Airport, float> kvp in hUBs)
-                {
-                    hubs.Push(kvp.Key);
-                    ranges.Push(kvp.Value);
-                }
-            }
+            //routeContainers = routeGC.SelectRouteContainers();
 
             //Instantiate the Flights
+            return false;
         }
     }
 }

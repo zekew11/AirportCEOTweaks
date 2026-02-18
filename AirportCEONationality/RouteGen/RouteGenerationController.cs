@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AirportCEOTweaksCore;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace AirportCEONationality
 		private City[] cities;
 		private Country[] countries;
 		private Continent[] continents;
+		private bool init = false;
 
 		Airport PlayerAirport
         {
@@ -24,12 +26,14 @@ namespace AirportCEONationality
 			}
         }
 
+
 		Dictionary<Enums.GenericSize, HashSet<Airport>> airportsBySize;
 		Dictionary<Enums.GenericSize, HashSet<Airport>> airportsByCargoSize;
 		HashSet<Airport> domesticAirports;
 		HashSet<Airport> nearAirports;
 
 		SortedSet<RouteContainer> routeContainers;
+		Dictionary<AirlineModelExtended, SortedSet<RouteContainer>> routeContainersByAirline = new Dictionary<AirlineModelExtended, SortedSet<RouteContainer>>();
 
 		public RouteGenerationController()
 		{
@@ -54,6 +58,7 @@ namespace AirportCEONationality
 			routeContainers = new SortedSet<RouteContainer>();
 			routeContainers.UnionWith(GenerateSomeRouteContainers(100));
 			StartCoroutines();
+			init = true;
 		}
 		private void MakeDictionarysEct()
 		{
@@ -116,7 +121,7 @@ namespace AirportCEONationality
 		}
 		public HashSet<RouteContainer> GenerateSomeRouteContainers(int numberToGenerate = 5)
 		{
-			Enums.GenericSize[] relevantAirportSizes = { Enums.GenericSize.Gigantic, Enums.GenericSize.Huge, Enums.GenericSize.VeryLarge, Enums.GenericSize.Large };
+			Enums.GenericSize[] relevantAirportSizes = { Enums.GenericSize.Gigantic, Enums.GenericSize.Huge, Enums.GenericSize.VeryLarge, Enums.GenericSize.Large }; //always add the biggest airports to the pool
 			HashSet<Airport> canidateAirports = new HashSet<Airport>();
 			HashSet<RouteContainer> routeContainers = new HashSet<RouteContainer>();
 
@@ -168,35 +173,22 @@ namespace AirportCEONationality
 			bool forceDomestic = false, bool forceNationalOrigin = false, Country[] origin = null, Country[] forbidden = null,
 			bool forceHUBOriginInternational = false, bool forceHUBOriginAll = false, bool forceHUBRange = false , Airport[] hUBs = null, float[] hUBRanges = null)
 		{
-			forceNationalOrigin = origin == null ? false : forceNationalOrigin;
+			forceNationalOrigin = origin == null ? false : forceNationalOrigin; //if no origin country then no origin country restriction
 			
 			SortedSet<RouteContainer> returnSet = new SortedSet<RouteContainer>();
 			HashSet<RouteContainer> returnHashSet = new HashSet<RouteContainer>();
-			HashSet<RouteContainer> removeSet = new HashSet<RouteContainer>();
-
 			
+			// adding 20 (routesToAdd) random routes that satisfy the range criteria
+
 			float min = 0;
-			float max = routeContainers.Count;
+			float max = routeContainers.Count; //bounds random route to sorted set ranges
 			int rand;
 			int routesToAdd = 20;
 			RouteContainer item;
 
 			returnHashSet.UnionWith(preExistingContainers);
 			
-			foreach (RouteContainer container in returnHashSet)
-            {
-				if (container.Distance > maxRange)
-				{ 
-					removeSet.Add(container); 
-				}
-				else if (container.Distance < minRange)
-                {
-					removeSet.Add(container);
-                }
-            }
-			returnHashSet.ExceptWith(removeSet);
-
-			for (int i = 0; (i < 100); i++)
+			for (int i = 0; (i < routesToAdd*4); i++)
 			{
 				rand = (int)Random.Range(min, max);
 				item = routeContainers.ElementAt(rand);
@@ -220,7 +212,7 @@ namespace AirportCEONationality
 				}
 			}
 
-			returnSet.UnionWith(returnHashSet);
+			returnSet.UnionWith(returnHashSet); //now using a sorted return set with the filter functions
 
 			if (forceDomestic)
 			{
@@ -455,6 +447,25 @@ namespace AirportCEONationality
 
 
 
+		public SortedSet<RouteContainer> RouteContainersByAirline (AirlineModelExtended airlineModelExtended)
+        {
+			SortedSet<RouteContainer> updatedSet = new SortedSet<RouteContainer>();
+			HashSet<RouteContainer> existingRouteContainers = new HashSet<RouteContainer>();
+
+			if (!routeContainersByAirline.ContainsKey(airlineModelExtended))
+            {
+				routeContainersByAirline.Add(airlineModelExtended, new SortedSet<RouteContainer>());
+            }
+
+			existingRouteContainers.UnionWith(routeContainersByAirline[airlineModelExtended]);
+
+			updatedSet = SelectRouteContainers(ref existingRouteContainers, 16000, 10, airlineModelExtended.RemainInHomeCodes, true, airlineModelExtended.originCountries.ToArray(), airlineModelExtended.forbiddenCountries.ToArray(), false, false, false, null, null);
+
+			return updatedSet;
+        }
+
+
+
 		public bool IsDomestic(Country countryA, Country countryB = null)
 		{
 			if (countryA == null)
@@ -530,6 +541,8 @@ namespace AirportCEONationality
 
 			}
 		}
+		
+		
 		//Map of continent vs continent twin-engine restriction
 		public readonly bool[,] etopsContinents ={
 		    //  EU    AS    NA    AF    AN    SA    OC

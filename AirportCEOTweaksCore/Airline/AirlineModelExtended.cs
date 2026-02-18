@@ -12,11 +12,13 @@ using HarmonyLib.Tools;
 using System.Reflection;
 using Random = UnityEngine.Random;
 
+
 namespace AirportCEOTweaksCore
 {
     public class AirlineModelExtended : AirlineModel
     {
         AirlineBusinessData airlineBusinessData;
+        public bool usesHUBs = false; //todo impliment hubs
         public AirlineModelExtended(Airline airline, ref AirlineModel airlineModel) : base(airline)
         {
             if (airline == null) { Debug.LogError("ERROR: Airline Model Extended ctor encountered airline == null!");  return; }
@@ -49,9 +51,40 @@ namespace AirportCEOTweaksCore
 
         public Dictionary<string, (float Available, float Allocated)> AircraftTypeAllocation = new Dictionary<string, (float Available, float Allocated)>();
 
+        public Dictionary<Airport, float> hUBs = new Dictionary<Airport, float>();
+
+        public List<Country> originCountries = new List<Country>();
+        public List<Country> forbiddenCountries = new List<Country>();
+        public bool forceNationalOrigin;
+
+        public bool RemainInHomeCodes
+        {
+            get
+            {
+                if (!IsDomesticUtil.IsDomestic(originCountries.ToArray()))
+                {
+                    return false;
+                } //we don't want to be making forien airlines domestic only
+
+                if (airlineBusinessData.remainWithinHomeCodes)
+                {
+                    return true;
+                }
+
+                if (originCountries == null || originCountries.Count==0)
+                {
+                    return false;
+                } //can't enforce nationality on fictional airlines/those without a nationality!
+
+                return false;
+            }
+        }
+
         public void Refresh()
         {
             MakeUpdateFleet();
+            MakeUpdateHUBs();
+            MakeUpdateNationality();
         }
         private void ConsumeBaseAirlineModel(AirlineModel airlineModel)
         {
@@ -150,7 +183,54 @@ namespace AirportCEOTweaksCore
                 }
             }
         }
+        private void MakeUpdateHUBs()
+        {
+            if(airlineBusinessData.arrayHubIATAs == null || airlineBusinessData.arrayHubIATAs.Length <=0)
+            {
+                Debug.Log("ACEO Tweaks | Debug - Airline " + businessName + " HUBs is null or 0");
+            }
+            else
+            {
+                for(int i = 0; i<airlineBusinessData.arrayHubIATAs.Length; i++)
+                {
+                    Airport airport = StringtoTypeUtil.airportFromIATA(airlineBusinessData.arrayHubIATAs[i]);
+                    if (airport == null) { continue; }
+                    try
+                    {
+                        hUBs.Add(airport, airlineBusinessData.arrayRangesFromHubs_KM[i]);
+                    }
+                    catch
+                    {
+                        Debug.LogError("ACEO Tweaks | Debug - Airline " + businessName + " HUB " + airlineBusinessData.arrayHubIATAs[i]+" try/catch failed!");
+                    }
+                }
+            }
+        }
+        private void MakeUpdateNationality()
+        {            
+            string countryCode = Singleton<BusinessController>.Instance?.GetAirline(businessName)?.countryCode ?? "";
 
+            HashSet<string> codeList = new HashSet<string>();
+            List<Country> countryList = new List<Country>();
+
+            if (airlineBusinessData.arrayHomeCountryCodes != null && airlineBusinessData.arrayHomeCountryCodes.Length > 0)
+            {
+                codeList.UnionWith(airlineBusinessData.arrayHomeCountryCodes);
+            }
+            codeList.Add(countryCode);
+            originCountries = StringtoTypeUtil.countrysFromCodes(codeList.ToArray());
+            if (originCountries.Count>0)
+            {
+                forceNationalOrigin = true;
+            }
+
+            codeList.Clear();
+            if (airlineBusinessData.arrayForbiddenCountryCodes != null && airlineBusinessData.arrayForbiddenCountryCodes.Length > 0)
+            {
+                codeList.UnionWith(airlineBusinessData.arrayForbiddenCountryCodes);
+            }
+            forbiddenCountries = StringtoTypeUtil.countrysFromCodes(codeList.ToArray());
+        }
         public string GetAndAllocateRandomAircraft(bool allocate = true)
         {
             string aircraft;
